@@ -1,0 +1,34 @@
+{
+  "name": "distillery-js",
+  "version": "0.1.0",
+  "description": "200 proof web scraping",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/achannarasappa/distillery.git"
+  },
+  "keywords": [
+    "web scraping",
+    "scraping",
+    "scrape",
+    "distillery",
+    "distill",
+    "distillery-js"
+  ],
+  "author": "Ani Channarasappa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/achannarasappa/distillery/issues"
+  },
+  "homepage": "https://github.com/achannarasappa/distillery",
+  "dependencies": {
+    "cheerio": "^0.18.0",
+    "lodash": "^2.4.1",
+    "q": "^1.1.2",
+    "ramda": "^0.8.0",
+    "request": "^2.51.0"
+  }
+}
