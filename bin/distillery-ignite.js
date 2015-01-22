@@ -2,16 +2,21 @@
 
 var log = require('captains-log')();
 var path = require('path');
+var fs = require('fs');
 var Ignite = require('../lib/ignite/ignite');
 var Utility = require('../lib/utility');
 
 module.exports = function(file, options) {
 
+  var still = path.resolve(process.cwd(), file);
+
   log.info('Starting distillation');
 
-  Ignite(require(path.resolve(__dirname, file)))
+  if (!fs.existsSync(still)) return log.error('Unable to find still at \'' + still + '\'');
+
+  return Ignite(require(still))
     .distill(Utility.parseKeyValuePairs('=', options.parameters))
-    .then(function(res){
+    .then(function(){
       log.info('Completed distillation')
     }).catch(function(err){
       log.error(err);
