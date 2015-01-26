@@ -14,7 +14,7 @@ module.exports = function(file, options) {
 
   if (!fs.existsSync(still)) return log.error('Unable to find still at \'' + still + '\'');
 
-  return Ignite(require(still))
+  return Ignite(require(still), Utility.parseKeyValuePairs('=', options.opts))
     .distill(Utility.parseKeyValuePairs('=', options.parameters))
     .then(function(){
       log.info('Completed distillation')
