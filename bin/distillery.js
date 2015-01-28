@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 
-var program = require('commander'),
-    coercion = require('commander-coercions'),
-    info = require('../package.json');
-function collect(val, memo) {
-  memo.push(val);
-  return memo;
-}
+var program = require('commander');
+var coercion = require('commander-coercions');
+var info = require('../package.json');
+
 program
   .version(info.version, '-v, --version');
 
