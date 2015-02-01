@@ -10,6 +10,7 @@ program
 program.command('ignite <file>')
   .option('-p, --parameters [value]', 'parameter to pass to the still', coercion.toListFromMultipleInvocations, [])
   .option('-o, --opts [value]', 'set distillery options', coercion.toListFromMultipleInvocations, [])
+  .option('-h, --h [value]', 'save html to file system')
   .action(require('./distillery-ignite'));
 
 
