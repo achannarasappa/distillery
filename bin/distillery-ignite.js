@@ -3,6 +3,7 @@
 var log = require('captains-log')();
 var path = require('path');
 var fs = require('fs');
+var _ = require('lodash');
 var Ignite = require('../lib/ignite/ignite');
 var Utility = require('../lib/utility');
 
