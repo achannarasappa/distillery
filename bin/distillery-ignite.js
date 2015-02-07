@@ -3,7 +3,7 @@
 var log = require('captains-log')();
 var path = require('path');
 var fs = require('fs');
-var _ = require('lodash');
+var Q = require('q');
 var Ignite = require('../lib/ignite/ignite');
 var Utility = require('../lib/utility');
 
@@ -15,11 +15,10 @@ module.exports = function(file, options) {
 
   if (!fs.existsSync(still)) return log.error('Unable to find still at \'' + still + '\'');
 
-  return Ignite(require(still), Utility.parseKeyValuePairs('=', options.opts))
-    .distill(Utility.parseKeyValuePairs('=', options.parameters))
-    .then(function(){
+  return Q.when(Ignite(require(still), Utility.parseKeyValuePairs('=', options.opts))
+    .distill(Utility.parseKeyValuePairs('=', options.parameters)), function(){
       log.info('Completed distillation')
-    }).catch(function(err){
+    }, function(err){
       log.error(err);
     })
 
