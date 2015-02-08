@@ -12,6 +12,4 @@ program.command('ignite <file>')
   .option('-o, --opts [value]', 'set distillery options', coercion.toListFromMultipleInvocations, [])
   .action(require('./distillery-ignite'));
 
-
-
 program.parse(process.argv);
