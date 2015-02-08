@@ -16,10 +16,14 @@ module.exports = function(file, options) {
   if (!fs.existsSync(still)) return log.error('Unable to find still at \'' + still + '\'');
 
   return Q.when(Ignite(require(still), Utility.parseKeyValuePairs('=', options.opts))
-    .distill(Utility.parseKeyValuePairs('=', options.parameters)), function(){
+    .distill(Utility.parseKeyValuePairs('=', options.parameters)), function() {
+    
       log.info('Completed distillation')
-    }, function(err){
+    
+    }, function(err) {
+    
       log.error(err);
+    
     })
 
 };
