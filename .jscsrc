@@ -108,7 +108,6 @@
     "disallowSpacesInAnonymousFunctionExpression": {
         "beforeOpeningRoundBrace": true
     },
-    "disallowSpacesInConditionalExpression": true,
     "disallowSpacesInCallExpression": true,
     "disallowSpaceBeforePostfixUnaryOperators": true,
     "disallowSpaceAfterPrefixUnaryOperators": true,
