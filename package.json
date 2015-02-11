@@ -4,7 +4,8 @@
   "description": "200 proof web scraping",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "code-style": "jscs . | grep -qi \"No code style errors found\" && exit 0 || exit 1"
   },
   "repository": {
     "type": "git",
@@ -38,5 +39,11 @@
   },
   "bin": {
     "distillery": "./bin/distillery.js"
+  },
+  "pre-commit": [
+    "code-style"
+  ],
+  "devDependencies": {
+    "pre-commit": "^1.0.2"
   }
 }
