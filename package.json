@@ -4,7 +4,7 @@
   "description": "200 proof web scraping",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --recursive",
     "code-style": "jscs . | grep -qi \"No code style errors found\" && exit 0 || exit 1"
   },
   "repository": {
@@ -19,7 +19,7 @@
     "distill",
     "distillery-js"
   ],
-  "author": "Ani Channarasappa",
+  "author": "Ani Channarasappa <ani+npm@channarasappa.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/achannarasappa/distillery/issues"
@@ -41,9 +41,12 @@
     "distillery": "./bin/distillery.js"
   },
   "pre-commit": [
+    "test",
     "code-style"
   ],
   "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^2.1.0",
     "pre-commit": "^1.0.2"
   }
 }

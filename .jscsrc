@@ -112,5 +112,8 @@
     "disallowSpaceBeforePostfixUnaryOperators": true,
     "disallowSpaceAfterPrefixUnaryOperators": true,
     "disallowSpaceAfterObjectKeys": true,
-    "requirePaddingNewlinesInBlocks": true
+    "requirePaddingNewlinesInBlocks": true,
+    "excludeFiles": [
+        "node_modules/**"
+    ]
 }
