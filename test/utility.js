@@ -65,28 +65,38 @@ describe('Utility', function() {
 
   });
 
-  describe('.parseKeyValuePairs', function() {
+  describe('.splitStringArray', function() {
 
-    it('should return an object with the same length as \'strings\'', function() {
+    var cliArgs = [ 'key1=value1', 'key2=value2', 'key3=value3' ];
+    var delimiter = '=';
 
+    it('should return an object with the same number of properties as \'strings\'', function() {
+
+      expect(_.keys(Utility.splitStringArray(delimiter, cliArgs))).to.have.length(cliArgs.length)
 
     });
 
     it('should have keys equal to the string prior to the \'delimiter\'', function() {
 
+      expect(_.keys(Utility.splitStringArray(delimiter, cliArgs))).to.eql([ 'key1', 'key2', 'key3' ])
 
     });
 
     it('should have values equal to the string after to the \'delimiter\'', function() {
 
+      expect(_.values(Utility.splitStringArray(delimiter, cliArgs))).to.eql([ 'value1', 'value2', 'value3' ])
 
     });
 
     it('should throw an error if \'delimiter\' is not a string.', function() {
 
+      expect(Utility.splitStringArray).withArgs(1, cliArgs).to.throwError()
+
     });
 
     it('should throw an error if \'strings\' is not an array.', function() {
+
+      expect(Utility.splitStringArray).withArgs(delimiter, 1).to.throwError()
 
     });
 

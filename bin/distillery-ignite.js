@@ -15,8 +15,8 @@ module.exports = function(file, options) {
 
   if (!fs.existsSync(still)) return log.error('Unable to find still at \'' + still + '\'');
 
-  return Q.when(Ignite(require(still), Utility.parseKeyValuePairs('=', options.opts))
-    .distill(Utility.parseKeyValuePairs('=', options.parameters)), function() {
+  return Q.when(Ignite(require(still), Utility.splitStringArray('=', options.opts))
+    .distill(Utility.splitStringArray('=', options.parameters)), function() {
     
       log.info('Completed distillation')
     
