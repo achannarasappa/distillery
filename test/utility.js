@@ -8,27 +8,27 @@ describe('Utility', function() {
 
     it('should replace tokens enclosed in curly braces with values', function() {
 
-      expect(Utility.interpolate('http://example.com?key1={token1}&key2={token2}', { token1: 'value1', token2: 'value2' })).to.be('http://example.com?key1=value1&key2=value2');
+      expect(Utility.interpolateString('http://example.com?key1={token1}&key2={token2}', { token1: 'value1', token2: 'value2' })).to.be('http://example.com?key1=value1&key2=value2');
 
     });
 
     it('should not replace tokens if no value is supplied', function() {
 
-      expect(Utility.interpolate('http://example.com?key1={token1}&key2={token2}', { token1: 'value1' })).to.be('http://example.com?key1=value1&key2={token2}');
+      expect(Utility.interpolateString('http://example.com?key1={token1}&key2={token2}', { token1: 'value1' })).to.be('http://example.com?key1=value1&key2={token2}');
 
     });
 
     it('should throw an error if a string is not passed for str', function() {
 
-      expect(Utility.interpolate).withArgs(1000, {}).to.throwError();
-      expect(Utility.interpolate).withArgs('test', {}).to.not.throwError();
+      expect(Utility.interpolateString).withArgs(1000, {}).to.throwError();
+      expect(Utility.interpolateString).withArgs('test', {}).to.not.throwError();
 
     });
 
     it('should throw an error if a object is not passed for obj', function() {
 
-      expect(Utility.interpolate).withArgs('http://example.com?key1={token1}&key2={token2}', 1000).to.throwError();
-      expect(Utility.interpolate).withArgs('http://example.com?key1={token1}&key2={token2}', {}).to.not.throwError();
+      expect(Utility.interpolateString).withArgs('http://example.com?key1={token1}&key2={token2}', 1000).to.throwError();
+      expect(Utility.interpolateString).withArgs('http://example.com?key1={token1}&key2={token2}', {}).to.not.throwError();
 
     });
 
