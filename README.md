@@ -98,6 +98,7 @@ Hooks, validators, and indicators to handle a HTTP response. Each sub-object is 
 (*object*, *required*) - List conditions to look for that would indicate this specific response was returned from the server. Each sub-key is a user-assigned name for the indicator. There are a set of indicator that can be used detailed below. Which combination or combinations of indicators constitues a specific response is in the [`process.response[<key>].validate`](#processresponsekeyvalidate) function.
 #####Indicators
 Indicator function can be used to determine if a specific response was returned from the request.
+
 1. `distillery.expect.http_code(code)` - The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expect the response to contain.
     * arguments
         * `code` (*integer*, *required*) - The HTTP to expect the response to contain
