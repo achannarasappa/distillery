@@ -97,32 +97,10 @@ Hooks, validators, and indicators to handle a HTTP response. Each sub-object is 
 ####`process.response[<key>].indicators`
 (*object*, *required*) - List conditions to look for that would indicate this specific response was returned from the server. Each sub-key is a user-assigned name for the indicator. There are a set of indicator that can be used detailed below. Which combination or combinations of indicators constitues a specific response is in the [`process.response[<key>].validate`](#processresponsekeyvalidate) function.
 #####Indicators
-Indicator function can be used to determine if a specific response was returned from the request.
-
-1. `distillery.expect.http_code(code)` - The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expect the response to contain.
-    * arguments
-        * `code` (*integer*, *required*) - The HTTP to expect the response to contain
-    * returns
-        * `true` if HTTP response code matches `code` exactly
-        * `false` if HTTP response code does not match `code` exactly
-2. `distillery.expect.url(url)`
-    * arguments
-        * `url` (*string* or *regex*, *required*) - A string or regex pattern to match the final url against
-    * returns
-        * `true` if `url` is a string and final url matches `url` exactly
-        * `true` if `url` is a regex and final url matches the regex `url`
-        * `false` if final url does not match `url` exactly
-3. `distillery.expect.html_element(path, expected)`
-    * arguments    
-        * `path` (*string*) - CSS path to an HTML element.
-        * `expected` (*string* or *regex*, *optional*) - If expected is not set, the function will return the contents of the element at the CSS path if found or false is not found. If expected is a string, the fuction will return true if the inner text of the element at the path matches
-    * returns
-        * `<html element inner text>` if expected is not set and the element at the CSS path exists in the html document. This response allows for any customer validation logic to be performed in `process.response[<key>].validate`.
-        * `true` if `expected` is a regex, the element at the CSS path exists in the html document, and the `expected` regex pattern matches the inner text of that element
-        * `true` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string matches the inner text of that element exactly
-        * `false` if the contents of the element at the CSS path does not exists in the html document
-        * `false` if `expected` is a regex, the element at the CSS path exists in the html document, and the regex pattern does not match the inner text of the element
-        * `false` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string does not match the inner text of that element exactly  
+Indicators are used to recognize if a particular response was returned. They are key value pairs where the keys are the name of the indicator and the value is an expected value in the HTTP response. There are three signatures that can be detected with distillery:
+* [A specifc HTTP response code](#distilleryexpecthttp_codecode)
+* [A specifc url or url pattern after redirects](#distilleryexpecturlurl)
+* [A HTML element present on the page](#distilleryexpecturlurl)
 
 ####`process.response[<key>].validate`
 (*function*, *required*) - Used to determine which response was returned from the the request. The result of each indicator can be used in this function to evaluate if the response is valid. If there are multiple responses that have validation functions that evaluate to true, the first response will be chosen.
@@ -188,6 +166,34 @@ module.exports = function(distillery) {
     * `html` (*string*, *required*) - Utility function to parse any HTML and attempt to extract the data detailed in the models section of the still.
 * returns 
     * The result of any models that were able to be parse from the HTML.
+
+####`distillery.expect.http_code(code)`
+The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expect the response to contain.
+* arguments
+    * `code` (*integer*, *required*) - The HTTP to expect the response to contain
+* returns
+    * `true` if HTTP response code matches `code` exactly
+    * `false` if HTTP response code does not match `code` exactly
+
+####`distillery.expect.url(url)`
+* arguments
+    * `url` (*string* or *regex*, *required*) - A string or regex pattern to match the final url against
+* returns
+    * `true` if `url` is a string and final url matches `url` exactly
+    * `true` if `url` is a regex and final url matches the regex `url`
+    * `false` if final url does not match `url` exactly
+
+####`distillery.expect.html_element(path, expected)`
+* arguments    
+    * `path` (*string*) - CSS path to an HTML element.
+    * `expected` (*string* or *regex*, *optional*) - If expected is not set, the function will return the contents of the element at the CSS path if found or false is not found. If expected is a string, the fuction will return true if the inner text of the element at the path matches
+* returns
+    * `<html element inner text>` if expected is not set and the element at the CSS path exists in the html document. This response allows for any customer validation logic to be performed in `process.response[<key>].validate`.
+    * `true` if `expected` is a regex, the element at the CSS path exists in the html document, and the `expected` regex pattern matches the inner text of that element
+    * `true` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string matches the inner text of that element exactly
+    * `false` if the contents of the element at the CSS path does not exists in the html document
+    * `false` if `expected` is a regex, the element at the CSS path exists in the html document, and the regex pattern does not match the inner text of the element
+    * `false` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string does not match the inner text of that element exactly 
 
 ##Examples
 See [distillery-examples](https://github.com/achannarasappa/distillery-examples)
