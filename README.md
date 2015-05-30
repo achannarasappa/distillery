@@ -31,9 +31,9 @@ module.exports = function(distillery) {
 ```
 
 ####`process`
-The prcocess object contains the definition for how to make the HTTP request and how to handle the response.
+(`object`, `required`) - The prcocess object contains the definition for how to make the HTTP request and how to handle the response.
 ####`process.request`
-Data detailing how to complete a HTTP request.
+(`object`, `required`) - Data detailing how to complete a HTTP request.
 ####`process.request.url`
 (`string`, `required`) - URL string which may contain tokenized variables. See token section below for more information.  
 ####Tokens
@@ -145,6 +145,60 @@ module.exports = function(distillery) {
         * `response.hook` (*function*) - response hook as detailed in the [response hook](#processresponsekeyhook) section
         * `response.jar` (*object*) - [request cookie jar](https://github.com/request/request#requestjar) with cookie that is returned with the response. This can be used to pass cookies between distills or to store a cookie for later use.
 
+####`models`
+(`array`, `optional`) - Array of models that define how to extract an entity from HTML
+####`models[<index>]`
+(`object`, `optional`) - Model definition for how to extract an entity from HTML
+####`models[<index>].name`
+(`string`, `required`) - Name for the model
+####`models[<index>].type`
+(`string`, `required`) -Model type which can be:
+* *collection* - When an entity is expected to appear multiple times on a page, the type should be collection. A second property, *iterate* should be supplied if the type is collection.
+* *item* - When an entity is expect to appear only once on a page, the type should be item.
+
+####`models[<index>].elements`
+(`object`, `required`) - Object containing all of the properties of the entites with the keys being the name of the property and value being either a string CSS path to to the HTML element or an object containing information about how to retireve the property.
+####`models[<index>].elements[<key>]`
+(*string* or *object*, *required*) - There are several possibilities for what is returned from a model depending on the value of this key detailed below:
+* `<string>` - the inner text of the HTML element at that path will be returned
+* `<object>` with `attr` and `path` properties - the value of the attribute of the HTML element at the `path` will be returned
+* `<object>` with `regex` and `path` properties - the inner text of the HTML element at that path which has inner text matching the regular expression `regex` will be returned
+
+#####`models[<index>].elements[<key>].path`
+(*string*, *required*) - CSS path to a HTML element. Must also have a `attr` or `regex` property.
+#####`models[<index>].elements[<key>].attr`
+(*string*, *optional*) - Name of an HTML attribute to retrieve the value from
+#####`models[<index>].elements[<key>].regex`
+(*string*, *optional*) - Regular expression to test the inner text of the element at `path`
+####`models[<index>].iterate`
+(*string*, *required*) - Required if `type` is *collection*, otherwise not needed. The CSS path that contains the items in a collection. 
+#####Example
+With this snippet of a model, distillery with iterate over every `table > tr` in the HTML document and return the value from the `td.title` as an array.
+```javascript
+models: [
+    {
+        type: 'collection',
+        elements: {
+          title: 'td.title'
+        },
+        iterate: 'table > tr'
+    }
+]
+```
+####`models[<index>].validate`
+(*function*, *optional*) - Validation function that should return a true value for entites that should be returned and false for entites that should be removed from the result array for collections.
+####`models[<index>].format`
+(*function*, *optional*) - Formatting function that will be run over each entity in a collection to transform its values or on a single entity for an item.
+```javascript
+validate: function(posting) {
+  return (typeof posting.title !== "undefined")
+},
+format: function(posting) {
+  posting.title = posting.title.trim();
+  return posting;
+}
+```
+
 ##API
 ####`Distillery(still, options)`
 * arguments
@@ -165,7 +219,7 @@ module.exports = function(distillery) {
 * arguments
     * `html` (*string*, *required*) - Utility function to parse any HTML and attempt to extract the data detailed in the models section of the still.
 * returns 
-    * The result of any models that were able to be parse from the HTML.
+    * The result of any models that were able to be parsed from the HTML.
 
 ####`distillery.expect.http_code(code)`
 The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expect the response to contain.
@@ -194,6 +248,13 @@ The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expec
     * `false` if the contents of the element at the CSS path does not exists in the html document
     * `false` if `expected` is a regex, the element at the CSS path exists in the html document, and the regex pattern does not match the inner text of the element
     * `false` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string does not match the inner text of that element exactly 
+
+##CLI
+###Installation
+```
+npm install distillery-js -g
+```
+###Usage
 
 ##Examples
 See [distillery-examples](https://github.com/achannarasappa/distillery-examples)
