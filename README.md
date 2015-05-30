@@ -10,6 +10,88 @@ Create one configuration file that contains instructions for making a single HTT
 npm install distillery-js --save
 ```
 
+##API
+####`Distillery(still, options)`
+* arguments
+    * `still` (*function*) - Distillery still. Refer to the [still section](#stills) for further information.
+    * `options` (*object*) - Set distillery options
+        * `options.jar` (*object*) - [request cookie jar](https://github.com/request/request#requestjar), pass a jar from previous distill to reuse the same cookie.
+* returns 
+    * `distillery` instance of Distillery
+
+####`distillery.distill(parameters, returnResponse)`
+* arguments
+    * `parameters` (*object*, *optional*) - Parameters that modify the request. These would have been set in the `query`, `headers`, or `form` section of the still. An error will be thrown if any parameters with the required attribute are not set. The keys of this object should match the keys in the `query`, `headers`, or `form` objects.
+    * `returnResponse` (*boolean*, *optional*) - Override all logic for interpreting the response and return the [response object](#processresponsekeyhook)
+* returns 
+    * `Promise`
+
+####`distillery.parse(html)`
+* arguments
+    * `html` (*string*, *required*) - Utility function to parse any HTML and attempt to extract the data detailed in the models section of the still.
+* returns 
+    * The result of any models that were able to be parsed from the HTML.
+
+####`distillery.expect.http_code(code)`
+The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expect the response to contain.
+* arguments
+    * `code` (*integer*, *required*) - The HTTP to expect the response to contain
+* returns
+    * `true` if HTTP response code matches `code` exactly
+    * `false` if HTTP response code does not match `code` exactly
+
+####`distillery.expect.url(url)`
+* arguments
+    * `url` (*string* or *regex*, *required*) - A string or regex pattern to match the final url against
+* returns
+    * `true` if `url` is a string and final url matches `url` exactly
+    * `true` if `url` is a regex and final url matches the regex `url`
+    * `false` if final url does not match `url` exactly
+
+####`distillery.expect.html_element(path, expected)`
+* arguments    
+    * `path` (*string*) - CSS path to an HTML element.
+    * `expected` (*string* or *regex*, *optional*) - If expected is not set, the function will return the contents of the element at the CSS path if found or false is not found. If expected is a string, the fuction will return true if the inner text of the element at the path matches
+* returns
+    * `<html element inner text>` if expected is not set and the element at the CSS path exists in the html document. This response allows for any customer validation logic to be performed in `process.response[<key>].validate`.
+    * `true` if `expected` is a regex, the element at the CSS path exists in the html document, and the `expected` regex pattern matches the inner text of that element
+    * `true` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string matches the inner text of that element exactly
+    * `false` if the contents of the element at the CSS path does not exists in the html document
+    * `false` if `expected` is a regex, the element at the CSS path exists in the html document, and the regex pattern does not match the inner text of the element
+    * `false` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string does not match the inner text of that element exactly 
+
+##Ignite CLI
+###Overview
+The purpose of the Ignite command line interface is to make testing stills quicker and simpler. Ignite allows stills to be run from the command line with detailed output to assist developers.
+###Installation
+```
+npm install distillery-js -g
+```
+###Usage
+```
+$ distillery ignite <stillPath> [-o <option>...] [-p <parameter>...]
+```
+####stillPath
+The relative path to the still file
+####option
+Set distillery CLI options which are detailed below. All model options have default values shown while process options have no defaults.
+* Process
+    * `-o save_html=response.html` - Save HTML document to response.html
+    * `-o save_cookie=response.cookie` - Save cookie set in the response to response.cookie
+    * `-o restore_cookie=request.cookie` - Use cookie saved in request.cookie when making the request
+* Models
+    * `-o table=true` - Display detailed entities and properties
+    * `-o table_item_count=10` - Number of items to display in the table of entities.
+    * `-o item_max_length=50` - Number of characters after which to truncate an entity's property
+    * `-o item_format=false` - Apply the model's `format` function to the entities, by default, the raw data returned without any custom formatting will be returned
+
+####parameter
+Set any parameters defined in the still's `process.request.query`, `process.request.headers`, or `process.request.form` section that would be normally set in the `.distill` method of the programmatic API. Parameters should follow the format of `-p <name>=<value>`
+#####Example
+```
+$ distillery ignite ./still.js -p id=4809527167
+```
+
 ##Stills
 Stills are the configuration object that defines how to retrieve and extract data from a web page. A still is a function that returns an object with a specific structure shown here:
 ```javascript
@@ -198,63 +280,6 @@ format: function(posting) {
   return posting;
 }
 ```
-
-##API
-####`Distillery(still, options)`
-* arguments
-    * `still` (*function*) - Distillery still. Refer to the [still section](#stills) for further information.
-    * `options` (*object*) - Set distillery options
-        * `options.jar` (*object*) - [request cookie jar](https://github.com/request/request#requestjar), pass a jar from previous distill to reuse the same cookie.
-* returns 
-    * `distillery` instance of Distillery
-
-####`distillery.distill(parameters, returnResponse)`
-* arguments
-    * `parameters` (*object*, *optional*) - Parameters that modify the request. These would have been set in the `query`, `headers`, or `form` section of the still. An error will be thrown if any parameters with the required attribute are not set. The keys of this object should match the keys in the `query`, `headers`, or `form` objects.
-    * `returnResponse` (*boolean*, *optional*) - Override all logic for interpreting the response and return the [response object](#processresponsekeyhook)
-* returns 
-    * `Promise`
-
-####`distillery.parse(html)`
-* arguments
-    * `html` (*string*, *required*) - Utility function to parse any HTML and attempt to extract the data detailed in the models section of the still.
-* returns 
-    * The result of any models that were able to be parsed from the HTML.
-
-####`distillery.expect.http_code(code)`
-The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expect the response to contain.
-* arguments
-    * `code` (*integer*, *required*) - The HTTP to expect the response to contain
-* returns
-    * `true` if HTTP response code matches `code` exactly
-    * `false` if HTTP response code does not match `code` exactly
-
-####`distillery.expect.url(url)`
-* arguments
-    * `url` (*string* or *regex*, *required*) - A string or regex pattern to match the final url against
-* returns
-    * `true` if `url` is a string and final url matches `url` exactly
-    * `true` if `url` is a regex and final url matches the regex `url`
-    * `false` if final url does not match `url` exactly
-
-####`distillery.expect.html_element(path, expected)`
-* arguments    
-    * `path` (*string*) - CSS path to an HTML element.
-    * `expected` (*string* or *regex*, *optional*) - If expected is not set, the function will return the contents of the element at the CSS path if found or false is not found. If expected is a string, the fuction will return true if the inner text of the element at the path matches
-* returns
-    * `<html element inner text>` if expected is not set and the element at the CSS path exists in the html document. This response allows for any customer validation logic to be performed in `process.response[<key>].validate`.
-    * `true` if `expected` is a regex, the element at the CSS path exists in the html document, and the `expected` regex pattern matches the inner text of that element
-    * `true` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string matches the inner text of that element exactly
-    * `false` if the contents of the element at the CSS path does not exists in the html document
-    * `false` if `expected` is a regex, the element at the CSS path exists in the html document, and the regex pattern does not match the inner text of the element
-    * `false` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string does not match the inner text of that element exactly 
-
-##CLI
-###Installation
-```
-npm install distillery-js -g
-```
-###Usage
 
 ##Examples
 See [distillery-examples](https://github.com/achannarasappa/distillery-examples)
