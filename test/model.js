@@ -200,6 +200,29 @@ describe('Model', function() {
       }
     };
 
+    var itemDefinitionFunction = {
+      name: 'post1000',
+      type: 'item',
+      elements: {
+        id: 'div.id',
+        title: function($) {
+
+          return $('div#post-list > div').eq(0).html()
+
+        },
+        category: {
+          path: 'a.title',
+          attr: 'href'
+        }
+      }
+    };
+
+    it('should return result of a user defined function with a cheerio selector at the first argument', function() {
+
+      expect(Model(itemDefinitionFunction)._parseItem($).title).to.be('<div class="id">1000</div><a class="title" href="forum/tech/posts/1000">Help computer!</a>')
+
+    });
+
     it('should return the attribute text of the first occurrence of the element that matches \'regex\' if the element is an object and has the properties \'regex\' and \'attr\'', function() {
 
       expect(Model(itemDefinitionRegexAttr)._parseItem($).title).to.be('forum/tech/posts/1000')
