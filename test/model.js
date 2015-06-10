@@ -154,6 +154,23 @@ describe('Model', function() {
 
   describe('parseElement', function() {
 
+    var itemDefinitionRegexAttr = {
+      name: 'post1000',
+      type: 'item',
+      elements: {
+        id: 'div.id',
+        title: {
+          path: 'a.title',
+          attr: 'href',
+          regex: /computer/
+        },
+        category: {
+          path: 'a.title',
+          attr: 'href'
+        }
+      }
+    };
+
     var itemDefinitionRegex = {
       name: 'post1000',
       type: 'item',
@@ -183,13 +200,19 @@ describe('Model', function() {
       }
     };
 
-    it('should return the inner text of the first occurrence of the element if the element is an object and has the property \'regex\'', function() {
+    it('should return the attribute text of the first occurrence of the element that matches \'regex\' if the element is an object and has the properties \'regex\' and \'attr\'', function() {
 
-      expect(Model(itemDefinitionRegex)._parseItem($)).to.eql({ id: '1000', title: 'Help computer!', category: 'forum/tech/posts/1000' })
+      expect(Model(itemDefinitionRegexAttr)._parseItem($).title).to.be('forum/tech/posts/1000')
 
     });
 
-    it('should return the attribute text of the first occurrence of the element if the element is an object and has the property \'attr\'', function() {
+    it('should return the inner text of the first occurrence of the element that matches \'regex\' if the element is an object and has the property \'regex\' and no \'attr\' property', function() {
+
+      expect(Model(itemDefinitionRegex)._parseItem($).title).to.be('Help computer!')
+
+    });
+
+    it('should return the attribute text of the first occurrence of the element if the element is an object and has the property \'attr\' and no \'regex\' property', function() {
 
       expect(Model(itemDefinitionAttr)._parseItem($).category).to.be('forum/tech/posts/1000')
 
