@@ -1,17 +1,17 @@
-# Distillery
+# Distillery  
 200 proof web scraping
 
-## Overview
+## Overview  
 Build simple and maintainable web scrapers through configuration over code.
 Create one configuration file that contains instructions for making a single HTTP request and how to distill the returned html into easily consumable objects.
 
-## Installation
+## Installation  
 ```
 npm install distillery-js --save
 ```
 
-## API
-#### `Distillery(still, options)`
+## API  
+#### `Distillery(still, options)`  
 * arguments
     * `still` (*function*) - Distillery still. Refer to the [still section](#stills) for further information.
     * `options` (*object*) - Set distillery options
@@ -19,7 +19,7 @@ npm install distillery-js --save
 * returns 
     * `distillery` instance of Distillery
 
-#### `distillery.distill(parameters, returnResponse)`
+#### `distillery.distill(parameters, returnResponse)`  
 * arguments
     * `parameters` (*object*, *optional*) - Parameters that modify the request. These would have been set in the `query`, `headers`, or `form` section of the still. An error will be thrown if any parameters with the required attribute are not set. The keys of this object should match the keys in the `query`, `headers`, or `form` objects.
     * `returnResponse` (*boolean*, *optional*) - Override all logic for interpreting the response and return the [response object](https://nodejs.org/api/http.html#http_http_incomingmessage)
@@ -30,13 +30,13 @@ npm install distillery-js --save
     * `Promise<response object>` if the `process.response[<key>].hook` and the `models` keys are not set in the still
     * `Promise<models object>` if the `process.response[<key>].hook` is not set but the `models` is set, an array of data parsed by the models will be returned. This is the same data would would be returned by running `distillery.parse(html)` directly.
 
-#### `distillery.parse(html)`
+#### `distillery.parse(html)`  
 * arguments
     * `html` (*string*, *required*) - Utility function to parse any HTML and attempt to extract the data detailed in the models section of the still.
 * returns 
     * `<Array>` The result of any models that were able to be parsed from the HTML.
 
-##### Example
+##### Example  
 ```javascript
 // still.js
 module.exports = function(distillery) {
@@ -97,7 +97,7 @@ $ node test.js
 ]
 ```
 
-#### `distillery.expect.http_code(code)`
+#### `distillery.expect.http_code(code)`  
 The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expect the response to contain.
 * arguments
     * `code` (*integer*, *required*) - The HTTP to expect the response to contain
@@ -105,7 +105,7 @@ The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expec
     * `true` if HTTP response code matches `code` exactly
     * `false` if HTTP response code does not match `code` exactly
 
-#### `distillery.expect.url(url)`
+#### `distillery.expect.url(url)`  
 * arguments
     * `url` (*string* or *regex*, *required*) - A string or regex pattern to match the final url against
 * returns
@@ -113,7 +113,7 @@ The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expec
     * `true` if `url` is a regex and final url matches the regex `url`
     * `false` if final url does not match `url` exactly
 
-#### `distillery.expect.html_element(path, expected)`
+#### `distillery.expect.html_element(path, expected)`  
 * arguments    
     * `path` (*string*) - CSS path to an HTML element.
     * `expected` (*string* or *regex*, *optional*) - If expected is not set, the function will return the contents of the element at the CSS path if found or false is not found. If expected is a string, the fuction will return true if the inner text of the element at the path matches
@@ -125,20 +125,20 @@ The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expec
     * `false` if `expected` is a regex, the element at the CSS path exists in the html document, and the regex pattern does not match the inner text of the element
     * `false` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string does not match the inner text of that element exactly 
 
-## Ignite CLI
-### Overview
+## Ignite CLI  
+### Overview  
 The purpose of the Ignite command line interface is to make testing stills quicker and simpler. Ignite allows stills to be run from the command line with detailed output to assist developers.
-### Installation
+### Installation  
 ```
 npm install distillery-js -g
 ```
-### Usage
+### Usage  
 ```
 $ distillery ignite <stillPath> [-o <option>...] [-p <parameter>...]
 ```
-#### stillPath
+#### stillPath  
 The relative path to the still file
-#### option
+#### option  
 Set distillery CLI options which are detailed below. All model options have default values shown while process options have no defaults.
 * Process
     * `-o save_html=response.html` - Save HTML document to response.html
@@ -150,14 +150,14 @@ Set distillery CLI options which are detailed below. All model options have defa
     * `-o item_max_length=50` - Number of characters after which to truncate an entity's property
     * `-o item_format=false` - Apply the model's `format` function to the entities, by default, the raw data returned without any custom formatting will be returned
 
-#### parameter
+#### parameter  
 Set any parameters defined in the still's `process.request.query`, `process.request.headers`, or `process.request.form` section that would be normally set in the `.distill` method of the programmatic API. Parameters should follow the format of `-p <name>=<value>`
-##### Example
+##### Example  
 ```
 $ distillery ignite ./still.js -p id=4809527167
 ```
 
-## Stills
+## Stills  
 Stills are the configuration object that defines how to retrieve and extract data from a web page. A still is a function that returns an object with a specific structure shown here:
 ```javascript
 module.exports = function(distillery) {
@@ -177,15 +177,15 @@ module.exports = function(distillery) {
 };
 ```
 
-#### `process`
+#### `process`  
 (`object`, `required`) - The prcocess object contains the definition for how to make the HTTP request and how to handle the response.
-#### `process.request`
+#### `process.request`  
 (`object`, `required`) - Data detailing how to complete a HTTP request.
-#### `process.request.url`
+#### `process.request.url`  
 (`string`, `required`) - URL string which may contain tokenized variables. See token section below for more information.  
-#### Tokens
+#### Tokens  
 Tokens are placeholders for variables in the `process.request.url` that can be passed into a still to modify the request. Tokens are encapsulated by `{` and `}` in the url string. These can be used to make use of the same still for multiple similar requests.
-##### Example
+##### Example  
 In this example a GitHub username is passed into the distillery instance to save the profile page of a user. The username can be modified in the example.js script to scrape any user's profile.
 ```javascript
 // still.js
@@ -213,48 +213,48 @@ Distillery(still)
 ```
 Run with `$ node ./example.js`. The username variable can be modified in example.js to scrape the profile page of any github user.
 
-#### `process.request.method`
+#### `process.request.method`  
 (*string*, *required*) - The HTTP verb which may be `GET`, `POST`, `PUT`, or `DELETE`  
-#### `process.request.query`
+#### `process.request.query`  
 (*object*, *optional*) - Parameters to be interpolated with url tokens. Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
-##### `process.request.query[<key>].name`
+##### `process.request.query[<key>].name`  
 (*string*, *required*) - Name of the token in the url string.
-##### `process.request.query[<key>].required`
+##### `process.request.query[<key>].required`  
 (*boolean*, *optional*) - If set to true, then an error will be thrown if this variable is not set in the `Distillery(still).distill()` method.
-##### `process.request.query[<key>].default`
+##### `process.request.query[<key>].default`  
 (*string*, *optional*) - Default value for the given parameter.
-#### `process.request.headers`
+#### `process.request.headers`  
 (*object*, *optional*) - Parameters to be sent as headers. See [Request documentation](https://github.com/request/request#custom-http-headers) of headers for more information. Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
-##### `process.request.headers[<key>].name`
+##### `process.request.headers[<key>].name`  
 (*string*, *required*) - Name of the [http header](http://en.wikipedia.org/wiki/List_of_HTTP_header_fields).
-##### `process.request.headers[<key>].required`
+##### `process.request.headers[<key>].required`  
 See `process.request.query[<key>].required`.
-##### `process.request.headers[<key>].default`
+##### `process.request.headers[<key>].default`  
 See `process.request.query[<key>].default`.
-#### `process.request.payload`
+#### `process.request.payload`  
 (*object*, *optional*) - Send request data as `application/x-www-form-urlencoded`. See [Request documentation](https://github.com/request/request#forms) on forms for more information.  Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
-##### `process.request.payload[<key>].name`
+##### `process.request.payload[<key>].name`  
 (*string*, *required*) - Name of the form parameter.
-##### `process.request.payload[<key>].required`
+##### `process.request.payload[<key>].required`  
 See `process.request.query[<key>].required`.
-##### `process.request.payload[<key>].default`
+##### `process.request.payload[<key>].default`  
 See `process.request.query[<key>].default`.
-#### `process.response`
+#### `process.response`  
 Hooks, validators, and indicators to handle a HTTP response. Each sub-object is a potential response condition. This allows for handling 404 Not Found response differently from a 200 OK response.
-#### `process.response[<key>].indicators`
+#### `process.response[<key>].indicators`  
 (*object*, *required*) - List conditions to look for that would indicate this specific response was returned from the server. Each sub-key is a user-assigned name for the indicator. There are a set of indicator that can be used detailed below. Which combination or combinations of indicators constitues a specific response is in the [`process.response[<key>].validate`](#processresponsekeyvalidate) function.
-##### Indicators
+##### Indicators  
 Indicators are used to recognize if a particular response was returned. They are key value pairs where the keys are the name of the indicator and the value is an expected value in the HTTP response. There are three signatures that can be detected with distillery:
 * [A specifc HTTP response code](#distilleryexpecthttp_codecode)
 * [A specifc url or url pattern after redirects](#distilleryexpecturlurl)
 * [A HTML element present on the page](#distilleryexpecturlurl)
 
-#### `process.response[<key>].validate`
+#### `process.response[<key>].validate`  
 (*function*, *required*) - Used to determine which response was returned from the the request. The result of each indicator can be used in this function to evaluate if the response is valid. If there are multiple responses that have validation functions that evaluate to true, the first response will be chosen.
 * arguments
     * `indicators` (*object*) - Object with the same keys as defined in [response indicators](#processresponsekeyindicators). The values of these keys will be either a boolean or string depending on the indictor.
 
-##### Example
+##### Example  
 In the `profile_success` response, there are two indicators that will be evaluated, `success_url` and `success_code`. If the validate function returns true, the hook for this response will be triggered.
 ```javascript
 // still.js
@@ -284,7 +284,7 @@ module.exports = function(distillery) {
   }
 };
 ```
-#### `process.response[<key>].hook`
+#### `process.response[<key>].hook`  
 (*function*, *optional*) - Hook function to trigger after the response is validated. Only a single hook will be triggered in a still. If no hook is defined, 
 * arguments
     * `response` (*object*) - [HTTP response object](https://nodejs.org/api/http.html#http_http_incomingmessage) plus some additional distillery data. This is almost the same as the response object returned from the [Request](https://github.com/request/request) library. There are a few additional keys: 
@@ -292,32 +292,50 @@ module.exports = function(distillery) {
         * `response.hook` (*function*) - response hook as detailed in the [response hook](#processresponsekeyhook) section
         * `response.jar` (*object*) - [request cookie jar](https://github.com/request/request#requestjar) with cookie that is returned with the response. This can be used to pass cookies between distills or to store a cookie for later use.
 
-#### `models`
+#### `models`  
 (`array`, `optional`) - Array of models that define how to extract an entity from HTML
-#### `models[<index>]`
+#### `models[<index>]`  
 (`object`, `optional`) - Model definition for how to extract an entity from HTML
-#### `models[<index>].name`
+#### `models[<index>].name`  
 (`string`, `required`) - Name for the model
-#### `models[<index>].type`
+#### `models[<index>].type`  
 (`string`, `required`) -Model type which can be:
 * *collection* - When an entity is expected to appear multiple times on a page, the type should be collection. A second property, *iterate* should be supplied if the type is collection.
 * *item* - When an entity is expect to appear only once on a page, the type should be item.
 
-#### `models[<index>].elements`
+#### `models[<index>].elements`  
 (`object`, `required`) - Object containing all of the properties of the entites with the keys being the name of the property and value being either a string CSS path to to the HTML element or an object containing information about how to retireve the property.
-#### `models[<index>].elements[<key>]`
-(*string* or *object*, *required*) - There are several possibilities for what is returned from a model depending on the value of this key detailed below:
+#### `models[<index>].elements[<key>]`  
+(*string*, *object*, or *function*, *required*) - There are several possibilities for what is returned from a model depending on the value of this key detailed below:
 * `<string>` - the inner text of the HTML element at that path will be returned
-* `<object>` with `attr` and `path` properties - the value of the attribute of the HTML element at the `path` will be returned
-* `<object>` with `regex` and `path` properties - the inner text of the HTML element at that path which has inner text matching the regular expression `regex` will be returned
+* `<object>` with `attr`, `regex`, and `path` properties defined - the value of the attribute of the HTML element at the `path` which has inner text matching the regular expression `regex` will be returned
+* `<object>` with `attr` and `path` properties defined - the value of the attribute of the HTML element at the `path` will be returned
+* `<object>` with `regex` and `path` properties defined - the inner text of the HTML element at that path which has inner text matching the regular expression `regex` will be returned
+* `<function>` - the return of the function will be returned. The first argument is a [cheerio selector](https://github.com/cheeriojs/cheerio#-selector-context-root-) with the html body loaded
 
-##### `models[<index>].elements[<key>].path`
+##### Example
+Here, distillery will run the function in `elements.title` and return the result rather than selecting a specific a CSS path as it does with `elements.id`.
+```javascript
+models: [
+    {
+        type: 'item',
+        elements: {
+            id: 'div.id',
+            title: function($) {
+                return $('div#post-list > div').eq(0).html()
+            }
+        }
+    }
+]
+```
+
+##### `models[<index>].elements[<key>].path`  
 (*string*, *required*) - CSS path to a HTML element. Must also have a `attr` or `regex` property.
-##### `models[<index>].elements[<key>].attr`
+##### `models[<index>].elements[<key>].attr`  
 (*string*, *optional*) - Name of an HTML attribute to retrieve the value from
-##### `models[<index>].elements[<key>].regex`
+##### `models[<index>].elements[<key>].regex`  
 (*string*, *optional*) - Regular expression to test the inner text of the element at `path`
-#### `models[<index>].iterate`
+#### `models[<index>].iterate`  
 (*string*, *required*) - Required if `type` is *collection*, otherwise not needed. The CSS path that contains the items in a collection. 
 ##### Example
 With this snippet of a model, distillery with iterate over every `table > tr` in the HTML document and return the value from the `td.title` as an array.
@@ -332,9 +350,9 @@ models: [
     }
 ]
 ```
-#### `models[<index>].validate`
+#### `models[<index>].validate`  
 (*function*, *optional*) - Validation function that should return a true value for entites that should be returned and false for entites that should be removed from the result array for collections.
-#### `models[<index>].format`
+#### `models[<index>].format`  
 (*function*, *optional*) - Formatting function that will be run over each entity in a collection to transform its values or on a single entity for an item.
 ```javascript
 validate: function(posting) {
@@ -346,5 +364,5 @@ format: function(posting) {
 }
 ```
 
-## Examples
+## Examples  
 See [distillery-examples](https://github.com/achannarasappa/distillery-examples)
