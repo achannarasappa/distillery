@@ -25,6 +25,18 @@ describe('Expect', function() {
 
     });
 
+    it('should return an object with the keys \'name\', \'expected\', \'actual\', and \'valid\' if the verbose option is set to true.', function() {
+
+      expect(Expect.http_code(200)(response, true)).to.have.keys([ 'name', 'expected', 'actual', 'valid' ]);
+
+    });
+
+    it('should return the same result for the key \'valid\' as without the verbose option', function() {
+
+      expect(Expect.http_code(200)(response, true).valid).to.be(true);
+
+    });
+
   });
 
   describe('.url', function() {
@@ -47,6 +59,19 @@ describe('Expect', function() {
       expect(Expect.url).withArgs(1000).withArgs(response).to.throwError();
       expect(Expect.url).withArgs(/item\?id=9245441/).withArgs(response).to.not.throwError();
       expect(Expect.url).withArgs('https://news.ycombinator.com/item?id=9245441').withArgs(response).to.not.throwError();
+
+    });
+
+    it('should return an object with the keys \'name\', \'expected\', \'actual\', and \'valid\' if the verbose option is set to true.', function() {
+
+      expect(Expect.url(/item\?id=9245441/)(response, true)).to.have.keys([ 'name', 'expected', 'actual', 'valid' ]);
+
+    });
+
+    it('should return the same result for the key \'valid\' as without the verbose option', function() {
+
+      expect(Expect.url('https://news.ycombinator.com/item?id=9245441')(response, true).valid).to.be(true);
+      expect(Expect.url(/item\?id=9245441/)(response, true).valid).to.be(true);
 
     });
 
@@ -86,6 +111,18 @@ describe('Expect', function() {
     it('should throw an error if the path is not a string', function() {
 
       expect(Expect.html_element).withArgs(1000).withArgs(response).to.throwError();
+
+    });
+
+    it('should return an object with the keys \'name\', \'expected\', \'actual\', and \'valid\' if the verbose option is set to true.', function() {
+
+      expect(Expect.html_element('head > title', /Hacker News/)(response, true)).to.have.keys([ 'name', 'expected', 'actual', 'valid' ]);
+
+    });
+
+    it('should return the same result for the key \'valid\' as without the verbose option', function() {
+
+      expect(Expect.html_element('head > title', /Hacker News/)(response, true).valid).to.be(true);
 
     });
 
