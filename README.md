@@ -248,6 +248,21 @@ Indicators are used to recognize if a particular response was returned. They are
 * [A specifc HTTP response code](#distilleryexpecthttp_codecode)
 * [A specifc url or url pattern after redirects](#distilleryexpecturlurl)
 * [A HTML element present on the page](#distilleryexpecturlurl)
+* Custom indicator function
+
+##### Example  
+The first two indicators are included with distillery. The last indicator is a user defined indicator that should return true or false.
+```javascript
+...
+  indicators: {
+    success_url: distillery.expect.url('https://github.com/'),
+    success_code: distillery.expect.http_code(200),
+    success_custom: function(response) {
+        return (response.statusMessage === 'Not found')
+    }
+  },
+...
+```
 
 #### `process.response[<key>].validate`  
 (*function*, *required*) - Used to determine which response was returned from the the request. The result of each indicator can be used in this function to evaluate if the response is valid. If there are multiple responses that have validation functions that evaluate to true, the first response will be chosen.
