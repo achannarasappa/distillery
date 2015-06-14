@@ -4,12 +4,12 @@ var Process = require('./process');
 
 class Distillery {
 
-  constructor(still, options) {
+  constructor(still, options={}) {
 
     if (_.isUndefined(still))
       throw new Error('Unable run distillery with out a still.');
 
-    this.options = _.defaults(options || {}, this.options);
+    this.options = options;
     this.still = still(this);
 
   }
@@ -42,8 +42,6 @@ class Distillery {
 
   _respond(returnResponse) {
 
-    var self = this;
-
     return (response) => {
 
       if (returnResponse)
@@ -55,10 +53,10 @@ class Distillery {
       if (!_.isUndefined(response.hook))
         return response.hook(response);
 
-      if (_.isUndefined(self.still.models))
+      if (_.isUndefined(this.still.models))
         return response;
 
-      return self.parse(response.body);
+      return this.parse(response.body);
 
     }
 

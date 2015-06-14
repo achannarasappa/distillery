@@ -5,7 +5,7 @@ var Distillery = require('../distillery');
 var Model = require('./ignite-model');
 var Process = require('./ignite-process');
 
-var Ignite = function(still, options) {
+/*var Ignite = function(still, options) {
   
   if (!(this instanceof Ignite)) return new Ignite(still, options);
 
@@ -82,6 +82,88 @@ Ignite.prototype._createModels = function(definitions, options) {
     
   })
   
-};
+};*/
+
+class Ignite extends Distillery {
+
+  constructor(still, options={}) {
+
+    super(still, options);
+
+    this.options = _.defaults(options, {
+      restore_html: false
+    });
+    this.still = still(this);
+
+  }
+
+  distill(parameters, returnResponse) {
+
+    if (this.options.restore_html)
+      return this._respondRestoreHtml();
+
+    console.log(chalk.blue('\u2776') + chalk.gray(' initiating request'));
+
+    return new Process(this.still.process, this.options)
+      .execute(parameters)
+      .then(this._respond(returnResponse))
+
+  }
+
+  _respondRestoreHtml() {
+
+    var html = fs.readFileSync(this.options.restore_html, 'utf8');
+
+    console.log(chalk.blue('\u2776') + chalk.gray(' request skipped, loading html and auto parsing models'));
+
+    return this.parse(html);
+
+  }
+
+  _respond(returnResponse) {
+
+    return (response) => {
+
+      if (returnResponse) {
+
+        console.log(chalk.blue('\u2777') + chalk.gray(' returnResponse set, returned raw response object'));
+
+        return super._respond(returnResponse, response);
+
+      }
+
+      if (response.error) {
+
+        console.log(chalk.blue('\u2777') + chalk.gray(' request encountered an error: ' + response.error));
+
+        return super._respond(returnResponse, response);
+
+      }
+
+      if (!_.isUndefined(response.hook)) {
+
+        console.log(chalk.blue('\u2777') + chalk.gray(' request complete, triggering hook'));
+
+        return super._respond(returnResponse, response);
+
+      }
+
+      if (_.isUndefined(this.still.models)) {
+
+        console.log(chalk.blue('\u2777') + chalk.gray(' request complete, returning response'));
+
+        return super._respond(returnResponse, response);
+
+      }
+
+      console.log(chalk.blue('\u2777') + chalk.gray(' request complete, auto parsing models'));
+
+      return super._respond(returnResponse, response);
+
+    }
+
+  }
+
+}
 
 module.exports = Ignite;

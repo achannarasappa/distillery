@@ -21,7 +21,7 @@ module.exports = (file, opts) => {
 
   still = require(stillPath);
 
-  return Q.when(Ignite(still, options)
+  return Q.when(new Ignite(still, options)
     .distill(parameters), () => log.info('Completed distillation'), (err) => log.error(err))
 
 };

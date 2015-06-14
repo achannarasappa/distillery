@@ -7,13 +7,13 @@ var Table = require('cli-table');
 var Utility = require('../utility');
 var Process = require('../process');
 
-var IgniteProcess = function(definition, options) {
+/*var IgniteProcess = function(definition, options) {
   
   if (!(this instanceof IgniteProcess)) return new IgniteProcess(definition, options); 
 
   this.options = _.defaults(options || {}, { jar: request.jar() });
   
-  _.extend(this, Process.call(this, definition, options));
+  //_.extend(this, Process.call(this, definition, options));
   _.extend(this, definition);
 
   if (options.restore_cookie)
@@ -125,6 +125,142 @@ IgniteProcess.prototype._buildSummaryTable = function(status, url, key) {
 
   return console.log(table.toString())
   
-};
+};*/
+
+class IgniteProcess extends Process {
+
+  constructor(definition, options={}) {
+
+    var cookie;
+
+    super(definition, options);
+
+    this.options = _.defaults(options, {
+      jar: request.jar(),
+      indicators: true,
+      save_html: false,
+      save_cookie: false,
+      restore_cookie: false
+    });
+
+    _.extend(this, definition);
+
+    if (options.restore_cookie) {
+
+      cookie = fs.readFileSync(this.options.restore_cookie, 'utf8');
+      this.options.jar.setCookie(cookie, this.request.url);
+
+    }
+
+  }
+
+  _generateResponse(jar) {
+
+    return (response) => {
+
+      var validResponseKey = this._getValidResponseKey(response);
+      var pathSaveHtml;
+      var pathSaveCookie;
+
+      // Save HTML to disk
+      if (this.options.save_html) {
+
+        pathSaveHtml = path.resolve(process.cwd(), this.options.save_html);
+        fs.writeFile(pathSaveHtml, response.body);
+
+      }
+
+      // Save cookie to disk
+      if (this.options.save_cookie) {
+
+        pathSaveCookie = path.resolve(process.cwd(), this.options.save_cookie);
+        fs.writeFile(pathSaveCookie, jar.getCookies(this.request.url).toString());
+
+      }
+
+      this._buildResponseIndicatorsTable(response, validResponseKey);
+      this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey);
+
+      return super._generateResponse(jar)(response)
+
+    }
+
+  }
+
+  _buildResponseIndicatorsTable(response, validResponseKey) {
+
+    var table = new Table({
+      head: [
+        '',
+        'Response Key',
+        '',
+        'Type',
+        'Indicator',
+        'Expected',
+        'Actual'
+      ],
+      style: {
+        head: [ 'blue' ]
+      }
+    });
+
+    _.forOwn(this.response, function(res, resKey) {
+
+      _.forOwn(res.indicators, function(indicator, indicatorKey) {
+
+        indicator = indicator(response, true);
+
+        if (!_.isPlainObject(indicator) || !_.has(indicator, 'name') || !_.has(indicator, 'valid') || !_.has(indicator, 'actual'))
+          indicator = {
+            name: 'custom',
+            expected: '',
+            actual: '',
+            valid: indicator
+          };
+
+        var row = _.map([
+          (validResponseKey === resKey ? chalk.green('\u2713') : chalk.red('\u2717')),
+          resKey,
+          (indicator.valid ? chalk.green('\u2713') : chalk.red('\u2717')),
+          indicator.name,
+          indicatorKey,
+          indicator.expected,
+          indicator.actual
+
+        ], function(cell) {
+
+          return (_.isUndefined(cell) ? chalk.yellow('undefined') : cell)
+
+        });
+
+        table.push(row)
+
+      })
+
+    });
+
+    return console.log(table.toString())
+
+  }
+
+  _buildSummaryTable(status, url, key) {
+
+    var table = new Table({
+      style: {
+        head: [ 'blue' ]
+      }
+    });
+
+    table.push(
+      { 'Status Code': status },
+      { URL: url },
+      { 'Response Key': _.isUndefined(key) ? chalk.red('No match') : chalk.green(key) }
+    );
+
+    return console.log(table.toString())
+
+  }
+
+}
 
 module.exports = IgniteProcess;
