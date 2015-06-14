@@ -8,10 +8,10 @@ var fixtures = require('./fixtures');
 describe('Model', function() {
 
   var itemDefinition = fixtures.still.posts.models[1];
-  var itemModel = Model(itemDefinition);
+  var itemModel = new Model(itemDefinition);
   var itemObject = fixtures.objects.posts[1];
   var collectionDefinition = fixtures.still.posts.models[0];
-  var collectionModel = Model(collectionDefinition);
+  var collectionModel = new Model(collectionDefinition);
   var collectionObject = fixtures.objects.posts[0];
   var html = fixtures.html.posts;
   var $ = cheerio.load(html);
@@ -76,27 +76,27 @@ describe('Model', function() {
 
     it('should return null if model.validate is defined and model.format is not defined and model.validate returns false', function() {
 
-      expect(Model(_.omit(collectionDefinition, 'format'))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.be(null);
+      expect(new Model(_.omit(collectionDefinition, 'format'))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.be(null);
 
     });
 
     it('should return the item if model.validate is defined and model.format is not defined and model.validate returns true', function() {
 
-      expect(Model(_.omit(collectionDefinition, 'format'))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
+      expect(new Model(_.omit(collectionDefinition, 'format'))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
 
     });
 
     it('should return the formatted item if model.validate is not defined and model.format is defined', function() {
 
-      expect(Model(_.omit(collectionDefinition, 'validate'))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
-      expect(Model(_.omit(collectionDefinition, 'validate'))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
+      expect(new Model(_.omit(collectionDefinition, 'validate'))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
+      expect(new Model(_.omit(collectionDefinition, 'validate'))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
 
     });
 
     it('should return the item if model.validate is not defined and model.format is not defined', function() {
 
-      expect(Model(_.omit(collectionDefinition, [ 'validate', 'format' ]))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
-      expect(Model(_.omit(collectionDefinition, [ 'validate', 'format' ]))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
+      expect(new Model(_.omit(collectionDefinition, [ 'validate', 'format' ]))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
+      expect(new Model(_.omit(collectionDefinition, [ 'validate', 'format' ]))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
 
     });
 
@@ -219,31 +219,31 @@ describe('Model', function() {
 
     it('should return result of a user defined function with a cheerio selector at the first argument', function() {
 
-      expect(Model(itemDefinitionFunction)._parseItem($).title).to.be('<div class="id">1000</div><a class="title" href="forum/tech/posts/1000">Help computer!</a>')
+      expect(new Model(itemDefinitionFunction)._parseItem($).title).to.be('<div class="id">1000</div><a class="title" href="forum/tech/posts/1000">Help computer!</a>')
 
     });
 
     it('should return the attribute text of the first occurrence of the element that matches \'regex\' if the element is an object and has the properties \'regex\' and \'attr\'', function() {
 
-      expect(Model(itemDefinitionRegexAttr)._parseItem($).title).to.be('forum/tech/posts/1000')
+      expect(new Model(itemDefinitionRegexAttr)._parseItem($).title).to.be('forum/tech/posts/1000')
 
     });
 
     it('should return the inner text of the first occurrence of the element that matches \'regex\' if the element is an object and has the property \'regex\' and no \'attr\' property', function() {
 
-      expect(Model(itemDefinitionRegex)._parseItem($).title).to.be('Help computer!')
+      expect(new Model(itemDefinitionRegex)._parseItem($).title).to.be('Help computer!')
 
     });
 
     it('should return the attribute text of the first occurrence of the element if the element is an object and has the property \'attr\' and no \'regex\' property', function() {
 
-      expect(Model(itemDefinitionAttr)._parseItem($).category).to.be('forum/tech/posts/1000')
+      expect(new Model(itemDefinitionAttr)._parseItem($).category).to.be('forum/tech/posts/1000')
 
     });
 
     it('should return the inner text of the first occurrence of the element if the element is string', function() {
 
-      expect(Model(itemDefinitionAttr)._parseItem($).id).to.be('1000')
+      expect(new Model(itemDefinitionAttr)._parseItem($).id).to.be('1000')
 
     });
 

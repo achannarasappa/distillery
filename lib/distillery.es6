@@ -36,7 +36,7 @@ class Distillery {
 
   _createModels(definitions, options) {
 
-    return _.map(definitions, (definition) => Model(definition, options))
+    return _.map(definitions, (definition) => new Model(definition, options))
 
   }
 
