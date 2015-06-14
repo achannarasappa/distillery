@@ -4,8 +4,8 @@ var log = require('captains-log')();
 var path = require('path');
 var fs = require('fs');
 var Q = require('q');
-var Ignite = require('../lib/ignite/ignite');
-var Utility = require('../lib/utility');
+var Ignite = require('./ignite/ignite');
+var Utility = require('./utility');
 
 module.exports = function(file, options) {
 

@@ -4,6 +4,7 @@
   "description": "200 proof web scraping",
   "main": "index.js",
   "scripts": {
+    "compile": "babel src --out-dir lib -x .es6",
     "test": "mocha --recursive",
     "code-style": "jscs . | grep -qi \"No code style errors found\" && exit 0 || exit 1"
   },

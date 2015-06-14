@@ -74,8 +74,6 @@ Ignite.prototype.distill = function(parameters) {
   
 };
 
-//Ignite.prototype.expect = require('./ignite-expect');
-
 Ignite.prototype._createModels = function(definitions, options) {
   
   return _.mapValues(definitions, function(definition) {
