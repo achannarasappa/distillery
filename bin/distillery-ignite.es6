@@ -4,26 +4,24 @@ var log = require('captains-log')();
 var path = require('path');
 var fs = require('fs');
 var Q = require('q');
-var Ignite = require('./ignite/ignite');
-var Utility = require('./utility');
+var Ignite = require('../lib/ignite/ignite');
+var Utility = require('../lib/utility');
 
-module.exports = function(file, options) {
+module.exports = (file, opts) => {
 
-  var still = path.resolve(process.cwd(), file);
+  var options = Utility.splitStringArray('=', opts.opts);
+  var parameters = Utility.splitStringArray('=', opts.parameters);
+  var stillPath = path.resolve(process.cwd(), file);
+  var still;
 
   log.info('Starting distillation');
 
-  if (!fs.existsSync(still)) return log.error('Unable to find still at \'' + still + '\'');
+  if (!fs.existsSync(stillPath))
+    return log.error('Unable to find still at \'' + stillPath + '\'');
 
-  return Q.when(Ignite(require(still), Utility.splitStringArray('=', options.opts))
-    .distill(Utility.splitStringArray('=', options.parameters)), function() {
-    
-      log.info('Completed distillation')
-    
-    }, function(err) {
-    
-      log.error(err);
-    
-    })
+  still = require(stillPath);
+
+  return Q.when(Ignite(still, options)
+    .distill(parameters), () => log.info('Completed distillation'), (err) => log.error(err))
 
 };
