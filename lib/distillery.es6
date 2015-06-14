@@ -10,13 +10,13 @@ class Distillery {
       throw new Error('Unable run distillery with out a still.');
 
     this.options = _.defaults(options || {}, this.options);
-    this.still = still;
+    this.still = still(this);
 
   }
 
   distill(parameters, returnResponse) {
 
-    return Process(this.still(this).process, this.options)
+    return new Process(this.still.process, this.options)
       .execute(parameters)
       .then(this._respond(returnResponse))
 
@@ -30,7 +30,7 @@ class Distillery {
 
   parse(html) {
 
-    return parseModels(html, this._createModels(this.still(this).models, this.options))
+    return parseModels(html, this._createModels(this.still.models, this.options))
 
   }
 
@@ -55,7 +55,7 @@ class Distillery {
       if (!_.isUndefined(response.hook))
         return response.hook(response);
 
-      if (_.isUndefined(self.still(self).models))
+      if (_.isUndefined(self.still.models))
         return response;
 
       return self.parse(response.body);
