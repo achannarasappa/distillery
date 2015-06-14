@@ -5,9 +5,9 @@ var Expect = require('./expect');
 
 class Process {
 
-  constructor(definition, options) {
+  constructor(definition, options={}) {
 
-    this.options = _.defaults(options || {}, { jar: request.jar() });
+    this.options = _.defaults(options, { jar: request.jar() });
 
     if (validateDefinition(definition))
       _.extend(this, definition);
