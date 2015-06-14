@@ -159,24 +159,14 @@ class IgniteProcess extends Process {
     return (response) => {
 
       var validResponseKey = this._getValidResponseKey(response);
-      var pathSaveHtml;
-      var pathSaveCookie;
 
       // Save HTML to disk
-      if (this.options.save_html) {
-
-        pathSaveHtml = path.resolve(process.cwd(), this.options.save_html);
-        fs.writeFile(pathSaveHtml, response.body);
-
-      }
+      if (this.options.save_html)
+        saveFile(this.options.save_html, response.body);
 
       // Save cookie to disk
-      if (this.options.save_cookie) {
-
-        pathSaveCookie = path.resolve(process.cwd(), this.options.save_cookie);
-        fs.writeFile(pathSaveCookie, jar.getCookies(this.request.url).toString());
-
-      }
+      if (this.options.save_cookie)
+        saveFile(this.options.save_cookie, getCookieString(jar, this.request.url));
 
       this._buildResponseIndicatorsTable(response, validResponseKey);
       this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey);
@@ -262,5 +252,19 @@ class IgniteProcess extends Process {
   }
 
 }
+
+var saveFile = (relativePath, html) => {
+
+  var absolutePath = path.resolve(process.cwd(), relativePath);
+
+  return fs.writeFile(absolutePath, html);
+
+};
+
+var getCookieString = (jar, url) => {
+
+  return jar.getCookies(url).toString()
+
+};
 
 module.exports = IgniteProcess;
