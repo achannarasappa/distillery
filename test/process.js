@@ -6,8 +6,9 @@ var fixtures = require('./fixtures');
 
 describe('Process', function() {
 
-  var definition = Distillery(fixtures.postings).still(Distillery(fixtures.postings)).process;
-  var process = Process(definition);
+  var distillery = new Distillery(fixtures.postings);
+  var definition = distillery.still.process;
+  var process = new Process(definition);
   var response = fixtures.postings_response;
   var responseInvalid = fixtures.postings_response_invalid;
   var blankCookie = { _jar: { store: { idx: {} } } };
@@ -23,13 +24,13 @@ describe('Process', function() {
 
     it('should set an empty cookie jar if no jar is specified', function() {
 
-      expect(Process(definition).options.jar).to.eql(blankCookie)
+      expect(process.options.jar).to.eql(blankCookie)
 
     });
 
     it('should set use the passed cookie jar is one is specified', function() {
 
-      expect(Process(definition, { jar: testCookie }).options.jar).to.eql(testCookie)
+      expect(new Process(definition, { jar: testCookie }).options.jar).to.eql(testCookie)
 
     });
 
