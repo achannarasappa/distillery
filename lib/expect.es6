@@ -2,11 +2,12 @@ var cheerio = require('cheerio');
 var _ = require('lodash');
 
 var Expect = {
-  http_code: function(expected) {
+  http_code: (expected) => {
 
-    if (!_.isFinite(expected)) throw new Error('Expected http_code must be an number.');
+    if (!_.isFinite(expected))
+      throw new Error('Expected http_code must be an number.');
     
-    return function(response, verbose) {
+    return (response, verbose) => {
 
       var valid = (response.statusCode === expected);
       
@@ -23,11 +24,12 @@ var Expect = {
     }
     
   },
-  url: function(expected) {
+  url: (expected) => {
 
-    if (!_.isRegExp(expected) && !_.isString(expected)) throw new Error('Expected url must be an string of regular expression.');
+    if (!_.isRegExp(expected) && !_.isString(expected))
+      throw new Error('Expected url must be an string of regular expression.');
 
-    return function(response, verbose) {
+    return (response, verbose) => {
 
       var valid = _.isRegExp(expected) ? expected.test(response.request.uri.href) : (response.request.uri.href === expected);
 
@@ -44,12 +46,15 @@ var Expect = {
     }
     
   },
-  html_element: function(path, expected) {
+  html_element: (path, expected) => {
 
-    if (!_.isRegExp(expected) && !_.isString(expected) && !_.isUndefined(expected)) throw new Error('Expected html_element must be an string or regular expression if defined.');
-    if (!_.isString(path)) throw new Error('Path for html_element must be an string.');
+    if (!_.isRegExp(expected) && !_.isString(expected) && !_.isUndefined(expected))
+      throw new Error('Expected html_element must be an string or regular expression if defined.');
 
-    return function(response, verbose) {
+    if (!_.isString(path))
+      throw new Error('Path for html_element must be an string.');
+
+    return (response, verbose) => {
 
       var $ = cheerio.load(response.body);
       var valid;

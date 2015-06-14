@@ -1,10 +1,13 @@
 var _ = require('lodash');
 
 var Utility = {
-  interpolateString: function(str, obj) {
+  interpolateString: (str, obj) => {
 
-    if (!_.isString(str)) throw new Error('str must be a string.');
-    if (!_.isObject(obj)) throw new Error('obj must be a object.');
+    if (!_.isString(str))
+      throw new Error('str must be a string.');
+
+    if (!_.isObject(obj))
+      throw new Error('obj must be a object.');
 
     return _(obj)
       .pairs()
@@ -16,18 +19,24 @@ var Utility = {
       }, str)
   
   },
-  truncateString: _.curry(function(length, str) {
+  truncateString: _.curry((length, str) => {
 
-    if (!_.isFinite(length)) throw new Error('length must be a number.');
-    if (!_.isString(str) && !_.isFinite(str)) throw new Error('str must be a string or number.');
+    if (!_.isFinite(length))
+      throw new Error('length must be a number.');
+
+    if (!_.isString(str) && !_.isFinite(str))
+      throw new Error('str must be a string or number.');
 
     return str.length > length ? str.substring(0, length) + '...' : str;
 
   }),
-  splitStringArray: function(delimiter, strings) {
+  splitStringArray: (delimiter, strings) => {
 
-    if (!_.isString(delimiter)) throw new Error('delimiter must be a string.');
-    if (!_.isArray(strings)) throw new Error('strings must be an array.');
+    if (!_.isString(delimiter))
+      throw new Error('delimiter must be a string.');
+
+    if (!_.isArray(strings))
+      throw new Error('strings must be an array.');
 
     return _.chain(strings)
       .invoke('split', delimiter)
@@ -37,16 +46,8 @@ var Utility = {
   }
 };
 
-var tokenize = _.curry(function(prepend, append, str) {
-  
-  return prepend + str + append;
-  
-});
+var tokenize = _.curry((prepend, append, str) => prepend + str + append);
 
-var mapFirstInPair = _.curry(function(func, pair) {
-  
-  return [ func(pair[0]), pair[1] ]
-  
-});
+var mapFirstInPair = _.curry((func, pair) => [ func(pair[0]), pair[1] ]);
 
 module.exports = Utility;
