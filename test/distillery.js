@@ -5,7 +5,7 @@ var fixtures = require('./fixtures');
 
 describe('Distillery', function() {
 
-  var distillery = Distillery(fixtures.postings);
+  var distillery = new Distillery(fixtures.postings);
 
   it('should get the version', function() {
 
@@ -29,7 +29,7 @@ describe('Distillery', function() {
 
     it('should have the specified options when an option is passed', function() {
 
-      expect(Distillery(fixtures.postings, { save_html: './test.html' }).options.save_html).to.be('./test.html');
+      expect(new Distillery(fixtures.postings, { save_html: './test.html' }).options.save_html).to.be('./test.html');
 
     });
 
