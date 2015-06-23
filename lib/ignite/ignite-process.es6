@@ -233,6 +233,15 @@ class IgniteProcess extends Process {
 
   }
 
+  _getResponseSummary(responseKey, responseServer) {
+
+    return _(this.response)
+      .pairs()
+      .map(getResponseDetails)
+      .value()
+
+  }
+
   _buildSummaryTable(status, url, key) {
 
     var table = new Table({
@@ -264,6 +273,18 @@ var saveFile = (relativePath, html) => {
 var getCookieString = (jar, url) => {
 
   return jar.getCookies(url).toString()
+
+};
+
+var getResponseDetails = (response) => {
+
+
+
+};
+
+var getIndicatorDetails = (response) => {
+
+
 
 };
 
