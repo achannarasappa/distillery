@@ -233,11 +233,11 @@ class IgniteProcess extends Process {
 
   }
 
-  _getResponseSummary(responseKey, responseServer) {
+  _getSummaryAnalysis(response, validResponseKey) {
 
     return _(this.response)
       .pairs()
-      .map(getResponseDetails)
+      .map(getResponseAnalysis(response, validResponseKey))
       .value()
 
   }
@@ -276,16 +276,46 @@ var getCookieString = (jar, url) => {
 
 };
 
-var getResponseDetails = (response) => {
+var getResponseAnalysis = _.curry((response, validResponseKey, stillResponsePair) => {
+
+  const [stillResponseKey, stillIndicators] = stillResponsePair;
+  const validResponse = (validResponseKey === stillResponseKey);
+
+  return _(stillIndicators)
+    .pairs()
+    .map(getIndicatorAnalysis(response, validResponse, stillResponseKey))
+    .value()
+
+
+});
+
+var getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey, stillIndicatorPair) => {
+
+  const [stillIndicatorKey, stillIndicator] = stillIndicatorPair;
+  const indicator = stillIndicator(response, true);
+
+  if (!_.isPlainObject(indicator) || !_.has(indicator, 'name') || !_.has(indicator, 'valid') || !_.has(indicator, 'actual'))
+    return {
+      name: 'custom',
+      expected: '',
+      actual: '',
+      valid: indicator
+    };
+
+  return [
+    (validResponse ? chalk.green('\u2713') : chalk.red('\u2717')),
+    stillResponseKey,
+    (indicator.valid ? chalk.green('\u2713') : chalk.red('\u2717')),
+    indicator.name,
+    stillIndicatorKey,
+    indicator.expected,
+    indicator.actual
+  ]
 
 
 
-};
+});
 
-var getIndicatorDetails = (response) => {
-
-
-
-};
+var replaceUndefined = (value) => (_.isUndefined(value) ? chalk.yellow('undefined') : value)
 
 module.exports = IgniteProcess;
