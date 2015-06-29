@@ -7,10 +7,11 @@ var fixtures = require('./fixtures');
 
 describe('Model', function() {
 
-  var itemDefinition = fixtures.still.posts.models[1];
+  var distillery = new Distillery(fixtures.still.posts);
+  var itemDefinition = fixtures.still.posts(distillery).models[1];
   var itemModel = new Model(itemDefinition);
   var itemObject = fixtures.objects.posts[1];
-  var collectionDefinition = fixtures.still.posts.models[0];
+  var collectionDefinition = fixtures.still.posts(distillery).models[0];
   var collectionModel = new Model(collectionDefinition);
   var collectionObject = fixtures.objects.posts[0];
   var html = fixtures.html.posts;

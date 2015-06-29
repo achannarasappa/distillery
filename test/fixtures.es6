@@ -211,21 +211,31 @@ module.exports.postings_response_invalid = {
 };
 
 module.exports.still = {
-  posts: {
+  posts: (distillery) => ({
     process: {
       request: {
-        url: 'http://example.com',
+        url: 'http://example.com/forum/tech',
         method: 'GET'
       },
       response: {
         success: {
-          validate: function() {
-
-            return true;
-
-          }
-        }
-      }
+          indicators: {
+            title: distillery.expect.html_element('title', 'Technology'),
+            url: distillery.expect.url('http://example.com/forum/tech'),
+            code: distillery.expect.http_code(200),
+            custom: (response) => true,
+          },
+          validate: (indicators) => indicators.title,
+        },
+        error: {
+          indicators: {
+            title: distillery.expect.html_element('title', 'Something went wrong'),
+            url: distillery.expect.url('http://example.com/error'),
+            code: distillery.expect.http_code(400),
+          },
+          validate: (indicators) => indicators.title && indicators.url,
+        },
+      },
     },
     models: [
       {
@@ -236,58 +246,69 @@ module.exports.still = {
           title: 'a.title',
           category: {
             path: 'a.title',
-            attr: 'href'
-          }
+            attr: 'href',
+          },
         },
-        iterate: 'html > div#post-list > div',
-        validate: function(post) {
-
-          return (post.id)
-
-        },
-        format: function(post) {
+        iterate: 'html > body > div#post-list > div',
+        validate: (post) => (post.id),
+        format: (post) => {
 
           post.category = post.category.split('/')[1];
 
           return post;
 
-        }
+        },
       },
       {
         name: 'page',
         type: 'item',
         elements: {
           current: 'a.current',
-          last: 'a.last'
-        }
-      }
-    ]
-  }
+          last: 'a.last',
+        },
+      },
+    ],
+  }),
 };
 
-module.exports.html = {
+var html = module.exports.html = {
   posts: [
     '<html>',
-      '<div id="post-list">',
-        '<div>',
-          '<div class="id">1000</div>',
-          '<a class="title" href="forum/tech/posts/1000">Help computer!</a>',
+      '<head>',
+        '<title>Technology</title>',
+      '</head>',
+      '<body>',
+        '<div id="post-list">',
+          '<div>',
+            '<div class="id">1000</div>',
+            '<a class="title" href="forum/tech/posts/1000">Help computer!</a>',
+          '</div>',
+          '<div>',
+            '<div class="id">1001</div>',
+            '<a class="title" href="forum/tech/posts/1001">Why is Windows so slow?</a>',
+          '</div>',
+          '<div>',
+            '<div class="id">1002</div>',
+            '<a class="title" href="forum/tech/posts/1002">How can I get rid of all these toolbars?</a>',
+          '</div>',
+          '<div>',
+            '<a class="current">1</a>',
+            '<a class="last">10</a>',
+          '</div>',
         '</div>',
-        '<div>',
-          '<div class="id">1001</div>',
-          '<a class="title" href="forum/tech/posts/1001">Why is Windows so slow?</a>',
-        '</div>',
-        '<div>',
-          '<div class="id">1002</div>',
-          '<a class="title" href="forum/tech/posts/1002">How can I get rid of all these toolbars?</a>',
-        '</div>',
-        '<div>',
-          '<a class="current">1</a>',
-          '<a class="last">10</a>',
-        '</div>',
-      '</div>',
-    '</html>'
+      '</body>',
+    '</html>',
   ].join('')
+};
+
+module.exports.response = {
+  posts: {
+    request: {
+      method: 'GET',
+      uri: 'http://example.com/forum/tech',
+    },
+    body: html.posts,
+  },
 };
 
 module.exports.objects = {
@@ -307,11 +328,11 @@ module.exports.objects = {
         id: 1002,
         title: 'How can I get rid of all these toolbars?',
         category: 'tech'
-      }
+      },
     ],
     {
       current: 1,
-      last: 10
-    }
-  ]
+      last: 10,
+    },
+  ],
 };
