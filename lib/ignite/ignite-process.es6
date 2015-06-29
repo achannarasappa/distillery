@@ -131,7 +131,7 @@ class IgniteProcess extends Process {
 
   constructor(definition, options={}) {
 
-    var cookie;
+    let cookie;
 
     super(definition, options);
 
@@ -158,7 +158,7 @@ class IgniteProcess extends Process {
 
     return (response) => {
 
-      var validResponseKey = this._getValidResponseKey(response);
+      const validResponseKey = this._getValidResponseKey(response);
 
       // Save HTML to disk
       if (this.options.save_html)
@@ -168,8 +168,8 @@ class IgniteProcess extends Process {
       if (this.options.save_cookie)
         saveFile(this.options.save_cookie, getCookieString(jar, this.request.url));
 
-      this._buildResponseIndicatorsTable(response, validResponseKey);
-      this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey);
+      console.log(this._buildSummaryAnalysisTable(response, validResponseKey));
+      console.log(this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey));
 
       return super._generateResponse(jar)(response)
 
@@ -177,9 +177,9 @@ class IgniteProcess extends Process {
 
   }
 
-  _buildResponseIndicatorsTable(response, validResponseKey) {
+  _buildSummaryAnalysisTable(response, validResponseKey) {
 
-    var table = new Table({
+    const table = new Table({
       head: [
         '',
         'Response Key',
@@ -194,42 +194,11 @@ class IgniteProcess extends Process {
       }
     });
 
-    _.forOwn(this.response, function(res, resKey) {
+    const rows = this._getSummaryAnalysis(response, validResponseKey);
 
-      _.forOwn(res.indicators, function(indicator, indicatorKey) {
+    _.forEach(rows, (row) => table.push(row));
 
-        indicator = indicator(response, true);
-
-        if (!_.isPlainObject(indicator) || !_.has(indicator, 'name') || !_.has(indicator, 'valid') || !_.has(indicator, 'actual'))
-          indicator = {
-            name: 'custom',
-            expected: '',
-            actual: '',
-            valid: indicator
-          };
-
-        var row = _.map([
-          (validResponseKey === resKey ? chalk.green('\u2713') : chalk.red('\u2717')),
-          resKey,
-          (indicator.valid ? chalk.green('\u2713') : chalk.red('\u2717')),
-          indicator.name,
-          indicatorKey,
-          indicator.expected,
-          indicator.actual
-
-        ], function(cell) {
-
-          return (_.isUndefined(cell) ? chalk.yellow('undefined') : cell)
-
-        });
-
-        table.push(row)
-
-      })
-
-    });
-
-    return console.log(table.toString())
+    return table.toString()
 
   }
 
@@ -238,13 +207,13 @@ class IgniteProcess extends Process {
     return _(this.response)
       .pairs()
       .map(getResponseAnalysis(response, validResponseKey))
-      .value()
+      .reduce((responses, response) => responses.concat(response), []);
 
   }
 
   _buildSummaryTable(status, url, key) {
 
-    var table = new Table({
+    const table = new Table({
       style: {
         head: [ 'blue' ]
       }
@@ -256,56 +225,59 @@ class IgniteProcess extends Process {
       { 'Response Key': _.isUndefined(key) ? chalk.red('No match') : chalk.green(key) }
     );
 
-    return console.log(table.toString())
+    return table.toString();
 
   }
 
 }
 
-var saveFile = (relativePath, html) => {
+const saveFile = (relativePath, html) => {
 
-  var absolutePath = path.resolve(process.cwd(), relativePath);
+  const absolutePath = path.resolve(process.cwd(), relativePath);
 
   return fs.writeFile(absolutePath, html);
 
 };
 
-var getCookieString = (jar, url) => {
+const getCookieString = (jar, url) => {
 
   return jar.getCookies(url).toString()
 
 };
 
-var getResponseAnalysis = _.curry((response, validResponseKey, stillResponsePair) => {
+const getResponseAnalysis = _.curry((response, validResponseKey, stillResponsePair) => {
 
-  const [stillResponseKey, stillIndicators] = stillResponsePair;
+  const [stillResponseKey, stillResponse] = stillResponsePair;
   const validResponse = (validResponseKey === stillResponseKey);
 
-  return _(stillIndicators)
+  return _(stillResponse.indicators)
     .pairs()
     .map(getIndicatorAnalysis(response, validResponse, stillResponseKey))
+    .map(replaceUndefinedMap)
     .value()
-
 
 });
 
-var getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey, stillIndicatorPair) => {
+const getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey, stillIndicatorPair) => {
 
   const [stillIndicatorKey, stillIndicator] = stillIndicatorPair;
   const indicator = stillIndicator(response, true);
 
   if (!_.isPlainObject(indicator) || !_.has(indicator, 'name') || !_.has(indicator, 'valid') || !_.has(indicator, 'actual'))
-    return {
-      name: 'custom',
-      expected: '',
-      actual: '',
-      valid: indicator
-    };
+    return [
+      booleanToCheck(validResponse),
+      stillResponseKey,
+      booleanToCheck(indicator),
+      'custom',
+      '',
+      '',
+      indicator
+    ];
 
   return [
-    (validResponse ? chalk.green('\u2713') : chalk.red('\u2717')),
+    booleanToCheck(validResponse),
     stillResponseKey,
-    (indicator.valid ? chalk.green('\u2713') : chalk.red('\u2717')),
+    booleanToCheck(indicator),
     indicator.name,
     stillIndicatorKey,
     indicator.expected,
@@ -316,6 +288,8 @@ var getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey, s
 
 });
 
-var replaceUndefined = (value) => (_.isUndefined(value) ? chalk.yellow('undefined') : value)
+const replaceUndefinedMap = (array) => _.map(array, (value) => (_.isUndefined(value) ? chalk.yellow('undefined') : value));
+
+const booleanToCheck = (value) => (value ? chalk.green('\u2713') : chalk.red('\u2717'));
 
 module.exports = IgniteProcess;

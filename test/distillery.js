@@ -23,7 +23,7 @@ describe('Distillery', function() {
 
     it('should have a still property', function() {
 
-      expect(distillery.still).to.eql(fixtures.postings);
+      expect(distillery).to.have.property('still')
 
     });
 
