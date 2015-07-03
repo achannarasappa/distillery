@@ -3,7 +3,7 @@ var _ = require('lodash');
 var chalk = require('chalk');
 var Distillery = require('../distillery');
 var Model = require('./ignite-model');
-var Process = require('./ignite-process');
+import Process from './ignite-process';
 
 /*var Ignite = function(still, options) {
   
