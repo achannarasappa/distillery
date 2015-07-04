@@ -2,7 +2,7 @@ var fs = require('fs');
 var _ = require('lodash');
 var chalk = require('chalk');
 var Distillery = require('../distillery');
-var Model = require('./ignite-model');
+import Model from './ignite-model';
 import Process from './ignite-process';
 
 /*var Ignite = function(still, options) {
