@@ -158,9 +158,15 @@ class Ignite extends Distillery {
 
       console.log(chalk.blue('\u2777') + chalk.gray(' request complete, auto parsing models'));
 
-      return super._respond(returnResponse, response);
+      return this.parse(response.body);
 
     }
+
+  }
+
+  _createModels(definitions, options) {
+
+    return _.mapValues(definitions, (definition) => new Model(definition, options))
 
   }
 

@@ -39,7 +39,7 @@ IgniteModel.prototype.parse = function(html) {
     iteration = self._parseIteration($);
 
     // Display parsed models
-    if (self.options.table) ((self.options.item_format) ? self._buildCollectionCLiTable(collection) : self._buildIterationCLiTable(iteration));
+    if (self.options.table) ((self.options.item_format) ? self._buildCollectionTable(collection) : self._buildIterationTable(iteration));
 
     // Display summary table
     self._buildSummaryTable(collection.length, (iteration.length - collection.length), iteration.length);
@@ -50,11 +50,11 @@ IgniteModel.prototype.parse = function(html) {
     
     if (self.options.item_format) {
       
-      self._buildItemCLiTable(self._applyFilters(self._parseItem($)))
+      self._buildItemTable(self._applyFilters(self._parseItem($)))
       
     } else {
       
-      self._buildItemCLiTable(self._parseItem($))
+      self._buildItemTable(self._parseItem($))
       
     }
     
@@ -64,7 +64,7 @@ IgniteModel.prototype.parse = function(html) {
   
 };
 
-IgniteModel.prototype._buildItemCLiTable = function(item) {
+IgniteModel.prototype._buildItemTable = function(item) {
 
   var table = new Table({
     style: {
@@ -85,7 +85,7 @@ IgniteModel.prototype._buildItemCLiTable = function(item) {
   
 };
 
-IgniteModel.prototype._buildCollectionCLiTable = function(collection) {
+IgniteModel.prototype._buildCollectionTable = function(collection) {
   
   var self = this;
   var table = new Table({
@@ -115,7 +115,7 @@ IgniteModel.prototype._buildCollectionCLiTable = function(collection) {
   
 };
 
-IgniteModel.prototype._buildIterationCLiTable = function(iteration) {
+IgniteModel.prototype._buildIterationTable = function(iteration) {
   
   var self = this;
   var item;
@@ -186,6 +186,9 @@ class IgniteModel extends Model {
       item_max_length: 50,
       item_format: false
     });
+    this.options.table_item_count = _.parseInt(this.options.table_item_count);
+    this.options.item_max_length = _.parseInt(this.options.item_max_length);
+    this.truncateStringFn = Utility.truncateString(this.options.item_max_length);
 
     _.extend(this, definition);
 
@@ -193,97 +196,77 @@ class IgniteModel extends Model {
 
   parse(html) {
 
-    var $ = cheerio.load(html);
-    var self = this;
-    var collection;
-    var iteration;
+    let dataTable = '';
+    let summaryTable = '';
+    const title = chalk.gray('Model: ') + chalk.cyan(this.name);
+    const $ = cheerio.load(html);
 
-    console.log(chalk.gray('Model: ') + chalk.cyan(self.name));
+    if (this.type === 'collection') {
 
-    if (self.type === 'collection') {
-
-      collection = self._parseCollection($);
-      iteration = self._parseIteration($);
+      let collection = this._parseCollection($);
+      let iteration = this._parseIteration($);
 
       // Display parsed models
-      if (self.options.table)
-        ((self.options.item_format) ? self._buildCollectionCLiTable(collection) : self._buildIterationCLiTable(iteration));
+      if (this.options.table)
+        dataTable = (this.options.item_format) ? this._buildCollectionTable(collection) : this._buildIterationTable(iteration);
 
       // Display summary table
-      self._buildSummaryTable(collection.length, (iteration.length - collection.length), iteration.length);
+      summaryTable = this._buildSummaryTable(collection.length, (iteration.length - collection.length), iteration.length);
 
     }
 
-    if (self.type === 'item') {
+    if (this.type === 'item') {
 
-      if (self.options.item_format) {
+      let item = this.options.item_format ? this._applyFilters(this._parseItem($)) : this._parseItem($);
 
-        self._buildItemCLiTable(self._applyFilters(self._parseItem($)))
-
-      } else {
-
-        self._buildItemCLiTable(self._parseItem($))
-
-      }
+      dataTable = this._buildItemTable(item);
 
     }
 
-    return Model.prototype.parse.call(this, html);
+    console.log(title);
+    console.log(dataTable);
+    console.log(summaryTable);
+
+    return super.parse(html);
 
   }
 
-  _buildItemCLiTable(item) {
+  _buildItemTable(item) {
 
-    var table = new Table({
-      style: {
-        head: [ 'blue' ]
-      }
-    });
-    var row = {};
-
-    _.forOwn(item, function(val, key) {
-
-      row = {};
-      row[key] = (_.isUndefined(val) ? chalk.red('not found') : val);
-      table.push(row);
-
-    });
-
-    return console.log(table.toString())
-
-  }
-
-  _buildCollectionCLiTable(collection) {
-
-    var self = this;
-    var table = new Table({
-      head: _.keys(self.elements),
+    const rows = objectToCliArray(item);
+    const table = new Table({
       style: {
         head: [ 'blue' ]
       }
     });
 
-    _.chain(collection)
-      .first(_.parseInt(self.options.table_item_count))
-      .map(function(item) {
+    table.push(...rows);
 
-        return _.chain(item)
-          .values()
-          .map(Utility.truncateString(_.parseInt(self.options.item_max_length)))
-          .value()
-
-      })
-      .map(function(item) {
-
-        table.push(item)
-
-      });
-
-    return console.log(table.toString())
+    return table.toString();
 
   }
 
-  _buildIterationCLiTable(iteration) {
+  _buildCollectionTable(collection) {
+
+    const columnHeaders = _.keys(this.elements);
+    const table = new Table({
+      head: columnHeaders,
+      style: {
+        head: [ 'blue' ]
+      }
+    });
+    const rows = _.chain(collection)
+      .first(this.options.table_item_count)
+      .map((item) => _.map(item, this.truncateStringFn))
+      .value();
+
+    table.push(...rows);
+
+    return table.toString();
+
+  }
+
+  _buildIterationTable(iteration) {
 
     var self = this;
     var item;
@@ -320,13 +303,13 @@ class IgniteModel extends Model {
 
       });
 
-    return console.log(table.toString())
+    return table.toString();
 
   }
 
   _buildSummaryTable(valid, rejected, total) {
 
-    var table = new Table({
+    const table = new Table({
       style: {
         head: [ 'white' ]
       }
@@ -338,10 +321,17 @@ class IgniteModel extends Model {
       { '\u2713 Valid': chalk.green(valid) }
     );
 
-    return console.log(table.toString())
+    return table.toString();
 
   }
 
 }
+
+const replaceUndefined = (value) => (_.isUndefined(value) ? chalk.red('not found') : value);
+
+const objectToCliArray = (object) => _(object)
+  .pairs()
+  .map((pair) => ({[pair[0]]: replaceUndefined(pair[1])}))
+  .value();
 
 module.exports = IgniteModel;
