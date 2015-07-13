@@ -7,11 +7,11 @@ const Table = require('cli-table');
 const Utility = require('../utility');
 const Process = require('../process');
 
+const cliStyleTable = { head: [ 'blue' ] };
+
 class IgniteProcess extends Process {
 
   constructor(definition, options={}) {
-
-    let cookie;
 
     super(definition, options);
 
@@ -27,7 +27,7 @@ class IgniteProcess extends Process {
 
     if (options.restore_cookie) {
 
-      cookie = fs.readFileSync(this.options.restore_cookie, 'utf8');
+      const cookie = fs.readFileSync(this.options.restore_cookie, 'utf8');
       this.options.jar.setCookie(cookie, this.request.url);
 
     }
@@ -69,14 +69,11 @@ class IgniteProcess extends Process {
         'Expected',
         'Actual'
       ],
-      style: {
-        head: [ 'blue' ]
-      }
+      style: cliStyleTable
     });
-
     const rows = this._getSummaryAnalysis(response, validResponseKey);
 
-    _.forEach(rows, (row) => table.push(row));
+    table.push(...rows);
 
     return table.toString()
 
@@ -93,17 +90,20 @@ class IgniteProcess extends Process {
 
   _buildSummaryTable(status, url, key) {
 
-    const table = new Table({
-      style: {
-        head: [ 'blue' ]
+    const table = new Table({ style: cliStyleTable });
+    const rows = [
+      {
+        'Status Code': status
+      },
+      {
+        URL: url
+      },
+      {
+        'Response Key': Utility.replaceUndefined(chalk.red('No match'), key)
       }
-    });
+    ];
 
-    table.push(
-      { 'Status Code': status },
-      { URL: url },
-      { 'Response Key': _.isUndefined(key) ? chalk.red('No match') : chalk.green(key) }
-    );
+    table.push(...rows);
 
     return table.toString();
 
@@ -168,7 +168,7 @@ const getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey,
 
 });
 
-const replaceUndefinedMap = (array) => _.map(array, (value) => (_.isUndefined(value) ? chalk.yellow('undefined') : value));
+const replaceUndefinedMap = (array) => _.map(array, (value) => Utility.replaceUndefined(chalk.yellow('undefined'), value));
 
 const booleanToCheck = (value) => (value ? chalk.green('\u2713') : chalk.red('\u2717'));
 
