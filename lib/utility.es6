@@ -43,7 +43,8 @@ var Utility = {
       .zipObject()
       .value();
 
-  }
+  },
+  replaceUndefined: _.curry((undefinedString, value) => (_.isUndefined(value) ? undefinedString : value))
 };
 
 var tokenize = _.curry((prepend, append, str) => prepend + str + append);

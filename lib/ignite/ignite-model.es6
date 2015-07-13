@@ -37,15 +37,15 @@ class IgniteModel extends Model {
 
     if (this.type === 'collection') {
 
-      let collection = this._parseCollection($);
-      let iteration = this._parseIteration($);
+      const collection = this._parseCollection($);
+      const iteration = this._parseIteration($);
 
       // Display parsed models
       if (this.options.table)
         dataTable = (this.options.item_format) ? this._buildCollectionTable(collection) : this._buildIterationTable(iteration);
 
       // Display summary table
-      summaryTable = this._buildSummaryTable(collection.length, (iteration.length - collection.length), iteration.length);
+      summaryTable = this._buildSummaryTable(collection.length, iteration.length);
 
     }
 
@@ -105,18 +105,19 @@ class IgniteModel extends Model {
 
   }
 
-  _buildSummaryTable(valid, rejected, total) {
+  _buildSummaryTable(validCount, totalCount) {
 
     const table = new Table({ style: cliStyleSummaryTable });
+    const rejectedCount = totalCount - validCount;
     const rows = [
       {
-        Total: chalk.yellow(total)
+        Total: chalk.yellow(totalCount)
       },
       {
-        '\u2717 Rejected': chalk.red(rejected)
+        '\u2717 Rejected': chalk.red(rejectedCount)
       },
       {
-        '\u2713 Valid': chalk.green(valid)
+        '\u2713 Valid': chalk.green(validCount)
       }
     ];
 
@@ -128,20 +129,11 @@ class IgniteModel extends Model {
 
 }
 
-const replaceUndefined = (value) => (_.isUndefined(value) ? chalk.red('not found') : value);
-
-const markFailedValidations = _.curry((item, validateFn, property) => {
-
-  if (!_.isUndefined(validateFn))
-    return validateFn(item) ? chalk.white(property) : chalk.gray(property);
-
-  return chalk.white(property);
-
-});
+const markFailedValidations = _.curry((item, validateFn, property) => ((!_.isUndefined(validateFn) && validateFn(item)) || _.isUndefined(validateFn)) ? chalk.white(property) : chalk.gray(property));
 
 const objectToCliArray = (object) => _(object)
   .pairs()
-  .map((pair) => ({ [pair[0]]: replaceUndefined(pair[1]) }))
+  .map((pair) => ({ [pair[0]]: Utility.replaceUndefined(chalk.red('not found'), pair[1]) }))
   .value();
 
 const arrayToCliArray = (array, itemCount, truncateFn) => _(array)
