@@ -16,6 +16,7 @@ npm install distillery-js --save
     * `still` (*function*) - Distillery still. Refer to the [still section](#stills) for further information.
     * `options` (*object*) - Set distillery options
         * `options.jar` (*object*) - [request cookie jar](https://github.com/request/request#requestjar), pass a jar from previous distill to reuse the same cookie.
+        * `options.requestOptions` (*object*) - [request options object](https://github.com/request/request#requestoptions-callback), pass any options directly to request. Request options normally used by Distillery will be filled in as defaults if not supplied through the options object.
 * returns 
     * `distillery` instance of Distillery
 
