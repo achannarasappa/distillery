@@ -51,7 +51,7 @@ class IgniteModel extends Model {
 
     if (this.type === 'item') {
 
-      let item = this.options.item_format ? this._applyFilters(this._parseItem($)) : this._parseItem($);
+      const item = this.options.item_format ? this._applyFilters(this._parseItem($)) : this._parseItem($);
 
       dataTable = this._buildItemTable(item);
 
@@ -95,6 +95,7 @@ class IgniteModel extends Model {
     const rows = _(iteration)
       .first(this.options.table_item_count)
       .map(($) => this._parseItem($))
+      .map((item) => _.map(item, replaceUndefinedIterations))
       .map((item) => _.map(item, this.truncateStringFn))
       .map((item) => _.map(item, markFailedValidations(item, this.validate)))
       .value();
@@ -128,6 +129,8 @@ class IgniteModel extends Model {
   }
 
 }
+
+const replaceUndefinedIterations = Utility.replaceUndefined(chalk.yellow('not found'));
 
 const markFailedValidations = _.curry((item, validateFn, property) => ((!_.isUndefined(validateFn) && validateFn(item)) || _.isUndefined(validateFn)) ? chalk.white(property) : chalk.gray(property));
 
