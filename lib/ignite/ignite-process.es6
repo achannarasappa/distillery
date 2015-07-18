@@ -39,17 +39,17 @@ class IgniteProcess extends Process {
     return (response) => {
 
       const validResponseKey = this._getValidResponseKey(response);
+      const summaryAnalysisTable = this._buildSummaryAnalysisTable(response, validResponseKey);
+      const summaryTable = this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey);
 
-      // Save HTML to disk
       if (this.options.save_html)
         saveFile(this.options.save_html, response.body);
 
-      // Save cookie to disk
       if (this.options.save_cookie)
         saveFile(this.options.save_cookie, getCookieString(jar, this.request.url));
 
-      console.log(this._buildSummaryAnalysisTable(response, validResponseKey));
-      console.log(this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey));
+      console.log(summaryAnalysisTable);
+      console.log(summaryTable);
 
       return super._generateResponse(jar)(response)
 

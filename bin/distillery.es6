@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var program = require('commander');
-var coercion = require('commander-coercions');
-var info = require('../package.json');
+const program = require('commander');
+const coercion = require('commander-coercions');
+const info = require('../package.json');
 
 program
   .version(info.version, '-v, --version');
