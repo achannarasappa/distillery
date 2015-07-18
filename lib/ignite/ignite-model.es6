@@ -30,38 +30,43 @@ class IgniteModel extends Model {
 
   parse(html) {
 
-    let dataTable = '';
-    let summaryTable = '';
     const title = chalk.gray('Model: ') + chalk.cyan(this.name);
     const $ = cheerio.load(html);
 
-    if (this.type === 'collection') {
+    if (this.type === 'collection')
+      [dataTable, summaryTable] = this._getCollectionTables($);
 
-      const collection = this._parseCollection($);
-      const iteration = this._parseIteration($);
-
-      // Display parsed models
-      if (this.options.table)
-        dataTable = (this.options.item_format) ? this._buildCollectionTable(collection) : this._buildIterationTable(iteration);
-
-      // Display summary table
-      summaryTable = this._buildSummaryTable(collection.length, iteration.length);
-
-    }
-
-    if (this.type === 'item') {
-
-      const item = this.options.item_format ? this._applyFilters(this._parseItem($)) : this._parseItem($);
-
-      dataTable = this._buildItemTable(item);
-
-    }
+    if (this.type === 'item')
+      [dataTable, summaryTable] = this._getItemTables($);
 
     console.log(title);
     console.log(dataTable);
     console.log(summaryTable);
 
     return super.parse(html);
+
+  }
+
+  _getItemTables($) {
+
+    const item = this.options.item_format ? this._applyFilters(this._parseItem($)) : this._parseItem($);
+    const dataTable = this._buildItemTable(item);
+
+    return [dataTable, ''];
+
+  }
+
+  _getCollectionTables($) {
+
+    let dataTable = '';
+    const collection = this._parseCollection($);
+    const iteration = this._parseIteration($);
+    const summaryTable = this._buildSummaryTable(collection.length, iteration.length);
+
+    if (this.options.table)
+      dataTable = (this.options.item_format) ? this._buildCollectionTable(collection) : this._buildIterationTable(iteration);
+
+    return [dataTable, summaryTable];
 
   }
 
