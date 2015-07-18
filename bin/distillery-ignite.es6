@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 
-var log = require('captains-log')();
-var path = require('path');
-var fs = require('fs');
-var Q = require('q');
-var Ignite = require('../lib/ignite/ignite');
-var Utility = require('../lib/utility');
+const log = require('captains-log')();
+const path = require('path');
+const fs = require('fs');
+const Q = require('q');
+const Utility = require('../lib/utility');
+import Ignite from '../lib/ignite/ignite';
 
 module.exports = (file, opts) => {
 
-  var options = Utility.splitStringArray('=', opts.opts);
-  var parameters = Utility.splitStringArray('=', opts.parameters);
-  var stillPath = path.resolve(process.cwd(), file);
-  var still;
+  let still;
+  let ignite;
+  const options = Utility.splitStringArray('=', opts.opts);
+  const parameters = Utility.splitStringArray('=', opts.parameters);
+  const stillPath = path.resolve(process.cwd(), file);
 
   log.info('Starting distillation');
 
@@ -20,8 +21,8 @@ module.exports = (file, opts) => {
     return log.error('Unable to find still at \'' + stillPath + '\'');
 
   still = require(stillPath);
+  ignite = new Ignite(still, options);
 
-  return Q.when(new Ignite(still, options)
-    .distill(parameters), () => log.info('Completed distillation'), (err) => log.error(err))
+  return Q.when(ignite.distill(parameters), () => log.info('Completed distillation'), (err) => log.error(err))
 
 };
