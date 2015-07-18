@@ -266,6 +266,16 @@ module.exports.still = {
           current: 'a.current',
           last: 'a.last',
         },
+        format: (page) => {
+
+          const pageInt = _.mapValues(page, _.parseInt);
+
+          return _.assign(pageInt, {
+            next: pageInt.current < pageInt.last ? pageInt.current + 1 : pageInt.last,
+            previous: 1 < pageInt.current ? pageInt.current - 1 : 1
+          })
+
+        },
       },
     ],
   }),
@@ -333,6 +343,8 @@ module.exports.objects = {
     {
       current: 1,
       last: 10,
+      next: 2,
+      previous: 1,
     },
   ],
 };

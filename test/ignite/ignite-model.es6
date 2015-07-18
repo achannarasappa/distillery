@@ -47,6 +47,17 @@ describe('IgniteProcess', () => {
     '│ last    │ 10 │\n',
     '└─────────┴────┘',
   ].join('');
+  const itemTableFormattedString = [
+    '┌──────────┬────┐\n',
+    '│ current  │ 1  │\n',
+    '├──────────┼────┤\n',
+    '│ last     │ 10 │\n',
+    '├──────────┼────┤\n',
+    '│ next     │ 2  │\n',
+    '├──────────┼────┤\n',
+    '│ previous │ 1  │\n',
+    '└──────────┴────┘',
+  ].join('');
   const summaryTableString = [
     '┌────────────┬───┐\n',
     '│ Total      │ 4 │\n',
@@ -62,6 +73,72 @@ describe('IgniteProcess', () => {
     it('should set default options', () => {
 
       expect(itemIgniteModel.options).to.only.have.keys('table', 'table_item_count', 'item_max_length', 'item_format')
+
+    });
+
+  });
+
+  describe('.prototype._getItemTable()', () => {
+
+    it('should format the item properties if the \'item_format\' option is set', () => {
+
+      const itemIgniteModelFormat = new IgniteModel(itemDefinition, { item_format: true });
+      const [dataTable, summaryTable] = itemIgniteModelFormat._getItemTables($);
+
+      expect(dataTable).to.be(itemTableFormattedString);
+      expect(summaryTable).to.be('');
+
+    });
+
+    it('should not format the item properties if the \'item_format\' option is not set', () => {
+
+      const [dataTable, summaryTable] = itemIgniteModel._getItemTables($);
+
+      expect(dataTable).to.be(itemTableString);
+      expect(summaryTable).to.be('');
+
+    });
+
+  });
+
+  describe('.prototype._getCollectionTable()', () => {
+
+    it('should generate the string for a collection table if the \'item_format\' option is set', () => {
+
+      const collectionIgniteModelFormatted = new IgniteModel(collectionDefinition, { item_format: true });
+      const [dataTable, summaryTable] = collectionIgniteModelFormatted._getCollectionTables($);
+
+      expect(dataTable).to.be(collectionTableString);
+      expect(summaryTable).to.be(summaryTableString);
+
+    });
+
+    it('should generate the string for a iteration table if the \'item_format\' option is false', () => {
+
+      const collectionIgniteModelUnformatted = new IgniteModel(collectionDefinition, { item_format: false });
+      const [dataTable, summaryTable] = collectionIgniteModelUnformatted._getCollectionTables($);
+
+      expect(dataTable).to.be(iterationTableString);
+      expect(summaryTable).to.be(summaryTableString);
+
+    });
+
+    it('should generate the string for a iteration table if the \'item_format\' option is not set', () => {
+
+      const [dataTable, summaryTable] = collectionIgniteModel._getCollectionTables($);
+
+      expect(dataTable).to.be(iterationTableString);
+      expect(summaryTable).to.be(summaryTableString);
+
+    });
+
+    it('should not show a collection or iteration table if the \'table\' option is false', () => {
+
+      const collectionIgniteModelTable = new IgniteModel(collectionDefinition, { table: false });
+      const [dataTable, summaryTable] = collectionIgniteModelTable._getCollectionTables($);
+
+      expect(dataTable).to.be('');
+      expect(summaryTable).to.be(summaryTableString);
 
     });
 
