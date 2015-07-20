@@ -1,31 +1,31 @@
-var expect = require('expect.js');
-var _ = require('lodash');
-var Utility = require('../lib/utility');
+const expect = require('expect.js');
+const _ = require('lodash');
+const Utility = require('../lib/utility');
 
-describe('Utility', function() {
+describe('Utility', () => {
 
-  describe('.interpolate', function() {
+  describe('.interpolate', () => {
 
-    it('should replace tokens enclosed in curly braces with values', function() {
+    it('should replace tokens enclosed in curly braces with values', () => {
 
       expect(Utility.interpolateString('http://example.com?key1={token1}&key2={token2}', { token1: 'value1', token2: 'value2' })).to.be('http://example.com?key1=value1&key2=value2');
 
     });
 
-    it('should not replace tokens if no value is supplied', function() {
+    it('should not replace tokens if no value is supplied', () => {
 
       expect(Utility.interpolateString('http://example.com?key1={token1}&key2={token2}', { token1: 'value1' })).to.be('http://example.com?key1=value1&key2={token2}');
 
     });
 
-    it('should throw an error if a string is not passed for str', function() {
+    it('should throw an error if a string is not passed for str', () => {
 
       expect(Utility.interpolateString).withArgs(1000, {}).to.throwError();
       expect(Utility.interpolateString).withArgs('test', {}).to.not.throwError();
 
     });
 
-    it('should throw an error if a object is not passed for obj', function() {
+    it('should throw an error if a object is not passed for obj', () => {
 
       expect(Utility.interpolateString).withArgs('http://example.com?key1={token1}&key2={token2}', 1000).to.throwError();
       expect(Utility.interpolateString).withArgs('http://example.com?key1={token1}&key2={token2}', {}).to.not.throwError();
@@ -34,28 +34,28 @@ describe('Utility', function() {
 
   });
 
-  describe('.truncateString', function() {
+  describe('.truncateString', () => {
 
-    it('should truncate strings longer than \'length\'', function() {
+    it('should truncate strings longer than \'length\'', () => {
 
       expect(Utility.truncateString(10, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.')).to.be('Lorem ipsu...');
 
     });
 
-    it('should not truncate strings less than \'length\'', function() {
+    it('should not truncate strings less than \'length\'', () => {
 
       expect(Utility.truncateString(10, 'Lorem')).to.be('Lorem');
 
     });
 
-    it('should throw an error if \'length\' is not a number.', function() {
+    it('should throw an error if \'length\' is not a number.', () => {
 
       expect(Utility.truncateString).withArgs('test', 'Lorem').to.throwError();
       expect(Utility.truncateString).withArgs(10, 'Lorem').to.not.throwError();
 
     });
 
-    it('should throw an error if \'str\' is not a string.', function() {
+    it('should throw an error if \'str\' is not a string.', () => {
 
       expect(Utility.truncateString).withArgs(10, {}).to.throwError();
       expect(Utility.truncateString).withArgs(10, 0).to.not.throwError();
@@ -65,36 +65,36 @@ describe('Utility', function() {
 
   });
 
-  describe('.splitStringArray', function() {
+  describe('.splitStringArray', () => {
 
-    var cliArgs = [ 'key1=value1', 'key2=value2', 'key3=value3' ];
-    var delimiter = '=';
+    const cliArgs = [ 'key1=value1', 'key2=value2', 'key3=value3' ];
+    const delimiter = '=';
 
-    it('should return an object with the same number of properties as \'strings\'', function() {
+    it('should return an object with the same number of properties as \'strings\'', () => {
 
       expect(_.keys(Utility.splitStringArray(delimiter, cliArgs))).to.have.length(cliArgs.length)
 
     });
 
-    it('should have keys equal to the string prior to the \'delimiter\'', function() {
+    it('should have keys equal to the string prior to the \'delimiter\'', () => {
 
       expect(_.keys(Utility.splitStringArray(delimiter, cliArgs))).to.eql([ 'key1', 'key2', 'key3' ])
 
     });
 
-    it('should have values equal to the string after to the \'delimiter\'', function() {
+    it('should have values equal to the string after to the \'delimiter\'', () => {
 
       expect(_.values(Utility.splitStringArray(delimiter, cliArgs))).to.eql([ 'value1', 'value2', 'value3' ])
 
     });
 
-    it('should throw an error if \'delimiter\' is not a string.', function() {
+    it('should throw an error if \'delimiter\' is not a string.', () => {
 
       expect(Utility.splitStringArray).withArgs(1, cliArgs).to.throwError()
 
     });
 
-    it('should throw an error if \'strings\' is not an array.', function() {
+    it('should throw an error if \'strings\' is not an array.', () => {
 
       expect(Utility.splitStringArray).withArgs(delimiter, 1).to.throwError()
 
