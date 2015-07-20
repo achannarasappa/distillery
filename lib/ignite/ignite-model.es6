@@ -98,7 +98,7 @@ class IgniteModel extends Model {
     const head = _.keys(this.elements);
     const table = new Table({ head, style: cliStyleDataTable });
     const rows = _(iteration)
-      .first(this.options.table_item_count)
+      .take(this.options.table_item_count)
       .map(($) => this._parseItem($))
       .map((item) => _.map(item, replaceUndefinedIterations))
       .map((item) => _.map(item, this.truncateStringFn))
@@ -145,7 +145,7 @@ const objectToCliArray = (object) => _(object)
   .value();
 
 const arrayToCliArray = (array, itemCount, truncateFn) => _(array)
-  .first(itemCount)
+  .take(itemCount, 1)
   .map((item) => _.map(item, truncateFn))
   .value();
 
