@@ -1,31 +1,31 @@
-var expect = require('expect.js');
-var _ = require('lodash');
-var cheerio = require('cheerio');
-var Distillery = require('../');
-var Model = require('../lib/model');
-var fixtures = require('./fixtures');
+const expect = require('expect.js');
+const _ = require('lodash');
+const cheerio = require('cheerio');
+const Distillery = require('../');
+const Model = require('../lib/model');
+const fixtures = require('./fixtures');
 
-describe('Model', function() {
+describe('Model', () => {
 
-  var distillery = new Distillery(fixtures.still.posts);
-  var itemDefinition = fixtures.still.posts(distillery).models[1];
-  var itemModel = new Model(itemDefinition);
-  var itemObject = fixtures.objects.posts[1];
-  var collectionDefinition = fixtures.still.posts(distillery).models[0];
-  var collectionModel = new Model(collectionDefinition);
-  var collectionObject = fixtures.objects.posts[0];
-  var html = fixtures.html.posts;
-  var $ = cheerio.load(html);
+  const distillery = new Distillery(fixtures.still.posts);
+  const itemDefinition = fixtures.still.posts(distillery).models[1];
+  const itemModel = new Model(itemDefinition);
+  const itemObject = fixtures.objects.posts[1];
+  const collectionDefinition = fixtures.still.posts(distillery).models[0];
+  const collectionModel = new Model(collectionDefinition);
+  const collectionObject = fixtures.objects.posts[0];
+  const html = fixtures.html.posts;
+  const $ = cheerio.load(html);
 
-  describe('Constructor', function() {
+  describe('Constructor', () => {
 
-    it('should be an instance of Model', function() {
+    it('should be an instance of Model', () => {
 
       expect(collectionModel).to.be.an(Model);
 
     });
 
-    it('should extend model with the definition', function() {
+    it('should extend model with the definition', () => {
 
       expect(itemDefinition.name).to.eql(itemDefinition.name);
       expect(itemDefinition.type).to.eql(itemDefinition.type);
@@ -35,15 +35,15 @@ describe('Model', function() {
 
   });
 
-  describe('.prototype.parse', function() {
+  describe('.prototype.parse', () => {
 
-    it('should return an array of objects if model.type is \'collection\'', function() {
+    it('should return an array of objects if model.type is \'collection\'', () => {
 
       expect(collectionModel.parse(html)).to.eql(collectionObject);
 
     });
 
-    it('should return an object if model.type is \'item\'', function() {
+    it('should return an object if model.type is \'item\'', () => {
 
       expect(itemModel.parse(html)).to.eql(itemObject);
 
@@ -51,9 +51,9 @@ describe('Model', function() {
 
   });
 
-  describe('.prototype._parseCollection', function() {
+  describe('.prototype._parseCollection', () => {
 
-    it('should return an array with no null elements', function() {
+    it('should return an array with no null elements', () => {
 
       expect(collectionModel._parseCollection($)).to.not.contain(null)
 
@@ -61,40 +61,40 @@ describe('Model', function() {
 
   });
 
-  describe('.prototype._applyFilters', function() {
+  describe('.prototype._applyFilters', () => {
 
-    it('should return null if both model.validate and model.format are defined and model.validate returns false', function() {
+    it('should return null if both model.validate and model.format are defined and model.validate returns false', () => {
 
       expect(collectionModel._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.be(null);
 
     });
 
-    it('should return the formatted item if both model.validate and model.format are defined and model.validate returns true', function() {
+    it('should return the formatted item if both model.validate and model.format are defined and model.validate returns true', () => {
 
       expect(collectionModel._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
 
     });
 
-    it('should return null if model.validate is defined and model.format is not defined and model.validate returns false', function() {
+    it('should return null if model.validate is defined and model.format is not defined and model.validate returns false', () => {
 
       expect(new Model(_.omit(collectionDefinition, 'format'))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.be(null);
 
     });
 
-    it('should return the item if model.validate is defined and model.format is not defined and model.validate returns true', function() {
+    it('should return the item if model.validate is defined and model.format is not defined and model.validate returns true', () => {
 
       expect(new Model(_.omit(collectionDefinition, 'format'))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
 
     });
 
-    it('should return the formatted item if model.validate is not defined and model.format is defined', function() {
+    it('should return the formatted item if model.validate is not defined and model.format is defined', () => {
 
       expect(new Model(_.omit(collectionDefinition, 'validate'))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
       expect(new Model(_.omit(collectionDefinition, 'validate'))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
 
     });
 
-    it('should return the item if model.validate is not defined and model.format is not defined', function() {
+    it('should return the item if model.validate is not defined and model.format is not defined', () => {
 
       expect(new Model(_.omit(collectionDefinition, [ 'validate', 'format' ]))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
       expect(new Model(_.omit(collectionDefinition, [ 'validate', 'format' ]))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
@@ -103,11 +103,11 @@ describe('Model', function() {
 
   });
 
-  describe('.prototype._parseIteration', function() {
+  describe('.prototype._parseIteration', () => {
 
-    it('should wrap each iteration in <html></html> tags', function() {
+    it('should wrap each iteration in <html></html> tags', () => {
 
-      var postHTML = [
+      const postHTML = [
         [
           '<html>',
             '<div class="id">1000</div>',
@@ -143,9 +143,9 @@ describe('Model', function() {
 
   });
 
-  describe('.prototype._parseItem', function() {
+  describe('.prototype._parseItem', () => {
 
-    it('should return an object with all values as strings', function() {
+    it('should return an object with all values as strings', () => {
 
       expect(itemModel._parseItem($)).to.eql({ current: 1, last: 10 })
 
@@ -153,9 +153,9 @@ describe('Model', function() {
 
   });
 
-  describe('parseElement', function() {
+  describe('parseElement', () => {
 
-    var itemDefinitionRegexAttr = {
+    const itemDefinitionRegexAttr = {
       name: 'post1000',
       type: 'item',
       elements: {
@@ -172,7 +172,7 @@ describe('Model', function() {
       }
     };
 
-    var itemDefinitionRegex = {
+    const itemDefinitionRegex = {
       name: 'post1000',
       type: 'item',
       elements: {
@@ -188,7 +188,7 @@ describe('Model', function() {
       }
     };
 
-    var itemDefinitionAttr = {
+    const itemDefinitionAttr = {
       name: 'post1000',
       type: 'item',
       elements: {
@@ -201,16 +201,12 @@ describe('Model', function() {
       }
     };
 
-    var itemDefinitionFunction = {
+    const itemDefinitionFunction = {
       name: 'post1000',
       type: 'item',
       elements: {
         id: 'div.id',
-        title: function($) {
-
-          return $('div#post-list > div').eq(0).html()
-
-        },
+        title: ($) => $('div#post-list > div').eq(0).html(),
         category: {
           path: 'a.title',
           attr: 'href'
@@ -218,31 +214,31 @@ describe('Model', function() {
       }
     };
 
-    it('should return result of a user defined function with a cheerio selector at the first argument', function() {
+    it('should return result of a user defined function with a cheerio selector at the first argument', () => {
 
       expect(new Model(itemDefinitionFunction)._parseItem($).title).to.be('<div class="id">1000</div><a class="title" href="forum/tech/posts/1000">Help computer!</a>')
 
     });
 
-    it('should return the attribute text of the first occurrence of the element that matches \'regex\' if the element is an object and has the properties \'regex\' and \'attr\'', function() {
+    it('should return the attribute text of the first occurrence of the element that matches \'regex\' if the element is an object and has the properties \'regex\' and \'attr\'', () => {
 
       expect(new Model(itemDefinitionRegexAttr)._parseItem($).title).to.be('forum/tech/posts/1000')
 
     });
 
-    it('should return the inner text of the first occurrence of the element that matches \'regex\' if the element is an object and has the property \'regex\' and no \'attr\' property', function() {
+    it('should return the inner text of the first occurrence of the element that matches \'regex\' if the element is an object and has the property \'regex\' and no \'attr\' property', () => {
 
       expect(new Model(itemDefinitionRegex)._parseItem($).title).to.be('Help computer!')
 
     });
 
-    it('should return the attribute text of the first occurrence of the element if the element is an object and has the property \'attr\' and no \'regex\' property', function() {
+    it('should return the attribute text of the first occurrence of the element if the element is an object and has the property \'attr\' and no \'regex\' property', () => {
 
       expect(new Model(itemDefinitionAttr)._parseItem($).category).to.be('forum/tech/posts/1000')
 
     });
 
-    it('should return the inner text of the first occurrence of the element if the element is string', function() {
+    it('should return the inner text of the first occurrence of the element if the element is string', () => {
 
       expect(new Model(itemDefinitionAttr)._parseItem($).id).to.be('1000')
 
