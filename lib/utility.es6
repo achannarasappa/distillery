@@ -38,7 +38,7 @@ var Utility = {
     if (!_.isArray(strings))
       throw new Error('strings must be an array.');
 
-    return _.chain(strings)
+    return _(strings)
       .invoke('split', delimiter)
       .zipObject()
       .value();
