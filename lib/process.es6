@@ -91,7 +91,7 @@ class Process {
 
 var generateParameters = (definitions, parameters) => {
 
-  return _.chain(definitions)
+  return _(definitions)
     .pairs()
     .map((definition) => [ definition[1].name, generateParameter(definition[1], parameters[definition[0]]) ])
     .zipObject()
