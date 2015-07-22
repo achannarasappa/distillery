@@ -53,14 +53,15 @@ class IgniteModel extends Model {
 
   parse(html) {
 
+    let [ dataTable, summaryTable ] = [ '', '' ];
     const title = chalk.gray('Model: ') + chalk.cyan(this.name);
     const $ = cheerio.load(html);
 
     if (this.type === 'collection')
-      [dataTable, summaryTable] = this._getCollectionTables($);
+      [ dataTable, summaryTable ] = this._getCollectionTables($);
 
     if (this.type === 'item')
-      [dataTable, summaryTable] = this._getItemTables($);
+      [ dataTable, summaryTable ] = this._getItemTables($);
 
     console.log(title);
     console.log(dataTable);
