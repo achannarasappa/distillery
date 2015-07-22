@@ -7,6 +7,32 @@ const Model = require('../model');
 
 const cliStyleDataTable = { head: [ 'blue' ] };
 const cliStyleSummaryTable = { head: [ 'white' ] };
+const intOptionKeys = [
+  'table_item_count',
+  'item_max_length',
+];
+const defaultOptions = {
+  table: true,
+  table_item_count: 10,
+  item_max_length: 50,
+  item_format: false,
+};
+
+const replaceUndefinedIterations = Utility.replaceUndefined(chalk.yellow('not found'));
+
+const markFailedValidations = _.curry((item, validateFn, property) => ((!_.isUndefined(validateFn) && validateFn(item)) || _.isUndefined(validateFn)) ? chalk.white(property) : chalk.gray(property));
+
+const objectToCliArray = (object) => _(object)
+  .pairs()
+  .map((pair) => ({ [pair[0]]: Utility.replaceUndefined(chalk.red('not found'), pair[1]) }))
+  .value();
+
+const arrayToCliArray = (array, itemCount, truncateFn) => _(array)
+  .take(itemCount, 1)
+  .map((item) => _.map(item, truncateFn))
+  .value();
+
+const parseIntInArray = (value) => _.contains(intOptionKeys, value) ? _.parseInt(value) : value;
 
 class IgniteModel extends Model {
 
@@ -14,15 +40,12 @@ class IgniteModel extends Model {
 
     super(definition, options);
 
-    this.options = _.defaults(options, {
-      table: true,
-      table_item_count: 10,
-      item_max_length: 50,
-      item_format: false
-    });
-    this.options.table_item_count = _.parseInt(this.options.table_item_count);
-    this.options.item_max_length = _.parseInt(this.options.item_max_length);
-    this.truncateStringFn = Utility.truncateString(this.options.item_max_length);
+    this.options = _(options)
+      .mapValues(parseIntInArray)
+      .defaults(defaultOptions)
+      .value();
+
+    this.truncateFn = Utility.truncateString(this.options.item_max_length);
 
     _.extend(this, definition);
 
@@ -85,7 +108,7 @@ class IgniteModel extends Model {
 
     const head = _.keys(this.elements);
     const table = new Table({ head, style: cliStyleDataTable });
-    const rows = arrayToCliArray(collection, this.options.table_item_count, this.truncateStringFn);
+    const rows = arrayToCliArray(collection, this.options.table_item_count, this.truncateFn);
 
     table.push(...rows);
 
@@ -101,7 +124,7 @@ class IgniteModel extends Model {
       .take(this.options.table_item_count)
       .map(($) => this._parseItem($))
       .map((item) => _.map(item, replaceUndefinedIterations))
-      .map((item) => _.map(item, this.truncateStringFn))
+      .map((item) => _.map(item, this.truncateFn))
       .map((item) => _.map(item, markFailedValidations(item, this.validate)))
       .value();
 
@@ -134,19 +157,5 @@ class IgniteModel extends Model {
   }
 
 }
-
-const replaceUndefinedIterations = Utility.replaceUndefined(chalk.yellow('not found'));
-
-const markFailedValidations = _.curry((item, validateFn, property) => ((!_.isUndefined(validateFn) && validateFn(item)) || _.isUndefined(validateFn)) ? chalk.white(property) : chalk.gray(property));
-
-const objectToCliArray = (object) => _(object)
-  .pairs()
-  .map((pair) => ({ [pair[0]]: Utility.replaceUndefined(chalk.red('not found'), pair[1]) }))
-  .value();
-
-const arrayToCliArray = (array, itemCount, truncateFn) => _(array)
-  .take(itemCount, 1)
-  .map((item) => _.map(item, truncateFn))
-  .value();
 
 export default IgniteModel;
