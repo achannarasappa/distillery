@@ -19,17 +19,6 @@ var Utility = {
       }, str)
   
   },
-  truncateString: _.curry((length, str) => {
-
-    if (!_.isFinite(length))
-      throw new Error('length must be a number.');
-
-    if (!_.isString(str) && !_.isFinite(str))
-      throw new Error('str must be a string or number.');
-
-    return str.length > length ? str.substring(0, length) + '...' : str;
-
-  }),
   splitStringArray: (delimiter, strings) => {
 
     if (!_.isString(delimiter))

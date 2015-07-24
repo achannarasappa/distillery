@@ -34,37 +34,6 @@ describe('Utility', () => {
 
   });
 
-  describe('.truncateString', () => {
-
-    it('should truncate strings longer than \'length\'', () => {
-
-      expect(Utility.truncateString(10, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.')).to.be('Lorem ipsu...');
-
-    });
-
-    it('should not truncate strings less than \'length\'', () => {
-
-      expect(Utility.truncateString(10, 'Lorem')).to.be('Lorem');
-
-    });
-
-    it('should throw an error if \'length\' is not a number.', () => {
-
-      expect(Utility.truncateString).withArgs('test', 'Lorem').to.throwError();
-      expect(Utility.truncateString).withArgs(10, 'Lorem').to.not.throwError();
-
-    });
-
-    it('should throw an error if \'str\' is not a string.', () => {
-
-      expect(Utility.truncateString).withArgs(10, {}).to.throwError();
-      expect(Utility.truncateString).withArgs(10, 0).to.not.throwError();
-      expect(Utility.truncateString).withArgs(10, 'Lorem').to.not.throwError();
-
-    });
-
-  });
-
   describe('.splitStringArray', () => {
 
     const cliArgs = [ 'key1=value1', 'key2=value2', 'key3=value3' ];
