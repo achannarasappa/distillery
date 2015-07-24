@@ -1,8 +1,7 @@
-const _ = require('lodash');
+const _ = require('lodash').mixin(require('../mixin'));
 const cheerio = require('cheerio');
 const chalk = require('chalk');
 const Table = require('cli-table');
-const Utility = require('../utility');
 const Model = require('../model');
 
 const cliStyleDataTable = { head: [ 'blue' ] };
@@ -18,13 +17,13 @@ const defaultOptions = {
   item_format: false,
 };
 
-const replaceUndefinedIterations = Utility.replaceUndefined(chalk.yellow('not found'));
+const replaceUndefinedIterations = _.replaceUndefined(chalk.yellow('not found'));
 
 const markFailedValidations = _.curry((item, validateFn, property) => ((!_.isUndefined(validateFn) && validateFn(item)) || _.isUndefined(validateFn)) ? chalk.white(property) : chalk.gray(property));
 
 const objectToCliArray = (object) => _(object)
   .pairs()
-  .map((pair) => ({ [pair[0]]: Utility.replaceUndefined(chalk.red('not found'), pair[1]) }))
+  .map((pair) => ({ [pair[0]]: _.replaceUndefined(chalk.red('not found'), pair[1]) }))
   .value();
 
 const arrayToCliArray = (array, itemCount, truncateFn) => _(array)

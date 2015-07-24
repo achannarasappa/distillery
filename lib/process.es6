@@ -1,7 +1,6 @@
-var _ = require('lodash');
-var request = require('request-promise').defaults({ jar: true });
-var Utility = require('./utility');
-var Expect = require('./expect');
+const _ = require('lodash').mixin(require('./mixin'));
+const request = require('request-promise').defaults({ jar: true });
+const Expect = require('./expect');
 
 class Process {
 
@@ -33,7 +32,7 @@ class Process {
     return {
       method: this.request.method.toUpperCase(),
       jar: this.options.jar,
-      url: Utility.interpolateString(this.request.url, generateParameters(this.request.query, parameters)),
+      url: _.interpolate(this.request.url, generateParameters(this.request.query, parameters)),
       headers: generateParameters(this.request.headers, parameters),
       form: generateParameters(this.request.payload, parameters),
       resolveWithFullResponse: true,
