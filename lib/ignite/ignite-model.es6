@@ -45,7 +45,7 @@ class IgniteModel extends Model {
       .defaults(defaultOptions)
       .value();
 
-    this.truncateFn = Utility.truncateString(this.options.item_max_length);
+    this.truncateFn = _.partial(_.trunc, _, this.options.item_max_length);
 
     _.extend(this, definition);
 
