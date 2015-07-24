@@ -1,10 +1,9 @@
-const _ = require('lodash');
+const _ = require('lodash').mixin(require('../mixin'));
 const fs = require('fs');
 const path = require('path');
 const request = require('request-promise').defaults({ jar: true });
 const chalk = require('chalk');
 const Table = require('cli-table');
-const Utility = require('../utility');
 const Process = require('../process');
 
 const cliStyleTable = { head: [ 'blue' ] };
@@ -99,7 +98,7 @@ class IgniteProcess extends Process {
         URL: url
       },
       {
-        'Response Key': Utility.replaceUndefined(chalk.red('No match'), key)
+        'Response Key': _.replaceUndefined(chalk.red('No match'), key)
       }
     ];
 
@@ -168,7 +167,7 @@ const getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey,
 
 });
 
-const replaceUndefinedMap = (array) => _.map(array, (value) => Utility.replaceUndefined(chalk.yellow('undefined'), value));
+const replaceUndefinedMap = (array) => _.map(array, (value) => _.replaceUndefined(chalk.yellow('undefined'), value));
 
 const booleanToCheck = (value) => (value ? chalk.green('\u2713') : chalk.red('\u2717'));
 
