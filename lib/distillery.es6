@@ -1,10 +1,11 @@
-var _ = require('lodash');
+const _ = require('lodash');
 import Model from './model';
 import Process from './process';
+import Expect from './expect';
 
 class Distillery {
 
-  constructor(still, options={}) {
+  constructor(still, options = {}) {
 
     if (_.isUndefined(still))
       throw new Error('Unable run distillery with out a still.');
@@ -19,12 +20,6 @@ class Distillery {
     return new Process(this.still.process, this.options)
       .execute(parameters)
       .then(this._respond(returnResponse))
-
-  }
-
-  require(path) {
-
-    return require(path)(this)
 
   }
 
@@ -64,8 +59,8 @@ class Distillery {
 
 }
 
-Distillery.prototype.expect = require('./expect');
+Distillery.prototype.expect = Expect;
 
-var parseModels = (html, models) => _.map(models, (model) =>model.parse(html));
+const parseModels = (html, models) => _.map(models, (model) => model.parse(html));
 
-module.exports = Distillery;
+export default Distillery;

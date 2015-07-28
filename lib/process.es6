@@ -1,6 +1,6 @@
 const _ = require('lodash').mixin(require('./mixin'));
 const request = require('request-promise').defaults({ jar: true });
-const Expect = require('./expect');
+import Expect from './expect';
 
 class Process {
 

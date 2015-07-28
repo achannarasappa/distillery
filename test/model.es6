@@ -1,7 +1,7 @@
 const expect = require('expect.js');
 const _ = require('lodash');
 const cheerio = require('cheerio');
-const Distillery = require('../');
+import Distillery from '../lib/distillery';
 import Model from '../lib/model';
 const fixtures = require('./fixtures');
 

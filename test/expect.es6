@@ -1,6 +1,6 @@
 const expect = require('expect.js');
 const _ = require('lodash');
-const Expect = require('../lib/expect');
+import Expect from '../lib/expect';
 const fixtures = require('./fixtures');
 
 describe('Expect', () => {
