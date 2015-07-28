@@ -4,7 +4,7 @@ const Expect = require('./expect');
 
 class Process {
 
-  constructor(definition, options={}) {
+  constructor(definition, options = {}) {
 
     this.options = _.defaults(options, { jar: request.jar() });
 
@@ -15,16 +15,14 @@ class Process {
 
   execute(parameters) {
 
-    var configuration = this._buildConfiguration(parameters);
+    const configuration = this._buildConfiguration(parameters);
 
     return request(configuration)
       .then(this._generateResponse(configuration.jar))
 
   }
 
-  _buildConfiguration(parameters) {
-
-    parameters = parameters || {};
+  _buildConfiguration(parameters = {}) {
 
     if (!_.isObject(parameters))
       throw new Error('Process parameters must be an object.');
@@ -43,11 +41,9 @@ class Process {
 
   _generateResponse(jar) {
 
-    var self = this;
-
     return (response) => {
 
-      var validResponseKey = self._getValidResponseKey(response);
+      const validResponseKey = this._getValidResponseKey(response);
 
       if (_.isUndefined(validResponseKey))
         return {
@@ -57,8 +53,8 @@ class Process {
         };
 
       return _.assign(response, {
-        indicators: self._getValidResponseIndicators(self.response[validResponseKey].indicators, response),
-        hook: self.response[validResponseKey].hook,
+        indicators: this._getValidResponseIndicators(this.response[validResponseKey].indicators, response),
+        hook: this.response[validResponseKey].hook,
         jar: jar
       });
 
@@ -80,7 +76,7 @@ class Process {
 
   _isResponseValid(definition, response) {
 
-    var evaluatedIndicators = _.mapValues(definition.indicators, (indicator) => indicator(response));
+    const evaluatedIndicators = _.mapValues(definition.indicators, (indicator) => indicator(response));
 
     return definition.validate(evaluatedIndicators)
 
@@ -88,31 +84,31 @@ class Process {
 
 }
 
-var generateParameters = (definitions, parameters) => {
+const generateParameters = (parameterDefinitions, parameterValues) => {
 
-  return _(definitions)
+  return _(parameterDefinitions)
     .pairs()
-    .map((definition) => [ definition[1].name, generateParameter(definition[1], parameters[definition[0]]) ])
+    .map(([parameterDefinition, parameterName]) => [ parameterDefinition.name, generateParameter(parameterDefinition, parameterValues[parameterName]) ])
     .zipObject()
     .omit(_.isUndefined)
     .value();
 
 };
 
-var generateParameter = (definition, parameter) => {
+const generateParameter = (parameterDefinition, parameterValue) => {
 
-  if (!_.isUndefined(parameter))
-    return parameter;
+  if (!_.isUndefined(parameterValue))
+    return parameterValue;
 
-  if (!_.isUndefined(definition.default))
-    return definition.default;
+  if (!_.isUndefined(parameterDefinition.default))
+    return parameterDefinition.default;
 
-  if (definition.required)
-    throw new Error('Required parameter \'' + definition.name + '\' missing from request.');
+  if (parameterDefinition.required)
+    throw new Error('Required parameter \'' + parameterDefinition.name + '\' missing from request.');
 
 };
 
-var validateDefinition = (definition) => {
+const validateDefinition = (definition) => {
 
   if (!_.isObject(definition))
     throw new Error('Process definition is ' + (typeof definition) + ' expecting object.');
