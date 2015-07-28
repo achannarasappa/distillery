@@ -8,6 +8,10 @@ import Process from '../process';
 
 const cliStyleTable = { head: [ 'blue' ] };
 
+const replaceUndefinedMap = (array) => _.map(array, (value) => _.replaceUndefined(chalk.yellow('undefined'), value));
+
+const booleanToCheck = (value) => (value ? chalk.green('\u2713') : chalk.red('\u2717'));
+
 class IgniteProcess extends Process {
 
   constructor(definition, options={}) {
@@ -166,9 +170,5 @@ const getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey,
 
 
 });
-
-const replaceUndefinedMap = (array) => _.map(array, (value) => _.replaceUndefined(chalk.yellow('undefined'), value));
-
-const booleanToCheck = (value) => (value ? chalk.green('\u2713') : chalk.red('\u2717'));
 
 export default IgniteProcess;

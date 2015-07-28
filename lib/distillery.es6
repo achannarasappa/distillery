@@ -3,6 +3,8 @@ import Model from './model';
 import Process from './process';
 import Expect from './expect';
 
+const parseModels = (html, models) => _.map(models, (model) => model.parse(html));
+
 class Distillery {
 
   constructor(still, options = {}) {
@@ -60,7 +62,5 @@ class Distillery {
 }
 
 Distillery.prototype.expect = Expect;
-
-const parseModels = (html, models) => _.map(models, (model) => model.parse(html));
 
 export default Distillery;
