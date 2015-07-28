@@ -26,7 +26,7 @@ class Process {
 
     if (!_.isObject(parameters))
       throw new Error('Process parameters must be an object.');
-console.log( generateParameters(this.request.query, parameters));
+
     return {
       method: this.request.method.toUpperCase(),
       jar: this.options.jar,
@@ -88,23 +88,23 @@ const generateParameters = (parameterDefinitions, parameterValues) => {
 
   return _(parameterDefinitions)
     .pairs()
-    .map(([parameterName, parameterDefinition]) => [ parameterDefinition.name, generateParameter(parameterDefinition, parameterValues[parameterName]) ])
+    .map(([parameterName, parameterDefinition]) => [ parameterDefinition.name, generateParameter(parameterDefinition.name, parameterDefinition.required, parameterDefinition.default, parameterValues[parameterName]) ])
     .zipObject()
     .omit(_.isUndefined)
     .value();
 
 };
 
-const generateParameter = (parameterDefinition, parameterValue) => {
+const generateParameter = (parameterName, parameterRequired, parameterDefault, parameterValue) => {
 
   if (!_.isUndefined(parameterValue))
     return parameterValue;
 
-  if (!_.isUndefined(parameterDefinition.default))
-    return parameterDefinition.default;
+  if (!_.isUndefined(parameterDefault))
+    return parameterDefault;
 
-  if (parameterDefinition.required)
-    throw new Error('Required parameter \'' + parameterDefinition.name + '\' missing from request.');
+  if (parameterRequired)
+    throw new Error('Required parameter \'' + parameterName + '\' missing from request.');
 
 };
 
