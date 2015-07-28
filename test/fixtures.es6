@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-module.exports.still = {
+const still = {
   posts: (distillery) => ({
     process: {
       request: {
@@ -139,7 +139,7 @@ module.exports.still = {
     })
 };
 
-var html = module.exports.html = {
+const html = {
   posts: [
     '<html>',
       '<head>',
@@ -237,7 +237,7 @@ var html = module.exports.html = {
   ].join(''),
 };
 
-module.exports.response = {
+const response = {
   posts: {
     statusCode: 200,
     request: {
@@ -270,7 +270,7 @@ module.exports.response = {
   },
 };
 
-module.exports.objects = {
+const objects = {
   posts: [
     [
       {
@@ -297,3 +297,5 @@ module.exports.objects = {
     },
   ],
 };
+
+export { objects, still, response, html }

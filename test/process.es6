@@ -1,8 +1,8 @@
-const expect = require('expect.js');
 const _ = require('lodash');
+const expect = require('expect.js');
 import Distillery from '../lib/distillery';
 import Process from '../lib/process';
-const fixtures = require('./fixtures');
+import * as fixtures from './fixtures';
 
 describe('Process', () => {
 

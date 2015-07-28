@@ -1,9 +1,9 @@
-import IgniteModel from '../../lib/ignite/ignite-model';
+const _ = require('lodash');
 const expect = require('expect.js');
 const cheerio = require('cheerio');
-const _ = require('lodash');
-const Ignite = require('../../lib/ignite/ignite');
-const fixtures = require('../fixtures');
+import Ignite from '../../lib/ignite/ignite';
+import IgniteModel from '../../lib/ignite/ignite-model';
+import * as fixtures from '../fixtures';
 
 describe('IgniteProcess', () => {
 

@@ -1,5 +1,5 @@
-const expect = require('expect.js');
 const _ = require('lodash').mixin(require('../lib/mixin'));
+const expect = require('expect.js');
 
 describe('mixin', () => {
 
