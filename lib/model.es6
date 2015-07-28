@@ -67,19 +67,24 @@ const parseElement = (element, $) => {
   if (_.isFunction(element))
     return element($);
 
-  if (_.isObject(element) && _.has(element, 'regex'))
-    return _.chain($(element.path)
-      .map(() => {
+  if (_.isObject(element) && _.has(element, 'regex')) {
+
+    const matchedElements = $(element.path)
+      .map(function() {
 
         if (element.regex.test($(this).text()))
           return _.has(element, 'attr') ? $(this).attr(element.attr) : $(this).text();
 
         return null;
 
-      }))
+      });
+
+    return _.chain(matchedElements)
       .reject(_.isNull)
       .first()
       .value();
+
+  }
 
   if (_.isObject(element) && _.has(element, 'attr'))
     return $(element.path).first().attr(element.attr);
