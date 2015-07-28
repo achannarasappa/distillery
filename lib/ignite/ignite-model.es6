@@ -2,7 +2,7 @@ const _ = require('lodash').mixin(require('../mixin'));
 const cheerio = require('cheerio');
 const chalk = require('chalk');
 const Table = require('cli-table');
-const Model = require('../model');
+import Model from '../model';
 
 const cliStyleDataTable = { head: [ 'blue' ] };
 const cliStyleSummaryTable = { head: [ 'white' ] };

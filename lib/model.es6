@@ -1,9 +1,9 @@
-var _ = require('lodash');
-var cheerio = require('cheerio');
+const _ = require('lodash');
+const cheerio = require('cheerio');
 
 class Model {
 
-  constructor(definition, options={}) {
+  constructor(definition, options = {}) {
 
     this.options = options;
 
@@ -14,7 +14,7 @@ class Model {
 
   parse(html) {
 
-    var $ = cheerio.load(html);
+    const $ = cheerio.load(html);
 
     if (this.type === 'collection')
       return this._parseCollection($);
@@ -62,14 +62,14 @@ class Model {
 
 }
 
-var parseElement = (element, $) => {
+const parseElement = (element, $) => {
 
   if (_.isFunction(element))
     return element($);
 
   if (_.isObject(element) && _.has(element, 'regex'))
     return _.chain($(element.path)
-      .map(function() {
+      .map(() => {
 
         if (element.regex.test($(this).text()))
           return _.has(element, 'attr') ? $(this).attr(element.attr) : $(this).text();
@@ -89,7 +89,7 @@ var parseElement = (element, $) => {
 
 };
 
-var validateDefinition = (definition) => {
+const validateDefinition = (definition) => {
 
   if (!_.isObject(definition))
     throw new Error('Model definition is ' + (typeof definition) + ' expecting object.');
@@ -123,4 +123,4 @@ var validateDefinition = (definition) => {
 
 };
 
-module.exports = Model;
+export default Model;
