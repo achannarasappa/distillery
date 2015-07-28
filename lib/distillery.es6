@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var Model = require('./model');
-var Process = require('./process');
+import Process from './process';
 
 class Distillery {
 

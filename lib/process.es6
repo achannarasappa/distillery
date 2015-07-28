@@ -176,4 +176,4 @@ const validateDefinition = (definition) => {
 
 };
 
-module.exports = Process;
+export default Process;
