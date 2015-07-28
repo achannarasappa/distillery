@@ -2,7 +2,7 @@ const expect = require('expect.js');
 const _ = require('lodash');
 const cheerio = require('cheerio');
 const Distillery = require('../');
-const Model = require('../lib/model');
+import Model from '../lib/model';
 const fixtures = require('./fixtures');
 
 describe('Model', () => {
