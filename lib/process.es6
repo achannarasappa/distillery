@@ -2,6 +2,30 @@ const _ = require('lodash').mixin(require('./mixin'));
 const request = require('request-promise').defaults({ jar: true });
 import Expect from './expect';
 
+const generateParameters = (parameterDefinitions, parameterValues) => {
+
+  return _(parameterDefinitions)
+    .pairs()
+    .map(([parameterName, parameterDefinition]) => [ parameterDefinition.name, generateParameter(parameterDefinition.name, parameterDefinition.required, parameterDefinition.default, parameterValues[parameterName]) ])
+    .zipObject()
+    .omit(_.isUndefined)
+    .value();
+
+};
+
+const generateParameter = (parameterName, parameterRequired, parameterDefault, parameterValue) => {
+
+  if (!_.isUndefined(parameterValue))
+    return parameterValue;
+
+  if (!_.isUndefined(parameterDefault))
+    return parameterDefault;
+
+  if (parameterRequired)
+    throw new Error('Required parameter \'' + parameterName + '\' missing from request.');
+
+};
+
 class Process {
 
   constructor(definition, options = {}) {
@@ -83,30 +107,6 @@ class Process {
   }
 
 }
-
-const generateParameters = (parameterDefinitions, parameterValues) => {
-
-  return _(parameterDefinitions)
-    .pairs()
-    .map(([parameterName, parameterDefinition]) => [ parameterDefinition.name, generateParameter(parameterDefinition.name, parameterDefinition.required, parameterDefinition.default, parameterValues[parameterName]) ])
-    .zipObject()
-    .omit(_.isUndefined)
-    .value();
-
-};
-
-const generateParameter = (parameterName, parameterRequired, parameterDefault, parameterValue) => {
-
-  if (!_.isUndefined(parameterValue))
-    return parameterValue;
-
-  if (!_.isUndefined(parameterDefault))
-    return parameterDefault;
-
-  if (parameterRequired)
-    throw new Error('Required parameter \'' + parameterName + '\' missing from request.');
-
-};
 
 const validateDefinition = (definition) => {
 

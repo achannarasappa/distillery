@@ -7,7 +7,7 @@ import IgniteProcess from './ignite-process';
 
 class Ignite extends Distillery {
 
-  constructor(still, options={}) {
+  constructor(still, options = {}) {
 
     super(still, options);
 
