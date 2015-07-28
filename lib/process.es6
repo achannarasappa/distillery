@@ -26,7 +26,7 @@ class Process {
 
     if (!_.isObject(parameters))
       throw new Error('Process parameters must be an object.');
-
+console.log( generateParameters(this.request.query, parameters));
     return {
       method: this.request.method.toUpperCase(),
       jar: this.options.jar,
@@ -88,7 +88,7 @@ const generateParameters = (parameterDefinitions, parameterValues) => {
 
   return _(parameterDefinitions)
     .pairs()
-    .map(([parameterDefinition, parameterName]) => [ parameterDefinition.name, generateParameter(parameterDefinition, parameterValues[parameterName]) ])
+    .map(([parameterName, parameterDefinition]) => [ parameterDefinition.name, generateParameter(parameterDefinition, parameterValues[parameterName]) ])
     .zipObject()
     .omit(_.isUndefined)
     .value();
