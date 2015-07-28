@@ -4,7 +4,7 @@ const path = require('path');
 const request = require('request-promise').defaults({ jar: true });
 const chalk = require('chalk');
 const Table = require('cli-table');
-const Process = require('../process');
+import Process from '../process';
 
 const cliStyleTable = { head: [ 'blue' ] };
 
