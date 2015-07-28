@@ -1,6 +1,6 @@
 const expect = require('expect.js');
 const _ = require('lodash');
-const Distillery = require('../');
+import Distillery from '../lib/distillery';
 import Process from '../lib/process';
 const fixtures = require('./fixtures');
 

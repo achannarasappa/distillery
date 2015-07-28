@@ -1,7 +1,20 @@
-var cheerio = require('cheerio');
-var _ = require('lodash');
+const cheerio = require('cheerio');
+const _ = require('lodash');
 
-var Expect = {
+const getValidHtmlElement = (path, expected, $) => {
+
+  if (_.isRegExp(expected))
+    return expected.test($(path).first().text());
+
+  if (_.isString(expected))
+    return ($(path).first().text() === expected);
+
+  if (!_.isString(expected) && !_.isRegExp(expected))
+    return $(path).first().text();
+
+};
+
+const Expect = {
   http_code: (expected) => {
 
     if (!_.isFinite(expected))
@@ -9,7 +22,7 @@ var Expect = {
     
     return (response, verbose) => {
 
-      var valid = (response.statusCode === expected);
+      const valid = (response.statusCode === expected);
       
       if (verbose)
         return {
@@ -31,7 +44,7 @@ var Expect = {
 
     return (response, verbose) => {
 
-      var valid = _.isRegExp(expected) ? expected.test(response.request.uri.href) : (response.request.uri.href === expected);
+      const valid = _.isRegExp(expected) ? expected.test(response.request.uri.href) : (response.request.uri.href === expected);
 
       if (verbose)
           return {
@@ -56,17 +69,8 @@ var Expect = {
 
     return (response, verbose) => {
 
-      var $ = cheerio.load(response.body);
-      var valid;
-      
-      if (_.isRegExp(expected))
-        valid = expected.test($(path).first().text());
-
-      if (_.isString(expected))
-        valid = ($(path).first().text() === expected);
-
-      if (!_.isString(expected) && !_.isRegExp(expected))
-        valid = $(path).first().text();
+      const $ = cheerio.load(response.body);
+      const valid = getValidHtmlElement(path, expected, $);
 
       if (verbose)
         return {
@@ -83,4 +87,4 @@ var Expect = {
   }
 };
 
-module.exports = Expect;
+export default Expect;

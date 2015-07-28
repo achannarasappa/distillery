@@ -1,6 +1,6 @@
 const expect = require('expect.js');
 const _ = require('lodash');
-const Distillery = require('../');
+import Distillery from '../';
 const fixtures = require('./fixtures');
 
 describe('Distillery', () => {

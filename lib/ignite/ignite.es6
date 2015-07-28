@@ -1,7 +1,7 @@
 const fs = require('fs');
 const _ = require('lodash');
 const chalk = require('chalk');
-const Distillery = require('../distillery');
+import Distillery from '../distillery';
 import IgniteModel from './ignite-model';
 import IgniteProcess from './ignite-process';
 
