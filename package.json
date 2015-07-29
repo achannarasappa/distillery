@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "compile": "babel src --out-dir lib -x .es6",
-    "test": "mocha --recursive",
-    "code-style": "jscs . | grep -qi \"No code style errors found\" && exit 0 || exit 1"
+    "test": "./node_modules/mocha/bin/mocha --recursive",
+    "code-style": "./node_modules/jscs/bin/jscs ."
   },
   "repository": {
     "type": "git",
@@ -46,7 +46,9 @@
   ],
   "devDependencies": {
     "expect.js": "^0.3.1",
+    "jscs": "^2.0.0",
     "mocha": "^2.1.0",
-    "pre-commit": "^1.0.2"
+    "pre-commit": "^1.0.2",
+    "strip-ansi": "^3.0.0"
   }
 }

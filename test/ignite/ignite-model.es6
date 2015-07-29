@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const expect = require('expect.js');
 const cheerio = require('cheerio');
+const stripAnsi = require('strip-ansi');
 import Ignite from '../../lib/ignite/ignite';
 import IgniteModel from '../../lib/ignite/ignite-model';
 import * as fixtures from '../fixtures';
@@ -85,8 +86,8 @@ describe('IgniteModel', () => {
       const itemIgniteModelFormat = new IgniteModel(itemDefinition, { item_format: true });
       const [dataTable, summaryTable] = itemIgniteModelFormat._getItemTables($);
 
-      expect(dataTable).to.be(itemTableFormattedString);
-      expect(summaryTable).to.be('');
+      expect(stripAnsi(dataTable)).to.be(itemTableFormattedString);
+      expect(stripAnsi(summaryTable)).to.be('');
 
     });
 
@@ -94,8 +95,8 @@ describe('IgniteModel', () => {
 
       const [dataTable, summaryTable] = itemIgniteModel._getItemTables($);
 
-      expect(dataTable).to.be(itemTableString);
-      expect(summaryTable).to.be('');
+      expect(stripAnsi(dataTable)).to.be(itemTableString);
+      expect(stripAnsi(summaryTable)).to.be('');
 
     });
 
@@ -108,8 +109,8 @@ describe('IgniteModel', () => {
       const collectionIgniteModelFormatted = new IgniteModel(collectionDefinition, { item_format: true });
       const [dataTable, summaryTable] = collectionIgniteModelFormatted._getCollectionTables($);
 
-      expect(dataTable).to.be(collectionTableString);
-      expect(summaryTable).to.be(summaryTableString);
+      expect(stripAnsi(dataTable)).to.be(collectionTableString);
+      expect(stripAnsi(summaryTable)).to.be(summaryTableString);
 
     });
 
@@ -118,8 +119,8 @@ describe('IgniteModel', () => {
       const collectionIgniteModelUnformatted = new IgniteModel(collectionDefinition, { item_format: false });
       const [dataTable, summaryTable] = collectionIgniteModelUnformatted._getCollectionTables($);
 
-      expect(dataTable).to.be(iterationTableString);
-      expect(summaryTable).to.be(summaryTableString);
+      expect(stripAnsi(dataTable)).to.be(iterationTableString);
+      expect(stripAnsi(summaryTable)).to.be(summaryTableString);
 
     });
 
@@ -127,8 +128,8 @@ describe('IgniteModel', () => {
 
       const [dataTable, summaryTable] = collectionIgniteModel._getCollectionTables($);
 
-      expect(dataTable).to.be(iterationTableString);
-      expect(summaryTable).to.be(summaryTableString);
+      expect(stripAnsi(dataTable)).to.be(iterationTableString);
+      expect(stripAnsi(summaryTable)).to.be(summaryTableString);
 
     });
 
@@ -137,8 +138,8 @@ describe('IgniteModel', () => {
       const collectionIgniteModelTable = new IgniteModel(collectionDefinition, { table: false });
       const [dataTable, summaryTable] = collectionIgniteModelTable._getCollectionTables($);
 
-      expect(dataTable).to.be('');
-      expect(summaryTable).to.be(summaryTableString);
+      expect(stripAnsi(dataTable)).to.be('');
+      expect(stripAnsi(summaryTable)).to.be(summaryTableString);
 
     });
 
@@ -150,7 +151,7 @@ describe('IgniteModel', () => {
 
       const item = itemIgniteModel._parseItem($);
 
-      expect(itemIgniteModel._buildItemTable(item)).to.be(itemTableString)
+      expect(stripAnsi(itemIgniteModel._buildItemTable(item))).to.be(itemTableString)
 
     });
 
@@ -162,7 +163,7 @@ describe('IgniteModel', () => {
 
       const collection = collectionIgniteModel._parseCollection($);
 
-      expect(collectionIgniteModel._buildCollectionTable(collection)).to.be(collectionTableString)
+      expect(stripAnsi(collectionIgniteModel._buildCollectionTable(collection))).to.be(collectionTableString)
 
     });
 
@@ -174,7 +175,7 @@ describe('IgniteModel', () => {
 
       const iteration = iterationIgniteModel._parseIteration($);
 
-      expect(iterationIgniteModel._buildIterationTable(iteration)).to.be(iterationTableString)
+      expect(stripAnsi(iterationIgniteModel._buildIterationTable(iteration))).to.be(iterationTableString)
 
     });
 
@@ -187,7 +188,7 @@ describe('IgniteModel', () => {
       const collection = collectionIgniteModel._parseCollection($);
       const iteration = iterationIgniteModel._parseIteration($);
 
-      expect(collectionIgniteModel._buildSummaryTable(collection.length, iteration.length)).to.be(summaryTableString)
+      expect(stripAnsi(collectionIgniteModel._buildSummaryTable(collection.length, iteration.length))).to.be(summaryTableString)
 
     });
 
