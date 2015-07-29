@@ -29,7 +29,7 @@ const Expect = {
           name: 'http_code',
           expected: expected,
           actual: response.statusCode,
-          valid: valid
+          valid: valid,
         };
 
       return valid;
@@ -51,7 +51,7 @@ const Expect = {
             name: 'url',
             expected: expected,
             actual: response.request.uri.href,
-            valid: valid
+            valid: valid,
           };
 
       return valid;
@@ -77,14 +77,14 @@ const Expect = {
           name: 'html_element',
           expected: expected,
           actual: $(path).first().text(),
-          valid: valid
+          valid: valid,
         };
 
       return valid
       
     }
     
-  }
+  },
 };
 
 export default Expect;

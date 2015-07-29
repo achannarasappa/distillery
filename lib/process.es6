@@ -2,16 +2,12 @@ const _ = require('lodash').mixin(require('./mixin'));
 const request = require('request-promise').defaults({ jar: true });
 import Expect from './expect';
 
-const generateParameters = (parameterDefinitions, parameterValues) => {
-
-  return _(parameterDefinitions)
+const generateParameters = (parameterDefinitions, parameterValues) => _(parameterDefinitions)
     .pairs()
     .map(([parameterName, parameterDefinition]) => [ parameterDefinition.name, generateParameter(parameterDefinition.name, parameterDefinition.required, parameterDefinition.default, parameterValues[parameterName]) ])
     .zipObject()
     .omit(_.isUndefined)
     .value();
-
-};
 
 const generateParameter = (parameterName, parameterRequired, parameterDefault, parameterValue) => {
 
@@ -58,7 +54,7 @@ class Process {
       headers: generateParameters(this.request.headers, parameters),
       form: generateParameters(this.request.payload, parameters),
       resolveWithFullResponse: true,
-      simple: false
+      simple: false,
     }
 
   }
@@ -73,13 +69,13 @@ class Process {
         return {
           error: 'No response conditions met.',
           http_code: response.statusCode,
-          url: response.request.uri.href
+          url: response.request.uri.href,
         };
 
       return _.assign(response, {
         indicators: this._getValidResponseIndicators(this.response[validResponseKey].indicators, response),
         hook: this.response[validResponseKey].hook,
-        jar: jar
+        jar: jar,
       });
 
     };

@@ -75,7 +75,7 @@ class IgniteModel extends Model {
     const item = this.options.item_format ? this._applyFilters(this._parseItem($)) : this._parseItem($);
     const dataTable = this._buildItemTable(item);
 
-    return [dataTable, ''];
+    return [ dataTable, '' ];
 
   }
 
@@ -89,7 +89,7 @@ class IgniteModel extends Model {
     if (this.options.table)
       dataTable = (this.options.item_format) ? this._buildCollectionTable(collection) : this._buildIterationTable(iteration);
 
-    return [dataTable, summaryTable];
+    return [ dataTable, summaryTable ];
 
   }
 
@@ -140,14 +140,14 @@ class IgniteModel extends Model {
     const rejectedCount = totalCount - validCount;
     const rows = [
       {
-        Total: chalk.yellow(totalCount)
+        Total: chalk.yellow(totalCount),
       },
       {
-        '\u2717 Rejected': chalk.red(rejectedCount)
+        '\u2717 Rejected': chalk.red(rejectedCount),
       },
       {
-        '\u2713 Valid': chalk.green(validCount)
-      }
+        '\u2713 Valid': chalk.green(validCount),
+      },
     ];
 
     table.push(...rows);
