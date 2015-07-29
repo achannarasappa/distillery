@@ -5,7 +5,7 @@ import Ignite from '../../lib/ignite/ignite';
 import IgniteModel from '../../lib/ignite/ignite-model';
 import * as fixtures from '../fixtures';
 
-describe('IgniteProcess', () => {
+describe('IgniteModel', () => {
 
   const ignite = new Ignite(fixtures.still.posts);
   const itemDefinition = ignite.still.models[1];
