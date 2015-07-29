@@ -12,6 +12,56 @@ const replaceUndefinedMap = (array) => _.map(array, (value) => _.replaceUndefine
 
 const booleanToCheck = (value) => (value ? chalk.green('\u2713') : chalk.red('\u2717'));
 
+const saveFile = (relativePath, html) => {
+
+  const absolutePath = path.resolve(process.cwd(), relativePath);
+
+  return fs.writeFile(absolutePath, html);
+
+};
+
+const getCookieString = (jar, url) => jar.getCookies(url).toString();
+
+const getResponseAnalysis = _.curry((response, validResponseKey, stillResponsePair) => {
+
+  const [stillResponseKey, stillResponse] = stillResponsePair;
+  const validResponse = (validResponseKey === stillResponseKey);
+
+  return _(stillResponse.indicators)
+    .pairs()
+    .map(getIndicatorAnalysis(response, validResponse, stillResponseKey))
+    .map(replaceUndefinedMap)
+    .value()
+
+});
+
+const getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey, [stillIndicatorKey, stillIndicator]) => {
+
+  const indicator = stillIndicator(response, true);
+
+  if (!_.isPlainObject(indicator) || !_.has(indicator, 'name') || !_.has(indicator, 'valid') || !_.has(indicator, 'actual'))
+    return [
+      booleanToCheck(validResponse),
+      stillResponseKey,
+      booleanToCheck(indicator),
+      'custom',
+      '',
+      '',
+      indicator,
+    ];
+
+  return [
+    booleanToCheck(validResponse),
+    stillResponseKey,
+    booleanToCheck(indicator),
+    indicator.name,
+    stillIndicatorKey,
+    indicator.expected,
+    indicator.actual,
+  ]
+
+});
+
 class IgniteProcess extends Process {
 
   constructor(definition, options={}) {
@@ -23,7 +73,7 @@ class IgniteProcess extends Process {
       indicators: true,
       save_html: false,
       save_cookie: false,
-      restore_cookie: false
+      restore_cookie: false,
     });
 
     _.extend(this, definition);
@@ -70,9 +120,9 @@ class IgniteProcess extends Process {
         'Type',
         'Indicator',
         'Expected',
-        'Actual'
+        'Actual',
       ],
-      style: cliStyleTable
+      style: cliStyleTable,
     });
     const rows = this._getSummaryAnalysis(response, validResponseKey);
 
@@ -96,14 +146,14 @@ class IgniteProcess extends Process {
     const table = new Table({ style: cliStyleTable });
     const rows = [
       {
-        'Status Code': status
+        'Status Code': status,
       },
       {
-        URL: url
+        URL: url,
       },
       {
-        'Response Key': _.replaceUndefined(chalk.red('No match'), key)
-      }
+        'Response Key': _.replaceUndefined(chalk.red('No match'), key),
+      },
     ];
 
     table.push(...rows);
@@ -113,62 +163,5 @@ class IgniteProcess extends Process {
   }
 
 }
-
-const saveFile = (relativePath, html) => {
-
-  const absolutePath = path.resolve(process.cwd(), relativePath);
-
-  return fs.writeFile(absolutePath, html);
-
-};
-
-const getCookieString = (jar, url) => {
-
-  return jar.getCookies(url).toString()
-
-};
-
-const getResponseAnalysis = _.curry((response, validResponseKey, stillResponsePair) => {
-
-  const [stillResponseKey, stillResponse] = stillResponsePair;
-  const validResponse = (validResponseKey === stillResponseKey);
-
-  return _(stillResponse.indicators)
-    .pairs()
-    .map(getIndicatorAnalysis(response, validResponse, stillResponseKey))
-    .map(replaceUndefinedMap)
-    .value()
-
-});
-
-const getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey, stillIndicatorPair) => {
-
-  const [stillIndicatorKey, stillIndicator] = stillIndicatorPair;
-  const indicator = stillIndicator(response, true);
-
-  if (!_.isPlainObject(indicator) || !_.has(indicator, 'name') || !_.has(indicator, 'valid') || !_.has(indicator, 'actual'))
-    return [
-      booleanToCheck(validResponse),
-      stillResponseKey,
-      booleanToCheck(indicator),
-      'custom',
-      '',
-      '',
-      indicator
-    ];
-
-  return [
-    booleanToCheck(validResponse),
-    stillResponseKey,
-    booleanToCheck(indicator),
-    indicator.name,
-    stillIndicatorKey,
-    indicator.expected,
-    indicator.actual
-  ]
-
-
-
-});
 
 export default IgniteProcess;

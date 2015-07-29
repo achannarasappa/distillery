@@ -13,7 +13,7 @@
     },
     "disallowEmptyBlocks": true,
     "disallowSpacesInsideParentheses": true,
-    "disallowQuotedKeysInObjects": true,
+    "disallowQuotedKeysInObjects": "allButReserved",
     "disallowSpaceAfterObjectKeys": true,
     "disallowSpaceAfterPrefixUnaryOperators": true,
     "disallowSpaceBeforePostfixUnaryOperators": true,
@@ -21,7 +21,6 @@
         ","
     ],
     "disallowMixedSpacesAndTabs": true,
-    "disallowTrailingComma": true,
     "disallowYodaConditions": true,
     "disallowKeywords": [ "with" ],
     "disallowMultipleLineBreaks": true,
@@ -41,6 +40,10 @@
     "requireCurlyBraces": [
         "do"
     ],
+    "requireTrailingComma": {
+        "ignoreSingleValue": true,
+        "ignoreSingleLine": true
+    },
     "requireSpaceAfterKeywords": [
         "if",
         "else",
@@ -122,6 +125,7 @@
         "bin/**/*.js",
         "lib/**/*.js"
     ],
+    "requireShorthandArrowFunctions": true,
     "fileExtensions": [".es6"],
     "esnext": true
 }

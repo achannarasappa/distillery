@@ -62,7 +62,7 @@ const still = {
 
           return _.assign(pageInt, {
             next: pageInt.current < pageInt.last ? pageInt.current + 1 : pageInt.last,
-            previous: 1 < pageInt.current ? pageInt.current - 1 : 1
+            previous: 1 < pageInt.current ? pageInt.current - 1 : 1,
           })
 
         },
@@ -96,7 +96,7 @@ const still = {
             content_type: {
               name: 'Content-Type',
               required: true,
-              'default': 'application/x-www-form-urlencoded'
+              'default': 'application/x-www-form-urlencoded',
             },
           },
         },
@@ -110,17 +110,17 @@ const still = {
           },
           success_2: {
             indicators: {
-              success_code: distillery.expect.http_code(200)
+              success_code: distillery.expect.http_code(200),
             },
             validate: (indicators) => indicators.success_code,
           },
           error: {
             indicators: {
-              error_code: distillery.expect.http_code(400)
+              error_code: distillery.expect.http_code(400),
             },
             validate: (indicators) => indicators.error_code,
-          }
-        }
+          },
+        },
       },
       models: [
         {
@@ -130,13 +130,13 @@ const still = {
             status: 'td.status',
             title: 'td.title',
             category: 'td.cat',
-            id: 'td.id'
+            id: 'td.id',
           },
           iterate: '#container > table > tr',
           validate: (posting) => (!_.isUndefined(posting.status) && !_.isUndefined(posting.title) && !_.isUndefined(posting.category) && !_.isUndefined(posting.id)),
         },
       ],
-    })
+    }),
 };
 
 const html = {
@@ -221,7 +221,7 @@ const html = {
           '</table>',
         '</div>',
       '</body>',
-    '</html>'
+    '</html>',
   ].join(''),
   error: [
     '<html>',
@@ -233,7 +233,7 @@ const html = {
           '<div class="message">Error!</div>',
         '</div>',
       '</body>',
-    '</html>'
+    '</html>',
   ].join(''),
 };
 
@@ -243,7 +243,7 @@ const response = {
     request: {
       method: 'GET',
       uri: {
-        href: 'http://example.com/forum/tech'
+        href: 'http://example.com/forum/tech',
       },
     },
     body: html.posts,
@@ -253,7 +253,7 @@ const response = {
     request: {
       method: 'GET',
       uri: {
-        href: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user'
+        href: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user',
       },
     },
     body: html.auctions,
@@ -263,7 +263,7 @@ const response = {
     request: {
       method: 'GET',
       uri: {
-        href: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user'
+        href: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user',
       },
     },
     body: html.error,
@@ -276,17 +276,17 @@ const objects = {
       {
         id: 1000,
         title: 'Help computer!',
-        category: 'tech'
+        category: 'tech',
       },
       {
         id: 1001,
         title: 'Why is Windows so slow?',
-        category: 'tech'
+        category: 'tech',
       },
       {
         id: 1002,
         title: 'How can I get rid of all these toolbars?',
-        category: 'tech'
+        category: 'tech',
       },
     ],
     {

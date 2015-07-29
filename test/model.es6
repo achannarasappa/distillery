@@ -112,26 +112,26 @@ describe('Model', () => {
           '<html>',
             '<div class="id">1000</div>',
             '<a class="title" href="forum/tech/posts/1000">Help computer!</a>',
-          '</html>'
+          '</html>',
         ].join(''),
         [
           '<html>',
             '<div class="id">1001</div>',
             '<a class="title" href="forum/tech/posts/1001">Why is Windows so slow?</a>',
-          '</html>'
+          '</html>',
         ].join(''),
         [
           '<html>',
             '<div class="id">1002</div>',
             '<a class="title" href="forum/tech/posts/1002">How can I get rid of all these toolbars?</a>',
-          '</html>'
+          '</html>',
         ].join(''),
         [
           '<html>',
             '<a class="current">1</a>',
             '<a class="last">10</a>',
-          '</html>'
-        ].join('')
+          '</html>',
+        ].join(''),
       ];
 
       expect(collectionModel._parseIteration($)[0].html()).to.eql(postHTML[0]);
@@ -163,13 +163,13 @@ describe('Model', () => {
         title: {
           path: 'a.title',
           attr: 'href',
-          regex: /computer/
+          regex: /computer/,
         },
         category: {
           path: 'a.title',
-          attr: 'href'
-        }
-      }
+          attr: 'href',
+        },
+      },
     };
 
     const itemDefinitionRegex = {
@@ -179,13 +179,13 @@ describe('Model', () => {
         id: 'div.id',
         title: {
           path: 'a.title',
-          regex: /computer/
+          regex: /computer/,
         },
         category: {
           path: 'a.title',
-          attr: 'href'
-        }
-      }
+          attr: 'href',
+        },
+      },
     };
 
     const itemDefinitionAttr = {
@@ -196,9 +196,9 @@ describe('Model', () => {
         title: 'a.title',
         category: {
           path: 'a.title',
-          attr: 'href'
-        }
-      }
+          attr: 'href',
+        },
+      },
     };
 
     const itemDefinitionFunction = {
@@ -209,9 +209,9 @@ describe('Model', () => {
         title: ($) => $('div#post-list > div').eq(0).html(),
         category: {
           path: 'a.title',
-          attr: 'href'
-        }
-      }
+          attr: 'href',
+        },
+      },
     };
 
     it('should return result of a user defined function with a cheerio selector at the first argument', () => {

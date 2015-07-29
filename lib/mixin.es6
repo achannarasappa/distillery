@@ -9,7 +9,7 @@ const mixin = {
       .invoke('split', delimiter)
       .zipObject()
       .value(),
-  replaceUndefined: _.curry((undefinedString, value) => (_.isUndefined(value) ? undefinedString : value))
+  replaceUndefined: _.curry((undefinedString, value) => (_.isUndefined(value) ? undefinedString : value)),
 };
 
 module.exports = mixin;

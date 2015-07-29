@@ -90,7 +90,6 @@ describe('Process', () => {
       expect(process._generateResponse(blankCookie)(responseInvalid).http_code).to.be(responseInvalid.statusCode);
       expect(process._generateResponse(blankCookie)(responseInvalid).url).to.be(responseInvalid.request.uri.href);
 
-
     });
 
   });
