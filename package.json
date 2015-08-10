@@ -6,7 +6,8 @@
   "scripts": {
     "compile": "./node_modules/babel/bin/babel.js ./ --out-dir ./ -x .es6",
     "test": "./node_modules/mocha/bin/mocha --recursive",
-    "code-style": "./node_modules/jscs/bin/jscs ."
+    "code-style": "./node_modules/jscs/bin/jscs .",
+    "prepublish": "npm run compile"
   },
   "repository": {
     "type": "git",
