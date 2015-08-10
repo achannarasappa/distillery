@@ -44,10 +44,7 @@ class Process {
 
   _buildConfiguration(parameters = {}) {
 
-    if (!_.isObject(parameters))
-      throw new Error('Process parameters must be an object.');
-
-    return {
+    const configuration = {
       method: this.request.method.toUpperCase(),
       jar: this.options.jar,
       url: _.interpolate(this.request.url, generateParameters(this.request.query, parameters)),
@@ -55,7 +52,15 @@ class Process {
       form: generateParameters(this.request.payload, parameters),
       resolveWithFullResponse: true,
       simple: false,
-    }
+    };
+
+    if (!_.isObject(parameters))
+      throw new Error('Process parameters must be an object.');
+
+    if (_.isObject(this.options.requestOptions))
+      return _.defaults(this.options.requestOptions, configuration);
+
+    return configuration;
 
   }
 
