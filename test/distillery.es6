@@ -7,12 +7,6 @@ describe('Distillery', () => {
 
   const distillery = new Distillery(fixtures.still.posts);
 
-  it('should get the version', () => {
-
-    expect(/\d+\.\d+\.\d+/.test(Distillery.version)).to.be.ok();
-
-  });
-
   describe('Constructor', () => {
 
     it('should be an instance of Distillery', () => {
