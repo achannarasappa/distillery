@@ -4,7 +4,7 @@
   "description": "200 proof web scraping",
   "main": "index.js",
   "scripts": {
-    "compile": "babel src --out-dir lib -x .es6",
+    "compile": "./node_modules/babel/bin/babel.js ./ --out-dir ./ -x .es6",
     "test": "./node_modules/mocha/bin/mocha --recursive",
     "code-style": "./node_modules/jscs/bin/jscs ."
   },
@@ -45,6 +45,7 @@
     "code-style"
   ],
   "devDependencies": {
+    "babel": "^5.8.21",
     "expect.js": "^0.3.1",
     "jscs": "^2.0.0",
     "mocha": "^2.1.0",
