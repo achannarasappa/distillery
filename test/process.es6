@@ -9,6 +9,12 @@ describe('Process', () => {
   const distillery = new Distillery(fixtures.still.auctions);
   const definition = distillery.still.process;
   const process = new Process(definition);
+  const processCustom = new Process(definition, {
+    requestOptions: {
+      url: 'http://examplecustom.com',
+      maxRedirects: 100,
+    }
+  });
   const response = fixtures.response.auctions;
   const responseInvalid = fixtures.response.error;
   const blankCookie = { _jar: { store: { idx: {} } } };
@@ -46,6 +52,7 @@ describe('Process', () => {
   describe('.prototype._buildConfiguration', () => {
 
     const configuration = process._buildConfiguration({ tab: 'home', page: 1 });
+    const configurationCustom = processCustom._buildConfiguration({ tab: 'home', page: 1 });
 
     it('should build a request configuration object', () => {
 
@@ -54,6 +61,18 @@ describe('Process', () => {
       expect(configuration).to.have.key('url');
       expect(configuration).to.have.key('headers');
       expect(configuration).to.have.key('form');
+
+    });
+
+    it('should override distillery parameters and use custom requestOptions when passed', () => {
+
+      expect(configurationCustom.url).to.be('http://examplecustom.com');
+
+    });
+
+    it('should append additional request options', () => {
+
+      expect(configurationCustom.maxRedirects).to.be(100);
 
     });
 
