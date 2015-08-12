@@ -1,15 +1,22 @@
 const _ = require('lodash').mixin(require('./mixin'));
 const request = require('request-promise').defaults({ jar: true });
 import Expect from './expect';
+import { DistilleryValidationError } from './error';
 
 const generateParameters = (parameterDefinitions, parameterValues) => _(parameterDefinitions)
     .pairs()
-    .map(([parameterName, parameterDefinition]) => [ parameterDefinition.name, generateParameter(parameterDefinition.name, parameterDefinition.required, parameterDefinition.default, parameterValues[parameterName]) ])
+    .map(([parameterName, parameterDefinition]) => [ parameterDefinition.name, generateParameter(parameterDefinition.name, parameterDefinition.required, parameterDefinition.default, parameterValues[parameterName], parameterDefinition.validate) ])
     .zipObject()
     .omit(_.isUndefined)
     .value();
 
-const generateParameter = (parameterName, parameterRequired, parameterDefault, parameterValue) => {
+const generateParameter = (parameterName, parameterRequired, parameterDefault, parameterValue, parameterValidation) => {
+
+  if (!_.isUndefined(parameterValue) && _.isFunction(parameterValidation) && parameterValidation(parameterValue))
+    return parameterValue;
+
+  if (!_.isUndefined(parameterValue) && _.isFunction(parameterValidation) && !parameterValidation(parameterValue))
+    throw new DistilleryValidationError('Parameter \'' + parameterName + '\' failed validation');
 
   if (!_.isUndefined(parameterValue))
     return parameterValue;
@@ -18,7 +25,7 @@ const generateParameter = (parameterName, parameterRequired, parameterDefault, p
     return parameterDefault;
 
   if (parameterRequired)
-    throw new Error('Required parameter \'' + parameterName + '\' missing from request.');
+    throw new DistilleryValidationError('Required parameter \'' + parameterName + '\' missing from request.');
 
 };
 
