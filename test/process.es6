@@ -2,6 +2,7 @@ const _ = require('lodash');
 const expect = require('expect.js');
 import Distillery from '../lib/distillery';
 import Process from '../lib/process';
+import { DistilleryValidationError } from '../lib/error';
 import * as fixtures from './fixtures';
 
 describe('Process', () => {
@@ -160,6 +161,15 @@ describe('Process', () => {
 
     });
 
+    it('should substitute a parameter if one is passed and validation passes', () => {
+
+      const configuration = process._buildConfiguration({ context: 'user', page: 1 });
+
+      expect(configuration.url).to.contain('page=1');
+      expect(configuration.url).to.contain('context=user');
+
+    });
+
     it('should substitute a default parameter if one is available and no parameter is passed', () => {
 
       const configuration = process._buildConfiguration({ tab: 'home', page: 1 });
@@ -171,6 +181,16 @@ describe('Process', () => {
     it('should throw an error if a required parameter is not passed', () => {
 
       expect(process._buildConfiguration).to.throwError();
+
+    });
+
+    it('should throw a DistilleryValidationError error if validation fails', () => {
+
+      expect(() => process._buildConfiguration({ context: 'mod', page: 1 })).to.throwError((e) => {
+
+        expect(e).to.be.a(DistilleryValidationError);
+
+      });
 
     });
 

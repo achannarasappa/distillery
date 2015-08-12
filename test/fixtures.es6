@@ -90,6 +90,7 @@ const still = {
             context: {
               name: 'context',
               'default': 'user',
+              validate: value => _.contains([ 'user', 'admin' ], value),
             },
           },
           headers: {
