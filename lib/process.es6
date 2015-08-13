@@ -4,11 +4,19 @@ import Expect from './expect';
 import { DistilleryValidationError } from './error';
 
 const generateParameters = (parameterDefinitions, parameterValues) => _(parameterDefinitions)
-    .pairs()
-    .map(([parameterName, parameterDefinition]) => [ parameterDefinition.name, generateParameter(parameterDefinition.name, parameterDefinition.required, parameterDefinition.default, parameterValues[parameterName], parameterDefinition.validate) ])
-    .zipObject()
-    .omit(_.isUndefined)
-    .value();
+  .pairs()
+  .map(([parameterName, parameterDefinition]) => {
+
+    if (_.has(parameterDefinition, 'format'))
+      return [ parameterName, parameterDefinition, parameterDefinition.format(parameterValues[parameterName]) ];
+
+    return [ parameterName, parameterDefinition, parameterValues[parameterName] ];
+
+  })
+  .map(([parameterName, parameterDefinition, parameterValue]) => [ parameterDefinition.name, generateParameter(parameterDefinition.name, parameterDefinition.required, parameterDefinition.default, parameterValue, parameterDefinition.validate) ])
+  .zipObject()
+  .omit(_.isUndefined)
+  .value();
 
 const generateParameter = (parameterName, parameterRequired, parameterDefault, parameterValue, parameterValidation) => {
 
