@@ -79,7 +79,7 @@ describe('Process', () => {
 
     it('should interpolate the url', () => {
 
-      expect(configuration.url).to.be('http://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user');
+      expect(configuration.url).to.be('http://example.com/auctions?show_tab=home&page=10&items={show_items}&context=user');
 
     });
 
@@ -175,6 +175,14 @@ describe('Process', () => {
       const configuration = process._buildConfiguration({ tab: 'home', page: 1 });
 
       expect(configuration.url).to.contain('context=user');
+
+    });
+
+    it('should format a parameter if a format function is defined', () => {
+
+      const configuration = process._buildConfiguration({ tab: 'home', page: 1 });
+
+      expect(configuration.url).to.contain('page=10');
 
     });
 

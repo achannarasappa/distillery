@@ -83,6 +83,7 @@ const still = {
             page: {
               name: 'page',
               required: true,
+              format: value => value * 10,
             },
             items: {
               name: 'show_items',
