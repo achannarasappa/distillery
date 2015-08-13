@@ -224,6 +224,30 @@ Run with `$ node ./example.js`. The username variable can be modified in example
 (*boolean*, *optional*) - If set to true, then an error will be thrown if this variable is not set in the `Distillery(still).distill()` method.
 ##### `process.request.query[<key>].default`  
 (*string*, *optional*) - Default value for the given parameter.
+##### `process.request.query[<key>].validate`  
+(*function*, *optional*) - A `DistilleryValidationError` is thrown when a falsy value is returned from this function.
+##### Example  
+```javascript
+context: {
+  name: 'context',
+  'default': 'user',
+  validate: function(value) {
+    return value === 'user' || value === 'admin';
+  }
+},
+```
+##### `process.request.query[<key>].format`  
+(*function*, *optional*) - Modifies the parameter before running any validation.
+##### Example  
+```javascript
+context: {
+  name: 'context',
+  'default': 'user',
+  format: function(value) {
+    return value * 10;
+  }
+},
+```
 #### `process.request.headers`  
 (*object*, *optional*) - Parameters to be sent as headers. See [Request documentation](https://github.com/request/request#custom-http-headers) of headers for more information. Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
 ##### `process.request.headers[<key>].name`  
