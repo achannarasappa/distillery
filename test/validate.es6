@@ -189,6 +189,243 @@ describe('Validate', () => {
 
   describe('.process', () => {
 
+    it('should return the input if no errors are thrown', () => {
+
+      expect(Validate.process(definitionProcess)).to.eql(definitionProcess);
+
+    });
+
+    it('should throw an error if definition.request is not an object', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: '',
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if definition.request.method is not \'GET\', \'POST\', \'PATCH\', \'PUT\', \'DEL\', or \'HEAD\'', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          method: 'post1'
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.query[<key>].name is not a string', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          query: {
+            test: {
+              name: true
+            }
+          }
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.query[<key>].required is not a boolean or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          query: {
+            test: {
+              name: 'test1',
+              required: 'true',
+            },
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.query[<key>].validate is not a function or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          query: {
+            test: {
+              name: 'test1',
+              validate: true,
+            },
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.query[<key>].format is not a function or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          query: {
+            test: {
+              name: 'test1',
+              format: true,
+            },
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.headers[<key>].name is not a string', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          headers: {
+            test: {
+              name: true
+            }
+          }
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.headers[<key>].required is not a boolean or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          headers: {
+            test: {
+              name: 'test1',
+              required: 'true',
+            },
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.headers[<key>].validate is not a function or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          headers: {
+            test: {
+              name: 'test1',
+              validate: true,
+            },
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.headers[<key>].format is not a function or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          headers: {
+            test: {
+              name: 'test1',
+              format: true,
+            },
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });it('should throw an error if process.request.headers[<key>].name is not a string', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          headers: {
+            test: {
+              name: true
+            }
+          }
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.payload[<key>].required is not a boolean or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          payload: {
+            test: {
+              name: 'test1',
+              required: 'true',
+            },
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.payload[<key>].validate is not a function or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          payload: {
+            test: {
+              name: 'test1',
+              validate: true,
+            },
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.request.payload[<key>].format is not a function or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          payload: {
+            test: {
+              name: 'test1',
+              format: true,
+            },
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if definition.response is not an object', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        response: '',
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
   });
 
 });
