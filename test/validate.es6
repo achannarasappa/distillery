@@ -426,6 +426,98 @@ describe('Validate', () => {
 
     });
 
+    it('should throw an error if definition.response does not have at least one response', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        response: {},
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.response[<key>].indicators is not an object', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        response: {
+          invalid_response: {
+            indicators: false,
+            validate: (indicators) => true,
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if definition.response[<keyA>].indicators does not have at least one indicator', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        response: {
+          valid_response: {
+            indicators: {},
+            validate: (indicators) => true,
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.response[<keyA>].indicators[<keyB>] is not a function', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        response: {
+          valid_response: {
+            indicators: {
+              invalid_indicator: false,
+            },
+            validate: (indicators) => true,
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.response[<keyA>].validate is not a function', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        response: {
+          valid_response: {
+            indicators: {
+              valid_indicator: (response) => true,
+            },
+            validate: false
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if process.response[<keyA>].hook is not a function or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        response: {
+          valid_response: {
+            indicators: {
+              valid_indicator: (response) => true,
+            },
+            validate: (indicators) => true,
+            hook: false
+          },
+        },
+      });
+
+      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
   });
 
 });
