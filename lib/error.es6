@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-class CustomError extends Error {
+class DistilleryError extends Error {
   constructor(message) {
 
     super();
@@ -11,7 +11,7 @@ class CustomError extends Error {
   }
 }
 
-class DistilleryValidationError extends CustomError {
+class DistilleryValidationError extends DistilleryError {
 
   constructor(message) {
 
@@ -21,7 +21,7 @@ class DistilleryValidationError extends CustomError {
 
 }
 
-class DistilleryStillError extends CustomError {
+class DistilleryStillError extends DistilleryError {
 
   constructor(message) {
 
