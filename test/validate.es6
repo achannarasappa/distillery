@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const expect = require('expect.js');
 import * as fixtures from './fixtures';
-import Validate from '../lib/validate';
+import { validateModel, validateProcess } from '../lib/validate';
 import Distillery from '../lib/distillery';
 import { DistilleryStillError } from '../lib/error';
 
@@ -15,7 +15,7 @@ describe('Validate', () => {
 
     it('should return the input if no errors are thrown', () => {
 
-      expect(Validate.model(definitionModel)).to.eql(definitionModel);
+      expect(validateModel(definitionModel)).to.eql(definitionModel);
 
     });
 
@@ -25,7 +25,7 @@ describe('Validate', () => {
         name: {},
       });
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -35,7 +35,7 @@ describe('Validate', () => {
         type: {},
       });
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -45,7 +45,7 @@ describe('Validate', () => {
         type: 'item1',
       });
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -53,7 +53,7 @@ describe('Validate', () => {
 
       const invalidDefinitionModel = _.omit(definitionModel, 'iterate');
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -63,7 +63,7 @@ describe('Validate', () => {
         elements: '',
       });
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -80,8 +80,8 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(Validate.model).withArgs(validDefinitionModel).to.not.throwError();
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(validDefinitionModel).to.not.throwError();
 
     });
 
@@ -95,7 +95,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -109,7 +109,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -132,8 +132,8 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(Validate.model).withArgs(validDefinitionModel).to.not.throwError();
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(validDefinitionModel).to.not.throwError();
 
     });
 
@@ -156,8 +156,8 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(Validate.model).withArgs(validDefinitionModel).to.not.throwError();
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(validDefinitionModel).to.not.throwError();
 
     });
 
@@ -168,8 +168,8 @@ describe('Validate', () => {
       });
       const validDefinitionModel = _.omit(definitionModel, 'validate');
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(Validate.model).withArgs(validDefinitionModel).to.not.throwError();
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(validDefinitionModel).to.not.throwError();
 
     });
 
@@ -180,8 +180,8 @@ describe('Validate', () => {
       });
       const validDefinitionModel = _.omit(definitionModel, 'format');
 
-      expect(Validate.model).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(Validate.model).withArgs(validDefinitionModel).to.not.throwError();
+      expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateModel).withArgs(validDefinitionModel).to.not.throwError();
 
     });
 
@@ -191,7 +191,7 @@ describe('Validate', () => {
 
     it('should return the input if no errors are thrown', () => {
 
-      expect(Validate.process(definitionProcess)).to.eql(definitionProcess);
+      expect(validateProcess(definitionProcess)).to.eql(definitionProcess);
 
     });
 
@@ -201,7 +201,7 @@ describe('Validate', () => {
         request: '',
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -213,7 +213,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -229,7 +229,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -246,7 +246,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -263,7 +263,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -280,7 +280,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -296,7 +296,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -313,7 +313,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -330,7 +330,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -347,7 +347,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });it('should throw an error if process.request.headers[<key>].name is not a string', () => {
 
@@ -361,7 +361,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -378,7 +378,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -395,7 +395,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -412,7 +412,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -422,7 +422,7 @@ describe('Validate', () => {
         response: '',
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -432,7 +432,7 @@ describe('Validate', () => {
         response: {},
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -447,7 +447,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -462,7 +462,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -479,7 +479,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -496,7 +496,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -514,7 +514,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(Validate.process).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
