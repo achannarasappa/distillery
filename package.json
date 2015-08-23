@@ -4,8 +4,10 @@
   "description": "200 proof web scraping",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive",
-    "code-style": "jscs . | grep -qi \"No code style errors found\" && exit 0 || exit 1"
+    "compile": "./node_modules/babel/bin/babel.js ./ --out-dir ./ -x .es6",
+    "test": "./node_modules/mocha/bin/mocha --recursive",
+    "style": "./node_modules/jscs/bin/jscs .",
+    "prepublish": "npm run compile"
   },
   "repository": {
     "type": "git",
@@ -32,7 +34,7 @@
     "cli-table": "^0.3.1",
     "commander": "^2.6.0",
     "commander-coercions": "^0.3.0",
-    "lodash": "^2.4.1",
+    "lodash": "^3.10.0",
     "q": "^1.1.2",
     "request-promise": "^0.4.0"
   },
@@ -41,11 +43,14 @@
   },
   "pre-commit": [
     "test",
-    "code-style"
+    "style"
   ],
   "devDependencies": {
+    "babel": "^5.8.21",
     "expect.js": "^0.3.1",
+    "jscs": "^2.0.0",
     "mocha": "^2.1.0",
-    "pre-commit": "^1.0.2"
+    "pre-commit": "^1.0.2",
+    "strip-ansi": "^3.0.0"
   }
 }
