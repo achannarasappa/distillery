@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const cheerio = require('cheerio');
+import { validateModel } from './validate';
 
 const parseElement = (element, $) => {
 
@@ -39,7 +40,7 @@ class Model {
 
     this.options = options;
 
-    if (validateDefinition(definition))
+    if (validateModel(definition))
       _.extend(this, definition)
 
   }
@@ -93,39 +94,5 @@ class Model {
   }
 
 }
-
-const validateDefinition = (definition) => {
-
-  if (!_.isObject(definition))
-    throw new Error('Model definition is ' + (typeof definition) + ' expecting object.');
-
-  if (!_.isString(definition.type))
-    throw new Error('Model definition.type is ' + (typeof definition.type) + ' expecting string.');
-
-  if (!_.isString(definition.name))
-    throw new Error('Model definition.name is ' + (typeof definition.name) + ' expecting string.');
-
-  if (definition.type.toLowerCase() !== 'collection' && definition.type.toLowerCase() !== 'item')
-    throw new Error('Model definition.type expects \'collection\' or \'item\'.');
-
-  if (definition.type.toLowerCase() === 'collection' && !_.isString(definition.iterate))
-    throw new Error('Model definition.iterate is ' + (typeof definition.iterate) + ' expecting string for collections.');
-
-  if (!_.isObject(definition.elements))
-    throw new Error('Model definition.elements is ' + (typeof definition.elements) + ' expecting object.');
-
-  _.forOwn(definition.elements, function(element, key) {
-
-    if (!_.isString(element) && !_.isPlainObject(element) && !_.isFunction(element))
-      throw new Error('Model definition.elements.' + key + ' is ' + (typeof element) + ' expecting object, string, or function.');
-
-    if (_.isPlainObject(element) && !_.isString(element.path))
-      throw new Error('Model definition.elements.' + key + '.path is ' + (typeof element.attr) + ' expecting string.');
-
-  });
-
-  return true;
-
-};
 
 export default Model;
