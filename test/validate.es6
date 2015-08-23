@@ -1,17 +1,18 @@
 const _ = require('lodash');
 const expect = require('expect.js');
 import * as fixtures from './fixtures';
-import { validateModel, validateProcess } from '../lib/validate';
+import { validateModel, validateProcess, validateStill } from '../lib/validate';
 import Distillery from '../lib/distillery';
 import { DistilleryStillError } from '../lib/error';
 
 describe('Validate', () => {
 
   const distillery = new Distillery(fixtures.still.auctions);
-  const definitionProcess = distillery.still.process;
-  const definitionModel = distillery.still.models[0];
+  const definitionStill = _.clone(distillery.still);
+  const definitionProcess = _.clone(distillery.still.process);
+  const definitionModel = _.clone(distillery.still.models[0]);
 
-  describe('.model', () => {
+  describe('.validateModel', () => {
 
     it('should return the input if no errors are thrown', () => {
 
@@ -187,7 +188,7 @@ describe('Validate', () => {
 
   });
 
-  describe('.process', () => {
+  describe('.validateProcess', () => {
 
     it('should return the input if no errors are thrown', () => {
 
@@ -519,5 +520,23 @@ describe('Validate', () => {
     });
 
   });
+
+  describe('.validateStill', () => {
+
+    it('should return the still if validation of individual components pass', () => {
+
+      const invalidDefinitionStill = _.merge({}, definitionStill, {
+        process: {
+          response: false
+        },
+      });
+
+      expect(validateStill(definitionStill)).to.eql(definitionStill);
+      expect(validateStill).withArgs(definitionStill).to.not.throwError();
+      expect(validateStill).withArgs(invalidDefinitionStill).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+  })
 
 });

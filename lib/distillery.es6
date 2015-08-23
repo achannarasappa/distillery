@@ -2,6 +2,7 @@ const _ = require('lodash');
 import Model from './model';
 import Process from './process';
 import Expect from './expect';
+import { validateStill } from './validate';
 
 const parseModels = (html, models) => _.map(models, (model) => model.parse(html));
 
@@ -13,7 +14,7 @@ class Distillery {
       throw new Error('Unable run distillery with out a still.');
 
     this.options = options;
-    this.still = still(this);
+    this.still = validateStill(still(this));
 
   }
 

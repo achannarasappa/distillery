@@ -119,4 +119,9 @@ const validateProcess = (definition) => {
 
 };
 
-export { validateModel, validateProcess };
+const validateStill = (still) => ({
+  process: validateProcess(still.process),
+  models: _.map(still.models, validateModel),
+});
+
+export { validateModel, validateProcess, validateStill };
