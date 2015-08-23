@@ -43,7 +43,7 @@
   },
   "pre-commit": [
     "test",
-    "code-style"
+    "style"
   ],
   "devDependencies": {
     "babel": "^5.8.21",
