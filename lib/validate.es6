@@ -61,63 +61,62 @@ const validateProcessResponse = (responseValue) => {
 
 };
 
-const Validate = {
-  model: (definition) => {
+const validateModel = (definition) => {
 
-    if (!_.isString(definition.name))
-      throw new DistilleryStillError('');
+  if (!_.isString(definition.name))
+    throw new DistilleryStillError('');
 
-    if (!_.isString(definition.type))
-      throw new DistilleryStillError('');
+  if (!_.isString(definition.type))
+    throw new DistilleryStillError('');
 
-    if (!_.includes([ 'collection', 'item' ], definition.type))
-      throw new DistilleryStillError('');
+  if (!_.includes([ 'collection', 'item' ], definition.type))
+    throw new DistilleryStillError('');
 
-    if (definition.type === 'collection' && !_.isString(definition.iterate))
-      throw new DistilleryStillError('');
+  if (definition.type === 'collection' && !_.isString(definition.iterate))
+    throw new DistilleryStillError('');
 
-    if (!_.isPlainObject(definition.elements))
-      throw new DistilleryStillError('');
+  if (!_.isPlainObject(definition.elements))
+    throw new DistilleryStillError('');
 
-    _.mapValues(definition.elements, validateModelElement);
+  _.mapValues(definition.elements, validateModelElement);
 
-    if (!_.isFunction(definition.validate) && !_.isUndefined(definition.validate))
-      throw new DistilleryStillError('');
+  if (!_.isFunction(definition.validate) && !_.isUndefined(definition.validate))
+    throw new DistilleryStillError('');
 
-    if (!_.isFunction(definition.format) && !_.isUndefined(definition.format))
-      throw new DistilleryStillError('');
+  if (!_.isFunction(definition.format) && !_.isUndefined(definition.format))
+    throw new DistilleryStillError('');
 
-    return definition;
+  return definition;
 
-  },
-  process: (definition) => {
-
-    if (!_.isPlainObject(definition.request))
-      throw new DistilleryStillError('');
-
-    if (!_.includes([ 'get', 'head', 'post', 'put', 'patch', 'del' ], definition.request.method.toLowerCase()))
-      throw new DistilleryStillError('');
-
-    if (_.has(definition.request, 'query'))
-      _.mapValues(definition.request.query, validateProcessParameter);
-
-    if (_.has(definition.request, 'headers'))
-      _.mapValues(definition.request.headers, validateProcessParameter);
-
-    if (_.has(definition.request, 'payload'))
-      _.mapValues(definition.request.payload, validateProcessParameter);
-
-    if (!_.isPlainObject(definition.response))
-      throw new DistilleryStillError('');
-
-    if (_.keys(definition.response).length < 1)
-      throw new DistilleryStillError('');
-
-    _.mapValues(definition.response, validateProcessResponse);
-
-    return definition;
-
-  },
 };
 
-export default Validate;
+const validateProcess = (definition) => {
+
+  if (!_.isPlainObject(definition.request))
+    throw new DistilleryStillError('');
+
+  if (!_.includes([ 'get', 'head', 'post', 'put', 'patch', 'del' ], definition.request.method.toLowerCase()))
+    throw new DistilleryStillError('');
+
+  if (_.has(definition.request, 'query'))
+    _.mapValues(definition.request.query, validateProcessParameter);
+
+  if (_.has(definition.request, 'headers'))
+    _.mapValues(definition.request.headers, validateProcessParameter);
+
+  if (_.has(definition.request, 'payload'))
+    _.mapValues(definition.request.payload, validateProcessParameter);
+
+  if (!_.isPlainObject(definition.response))
+    throw new DistilleryStillError('');
+
+  if (_.keys(definition.response).length < 1)
+    throw new DistilleryStillError('');
+
+  _.mapValues(definition.response, validateProcessResponse);
+
+  return definition;
+
+};
+
+export { validateModel, validateProcess };
