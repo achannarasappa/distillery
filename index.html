@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Distillery by achannarasappa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Distillery</h1>
+      <h2 class="project-tagline">200 proof web scraping</h2>
+      <a href="https://github.com/achannarasappa/distillery" class="btn">View on GitHub</a>
+      <a href="https://github.com/achannarasappa/distillery/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/achannarasappa/distillery/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="distillery" class="anchor" href="#distillery" aria-hidden="true"><span class="octicon octicon-link"></span></a>Distillery</h1>
+
+<p>200 proof web scraping</p>
+
+<h2>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<p>Build simple and maintainable web scrapers through configuration over code.
+Create one configuration file that contains instructions for making a single HTTP request and how to distill the returned html into easily consumable objects.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<pre><code>npm install distillery-js --save
+</code></pre>
+
+<h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h2>
+
+<h4>
+<a id="distillerystill-options" class="anchor" href="#distillerystill-options" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>Distillery(still, options)</code>
+</h4>
+
+<ul>
+<li>arguments
+
+<ul>
+<li>
+<code>still</code> (<em>function</em>) - Distillery still. Refer to the <a href="#stills">still section</a> for further information.</li>
+<li>
+<code>options</code> (<em>object</em>) - Set distillery options
+
+<ul>
+<li>
+<code>options.jar</code> (<em>object</em>) - <a href="https://github.com/request/request#requestjar">request cookie jar</a>, pass a jar from previous distill to reuse the same cookie.</li>
+<li>
+<code>options.requestOptions</code> (<em>object</em>) - <a href="https://github.com/request/request#requestoptions-callback">request options object</a>, pass any options directly to request. Request options normally used by Distillery will be filled in as defaults if not supplied through the options object.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>returns 
+
+<ul>
+<li>
+<code>distillery</code> instance of Distillery</li>
+</ul>
+</li>
+</ul>
+
+<h4>
+<a id="distillerydistillparameters-returnresponse" class="anchor" href="#distillerydistillparameters-returnresponse" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>distillery.distill(parameters, returnResponse)</code>
+</h4>
+
+<ul>
+<li>arguments
+
+<ul>
+<li>
+<code>parameters</code> (<em>object</em>, <em>optional</em>) - Parameters that modify the request. These would have been set in the <code>query</code>, <code>headers</code>, or <code>form</code> section of the still. An error will be thrown if any parameters with the required attribute are not set. The keys of this object should match the keys in the <code>query</code>, <code>headers</code>, or <code>form</code> objects.</li>
+<li>
+<code>returnResponse</code> (<em>boolean</em>, <em>optional</em>) - Override all logic for interpreting the response and return the <a href="https://nodejs.org/api/http.html#http_http_incomingmessage">response object</a>
+</li>
+</ul>
+</li>
+<li>returns 
+
+<ul>
+<li>
+<code>Promise&lt;response object&gt;</code> if returnResponse is set to <code>true</code>
+</li>
+<li>
+<code>Promise&lt;response object&gt;</code> if any error is returned. The <code>response.error</code> will be set along with the rest of the <a href="https://nodejs.org/api/http.html#http_http_incomingmessage">response object</a>.</li>
+<li>
+<code>Promise&lt;any&gt;</code> if the still has the <code>process.response[&lt;key&gt;].hook</code> set, this function will be run and the and the promise will be resolved with the return of this function.</li>
+<li>
+<code>Promise&lt;response object&gt;</code> if the <code>process.response[&lt;key&gt;].hook</code> and the <code>models</code> keys are not set in the still</li>
+<li>
+<code>Promise&lt;models object&gt;</code> if the <code>process.response[&lt;key&gt;].hook</code> is not set but the <code>models</code> is set, an array of data parsed by the models will be returned. This is the same data would would be returned by running <code>distillery.parse(html)</code> directly.</li>
+</ul>
+</li>
+</ul>
+
+<h4>
+<a id="distilleryparsehtml" class="anchor" href="#distilleryparsehtml" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>distillery.parse(html)</code>
+</h4>
+
+<ul>
+<li>arguments
+
+<ul>
+<li>
+<code>html</code> (<em>string</em>, <em>required</em>) - Utility function to parse any HTML and attempt to extract the data detailed in the models section of the still.</li>
+</ul>
+</li>
+<li>returns 
+
+<ul>
+<li>
+<code>&lt;Array&gt;</code> The result of any models that were able to be parsed from the HTML.</li>
+</ul>
+</li>
+</ul>
+
+<h5>
+<a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">// still.js</span>
+<span class="pl-c1">module</span>.<span class="pl-en">exports</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">distillery</span>) {
+  <span class="pl-k">return</span> {
+    process<span class="pl-k">:</span> {
+      ...
+    },
+    models<span class="pl-k">:</span> [
+      {
+        name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>postings<span class="pl-pds">'</span></span>,
+        type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>collection<span class="pl-pds">'</span></span>,
+        elements<span class="pl-k">:</span> {
+          title<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>td.title<span class="pl-pds">'</span></span>,
+          id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>td.postingID &gt; small<span class="pl-pds">'</span></span>
+        },
+        iterate<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>html &gt; div<span class="pl-pds">'</span></span>,
+      },
+      {
+        name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>page<span class="pl-pds">'</span></span>,
+        type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>item<span class="pl-pds">'</span></span>,
+        elements<span class="pl-k">:</span> {
+          current<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>.current_page<span class="pl-pds">'</span></span>,
+          last<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>.last_page<span class="pl-pds">'</span></span>
+        }
+      }
+    ]
+  }
+};
+
+<span class="pl-c">// test.js</span>
+<span class="pl-k">var</span> Distillery <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>distillery-js<span class="pl-pds">'</span></span>)
+<span class="pl-k">var</span> still <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>./still.js<span class="pl-pds">'</span></span>)
+
+<span class="pl-en">console</span><span class="pl-c1">.log</span>(<span class="pl-c1">Distillery</span>(still).<span class="pl-c1">parse</span>(html))</pre></div>
+
+<div class="highlight highlight-sh"><pre>$ node <span class="pl-c1">test</span>.js
+[
+    {
+        current: 1,
+        last: 10
+    },
+    [
+        {
+            id: 100
+            title: <span class="pl-s"><span class="pl-pds">'</span>A post title<span class="pl-pds">'</span></span>
+        },
+        {
+            id: 101
+            title: <span class="pl-s"><span class="pl-pds">'</span>Another post title<span class="pl-pds">'</span></span>
+        },
+        {
+            id: 102
+            title: <span class="pl-s"><span class="pl-pds">'</span>One more post title<span class="pl-pds">'</span></span>
+        }
+    ]
+]</pre></div>
+
+<h4>
+<a id="distilleryexpecthttp_codecode" class="anchor" href="#distilleryexpecthttp_codecode" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>distillery.expect.http_code(code)</code>
+</h4>
+
+<p>The <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP code</a> to expect the response to contain.</p>
+
+<ul>
+<li>arguments
+
+<ul>
+<li>
+<code>code</code> (<em>integer</em>, <em>required</em>) - The HTTP to expect the response to contain</li>
+</ul>
+</li>
+<li>returns
+
+<ul>
+<li>
+<code>true</code> if HTTP response code matches <code>code</code> exactly</li>
+<li>
+<code>false</code> if HTTP response code does not match <code>code</code> exactly</li>
+</ul>
+</li>
+</ul>
+
+<h4>
+<a id="distilleryexpecturlurl" class="anchor" href="#distilleryexpecturlurl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>distillery.expect.url(url)</code>
+</h4>
+
+<ul>
+<li>arguments
+
+<ul>
+<li>
+<code>url</code> (<em>string</em> or <em>regex</em>, <em>required</em>) - A string or regex pattern to match the final url against</li>
+</ul>
+</li>
+<li>returns
+
+<ul>
+<li>
+<code>true</code> if <code>url</code> is a string and final url matches <code>url</code> exactly</li>
+<li>
+<code>true</code> if <code>url</code> is a regex and final url matches the regex <code>url</code>
+</li>
+<li>
+<code>false</code> if final url does not match <code>url</code> exactly</li>
+</ul>
+</li>
+</ul>
+
+<h4>
+<a id="distilleryexpecthtml_elementpath-expected" class="anchor" href="#distilleryexpecthtml_elementpath-expected" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>distillery.expect.html_element(path, expected)</code>
+</h4>
+
+<ul>
+<li>arguments<br>
+
+<ul>
+<li>
+<code>path</code> (<em>string</em>) - CSS path to an HTML element.</li>
+<li>
+<code>expected</code> (<em>string</em> or <em>regex</em>, <em>optional</em>) - If expected is not set, the function will return the contents of the element at the CSS path if found or false is not found. If expected is a string, the fuction will return true if the inner text of the element at the path matches</li>
+</ul>
+</li>
+<li>returns
+
+<ul>
+<li>
+<code>&lt;html element inner text&gt;</code> if expected is not set and the element at the CSS path exists in the html document. This response allows for any customer validation logic to be performed in <code>process.response[&lt;key&gt;].validate</code>.</li>
+<li>
+<code>true</code> if <code>expected</code> is a regex, the element at the CSS path exists in the html document, and the <code>expected</code> regex pattern matches the inner text of that element</li>
+<li>
+<code>true</code> if <code>expected</code> is a string, the element at the CSS path exists in the html document, and the <code>expected</code> string matches the inner text of that element exactly</li>
+<li>
+<code>false</code> if the contents of the element at the CSS path does not exists in the html document</li>
+<li>
+<code>false</code> if <code>expected</code> is a regex, the element at the CSS path exists in the html document, and the regex pattern does not match the inner text of the element</li>
+<li>
+<code>false</code> if <code>expected</code> is a string, the element at the CSS path exists in the html document, and the <code>expected</code> string does not match the inner text of that element exactly </li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="ignite-cli" class="anchor" href="#ignite-cli" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ignite CLI</h2>
+
+<h3>
+<a id="overview-1" class="anchor" href="#overview-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h3>
+
+<p>The purpose of the Ignite command line interface is to make testing stills quicker and simpler. Ignite allows stills to be run from the command line with detailed output to assist developers.</p>
+
+<h3>
+<a id="installation-1" class="anchor" href="#installation-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<pre><code>npm install distillery-js -g
+</code></pre>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<pre><code>$ distillery ignite &lt;stillPath&gt; [-o &lt;option&gt;...] [-p &lt;parameter&gt;...]
+</code></pre>
+
+<h4>
+<a id="stillpath" class="anchor" href="#stillpath" aria-hidden="true"><span class="octicon octicon-link"></span></a>stillPath</h4>
+
+<p>The relative path to the still file</p>
+
+<h4>
+<a id="option" class="anchor" href="#option" aria-hidden="true"><span class="octicon octicon-link"></span></a>option</h4>
+
+<p>Set distillery CLI options which are detailed below. All model options have default values shown while process options have no defaults.</p>
+
+<ul>
+<li>Process
+
+<ul>
+<li>
+<code>-o save_html=response.html</code> - Save HTML document to response.html</li>
+<li>
+<code>-o save_cookie=response.cookie</code> - Save cookie set in the response to response.cookie</li>
+<li>
+<code>-o restore_cookie=request.cookie</code> - Use cookie saved in request.cookie when making the request</li>
+</ul>
+</li>
+<li>Models
+
+<ul>
+<li>
+<code>-o table=true</code> - Display detailed entities and properties</li>
+<li>
+<code>-o table_item_count=10</code> - Number of items to display in the table of entities.</li>
+<li>
+<code>-o item_max_length=50</code> - Number of characters after which to truncate an entity's property</li>
+<li>
+<code>-o item_format=false</code> - Apply the model's <code>format</code> function to the entities, by default, the raw data returned without any custom formatting will be returned</li>
+</ul>
+</li>
+</ul>
+
+<h4>
+<a id="parameter" class="anchor" href="#parameter" aria-hidden="true"><span class="octicon octicon-link"></span></a>parameter</h4>
+
+<p>Set any parameters defined in the still's <code>process.request.query</code>, <code>process.request.headers</code>, or <code>process.request.form</code> section that would be normally set in the <code>.distill</code> method of the programmatic API. Parameters should follow the format of <code>-p &lt;name&gt;=&lt;value&gt;</code></p>
+
+<h5>
+<a id="example-1" class="anchor" href="#example-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<pre><code>$ distillery ignite ./still.js -p id=4809527167
+</code></pre>
+
+<h2>
+<a id="stills" class="anchor" href="#stills" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stills</h2>
+
+<p>Stills are the configuration object that defines how to retrieve and extract data from a web page. A still is a function that returns an object with a specific structure shown here:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c1">module</span>.<span class="pl-en">exports</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">distillery</span>) {
+  <span class="pl-k">return</span> {
+    process<span class="pl-k">:</span> {
+      request<span class="pl-k">:</span> {
+        ...
+      },
+      response<span class="pl-k">:</span> {
+        ...
+      }
+    },
+    models<span class="pl-k">:</span> [
+      ...
+    ]
+  }
+};</pre></div>
+
+<h4>
+<a id="process" class="anchor" href="#process" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process</code>
+</h4>
+
+<p>(<code>object</code>, <code>required</code>) - The prcocess object contains the definition for how to make the HTTP request and how to handle the response.</p>
+
+<h4>
+<a id="processrequest" class="anchor" href="#processrequest" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request</code>
+</h4>
+
+<p>(<code>object</code>, <code>required</code>) - Data detailing how to complete a HTTP request.</p>
+
+<h4>
+<a id="processrequesturl" class="anchor" href="#processrequesturl" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.url</code>
+</h4>
+
+<p>(<code>string</code>, <code>required</code>) - URL string which may contain tokenized variables. See token section below for more information.  </p>
+
+<h4>
+<a id="tokens" class="anchor" href="#tokens" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tokens</h4>
+
+<p>Tokens are placeholders for variables in the <code>process.request.url</code> that can be passed into a still to modify the request. Tokens are encapsulated by <code>{</code> and <code>}</code> in the url string. These can be used to make use of the same still for multiple similar requests.</p>
+
+<h5>
+<a id="example-2" class="anchor" href="#example-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<p>In this example a GitHub username is passed into the distillery instance to save the profile page of a user. The username can be modified in the example.js script to scrape any user's profile.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">// still.js</span>
+<span class="pl-c1">module</span>.<span class="pl-en">exports</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">distillery</span>) {
+  <span class="pl-k">return</span> {
+    process<span class="pl-k">:</span> {
+      request<span class="pl-k">:</span> {
+        method<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>GET<span class="pl-pds">'</span></span>,
+        url<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>https://github.com/{un}<span class="pl-pds">'</span></span>,
+        query<span class="pl-k">:</span> 
+            username<span class="pl-k">:</span> { name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>un<span class="pl-pds">'</span></span>, required<span class="pl-k">:</span> <span class="pl-c1">true</span> }
+      }
+  }
+};
+<span class="pl-c">// example.js</span>
+<span class="pl-k">var</span> Distillery <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>distillery-js<span class="pl-pds">'</span></span>)
+<span class="pl-k">var</span> still <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>./still.js<span class="pl-pds">'</span></span>)
+<span class="pl-k">var</span> fs <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>fs<span class="pl-pds">'</span></span>)
+
+<span class="pl-c1">Distillery</span>(still)
+  .<span class="pl-c1">distill</span>({ username<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>achannarasappa<span class="pl-pds">'</span></span> })
+  .<span class="pl-c1">then</span>(<span class="pl-k">function</span>(<span class="pl-smi">html</span>) {
+    fs.<span class="pl-c1">writeFileSync</span>(<span class="pl-s"><span class="pl-pds">'</span>user.html<span class="pl-pds">'</span></span>, html)
+  })</pre></div>
+
+<p>Run with <code>$ node ./example.js</code>. The username variable can be modified in example.js to scrape the profile page of any github user.</p>
+
+<h4>
+<a id="processrequestmethod" class="anchor" href="#processrequestmethod" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.method</code>
+</h4>
+
+<p>(<em>string</em>, <em>required</em>) - The HTTP verb which may be <code>GET</code>, <code>POST</code>, <code>PUT</code>, or <code>DELETE</code>  </p>
+
+<h4>
+<a id="processrequestquery" class="anchor" href="#processrequestquery" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.query</code>
+</h4>
+
+<p>(<em>object</em>, <em>optional</em>) - Parameters to be interpolated with url tokens. Object key refers to the name that can be used to set the parameter in the <code>Distillery(still).distill()</code> method.  </p>
+
+<h5>
+<a id="processrequestquerykeyname" class="anchor" href="#processrequestquerykeyname" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.query[&lt;key&gt;].name</code>
+</h5>
+
+<p>(<em>string</em>, <em>required</em>) - Name of the token in the url string.</p>
+
+<h5>
+<a id="processrequestquerykeyrequired" class="anchor" href="#processrequestquerykeyrequired" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.query[&lt;key&gt;].required</code>
+</h5>
+
+<p>(<em>boolean</em>, <em>optional</em>) - If set to true, then an error will be thrown if this variable is not set in the <code>Distillery(still).distill()</code> method.</p>
+
+<h5>
+<a id="processrequestquerykeydefault" class="anchor" href="#processrequestquerykeydefault" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.query[&lt;key&gt;].default</code>
+</h5>
+
+<p>(<em>string</em>, <em>optional</em>) - Default value for the given parameter.</p>
+
+<h5>
+<a id="processrequestquerykeyvalidate" class="anchor" href="#processrequestquerykeyvalidate" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.query[&lt;key&gt;].validate</code>
+</h5>
+
+<p>(<em>function</em>, <em>optional</em>) - A <code>DistilleryValidationError</code> is thrown when a falsy value is returned from this function.</p>
+
+<h5>
+<a id="example-3" class="anchor" href="#example-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<div class="highlight highlight-javascript"><pre>context<span class="pl-k">:</span> {
+  name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>context<span class="pl-pds">'</span></span>,
+  <span class="pl-s"><span class="pl-pds">'</span>default<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>user<span class="pl-pds">'</span></span>,
+  <span class="pl-en">validate</span><span class="pl-k">:</span> <span class="pl-k">function</span>(<span class="pl-smi">value</span>) {
+    <span class="pl-k">return</span> value <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>user<span class="pl-pds">'</span></span> <span class="pl-k">||</span> value <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>admin<span class="pl-pds">'</span></span>;
+  }
+},</pre></div>
+
+<h5>
+<a id="processrequestquerykeyformat" class="anchor" href="#processrequestquerykeyformat" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.query[&lt;key&gt;].format</code>
+</h5>
+
+<p>(<em>function</em>, <em>optional</em>) - Modifies the parameter before running any validation.</p>
+
+<h5>
+<a id="example-4" class="anchor" href="#example-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<div class="highlight highlight-javascript"><pre>context<span class="pl-k">:</span> {
+  name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>context<span class="pl-pds">'</span></span>,
+  <span class="pl-s"><span class="pl-pds">'</span>default<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>user<span class="pl-pds">'</span></span>,
+  <span class="pl-en">format</span><span class="pl-k">:</span> <span class="pl-k">function</span>(<span class="pl-smi">value</span>) {
+    <span class="pl-k">return</span> value <span class="pl-k">*</span> <span class="pl-c1">10</span>;
+  }
+},</pre></div>
+
+<h4>
+<a id="processrequestheaders" class="anchor" href="#processrequestheaders" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.headers</code>
+</h4>
+
+<p>(<em>object</em>, <em>optional</em>) - Parameters to be sent as headers. See <a href="https://github.com/request/request#custom-http-headers">Request documentation</a> of headers for more information. Object key refers to the name that can be used to set the parameter in the <code>Distillery(still).distill()</code> method.  </p>
+
+<h5>
+<a id="processrequestheaderskeyname" class="anchor" href="#processrequestheaderskeyname" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.headers[&lt;key&gt;].name</code>
+</h5>
+
+<p>(<em>string</em>, <em>required</em>) - Name of the <a href="http://en.wikipedia.org/wiki/List_of_HTTP_header_fields">http header</a>.</p>
+
+<h5>
+<a id="processrequestheaderskeyrequired" class="anchor" href="#processrequestheaderskeyrequired" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.headers[&lt;key&gt;].required</code>
+</h5>
+
+<p>See <code>process.request.query[&lt;key&gt;].required</code>.</p>
+
+<h5>
+<a id="processrequestheaderskeydefault" class="anchor" href="#processrequestheaderskeydefault" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.headers[&lt;key&gt;].default</code>
+</h5>
+
+<p>See <code>process.request.query[&lt;key&gt;].default</code>.</p>
+
+<h4>
+<a id="processrequestpayload" class="anchor" href="#processrequestpayload" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.payload</code>
+</h4>
+
+<p>(<em>object</em>, <em>optional</em>) - Send request data as <code>application/x-www-form-urlencoded</code>. See <a href="https://github.com/request/request#forms">Request documentation</a> on forms for more information.  Object key refers to the name that can be used to set the parameter in the <code>Distillery(still).distill()</code> method.  </p>
+
+<h5>
+<a id="processrequestpayloadkeyname" class="anchor" href="#processrequestpayloadkeyname" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.payload[&lt;key&gt;].name</code>
+</h5>
+
+<p>(<em>string</em>, <em>required</em>) - Name of the form parameter.</p>
+
+<h5>
+<a id="processrequestpayloadkeyrequired" class="anchor" href="#processrequestpayloadkeyrequired" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.payload[&lt;key&gt;].required</code>
+</h5>
+
+<p>See <code>process.request.query[&lt;key&gt;].required</code>.</p>
+
+<h5>
+<a id="processrequestpayloadkeydefault" class="anchor" href="#processrequestpayloadkeydefault" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.request.payload[&lt;key&gt;].default</code>
+</h5>
+
+<p>See <code>process.request.query[&lt;key&gt;].default</code>.</p>
+
+<h4>
+<a id="processresponse" class="anchor" href="#processresponse" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.response</code>
+</h4>
+
+<p>Hooks, validators, and indicators to handle a HTTP response. Each sub-object is a potential response condition. This allows for handling 404 Not Found response differently from a 200 OK response.</p>
+
+<h4>
+<a id="processresponsekeyindicators" class="anchor" href="#processresponsekeyindicators" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.response[&lt;key&gt;].indicators</code>
+</h4>
+
+<p>(<em>object</em>, <em>required</em>) - List conditions to look for that would indicate this specific response was returned from the server. Each sub-key is a user-assigned name for the indicator. There are a set of indicator that can be used detailed below. Which combination or combinations of indicators constitues a specific response is in the <a href="#processresponsekeyvalidate"><code>process.response[&lt;key&gt;].validate</code></a> function.</p>
+
+<h5>
+<a id="indicators" class="anchor" href="#indicators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Indicators</h5>
+
+<p>Indicators are used to recognize if a particular response was returned. They are key value pairs where the keys are the name of the indicator and the value is an expected value in the HTTP response. There are three signatures that can be detected with distillery:</p>
+
+<ul>
+<li><a href="#distilleryexpecthttp_codecode">A specifc HTTP response code</a></li>
+<li><a href="#distilleryexpecturlurl">A specifc url or url pattern after redirects</a></li>
+<li><a href="#distilleryexpecturlurl">A HTML element present on the page</a></li>
+<li>Custom indicator function</li>
+</ul>
+
+<h5>
+<a id="example-5" class="anchor" href="#example-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<p>The first two indicators are included with distillery. The last indicator is a user defined indicator that should return true or false.</p>
+
+<div class="highlight highlight-javascript"><pre>...
+  indicators<span class="pl-k">:</span> {
+    success_url<span class="pl-k">:</span> distillery.<span class="pl-c1">expect</span>.<span class="pl-c1">url</span>(<span class="pl-s"><span class="pl-pds">'</span>https://github.com/<span class="pl-pds">'</span></span>),
+    success_code<span class="pl-k">:</span> distillery.<span class="pl-c1">expect</span>.<span class="pl-c1">http_code</span>(<span class="pl-c1">200</span>),
+    <span class="pl-en">success_custom</span><span class="pl-k">:</span> <span class="pl-k">function</span>(<span class="pl-smi">response</span>) {
+        <span class="pl-k">return</span> (response.<span class="pl-c1">statusMessage</span> <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>Not found<span class="pl-pds">'</span></span>)
+    }
+  },
+...</pre></div>
+
+<h4>
+<a id="processresponsekeyvalidate" class="anchor" href="#processresponsekeyvalidate" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.response[&lt;key&gt;].validate</code>
+</h4>
+
+<p>(<em>function</em>, <em>required</em>) - Used to determine which response was returned from the the request. The result of each indicator can be used in this function to evaluate if the response is valid. If there are multiple responses that have validation functions that evaluate to true, the first response will be chosen.</p>
+
+<ul>
+<li>arguments
+
+<ul>
+<li>
+<code>indicators</code> (<em>object</em>) - Object with the same keys as defined in <a href="#processresponsekeyindicators">response indicators</a>. The values of these keys will be either a boolean or string depending on the indictor.</li>
+</ul>
+</li>
+</ul>
+
+<h5>
+<a id="example-6" class="anchor" href="#example-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<p>In the <code>profile_success</code> response, there are two indicators that will be evaluated, <code>success_url</code> and <code>success_code</code>. If the validate function returns true, the hook for this response will be triggered.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-c">// still.js</span>
+<span class="pl-c1">module</span>.<span class="pl-en">exports</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">distillery</span>) {
+  <span class="pl-k">return</span> {
+    process<span class="pl-k">:</span> {
+      request<span class="pl-k">:</span> {
+        method<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>GET<span class="pl-pds">'</span></span>,
+        url<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>https://github.com/{un}<span class="pl-pds">'</span></span>,
+        query<span class="pl-k">:</span> 
+            username<span class="pl-k">:</span> { name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>un<span class="pl-pds">'</span></span>, required<span class="pl-k">:</span> <span class="pl-c1">true</span> }
+      },
+      response<span class="pl-k">:</span> {
+        profile_success<span class="pl-k">:</span> {
+          indicators<span class="pl-k">:</span> {
+            success_url<span class="pl-k">:</span> distillery.<span class="pl-c1">expect</span>.<span class="pl-c1">url</span>(<span class="pl-s"><span class="pl-pds">'</span>https://github.com/<span class="pl-pds">'</span></span>),
+            success_code<span class="pl-k">:</span> distillery.<span class="pl-c1">expect</span>.<span class="pl-c1">http_code</span>(<span class="pl-c1">200</span>)
+          },
+          <span class="pl-en">validate</span><span class="pl-k">:</span> <span class="pl-k">function</span>(<span class="pl-smi">indicators</span>) {
+            <span class="pl-k">return</span> (indicators.<span class="pl-c1">success_code</span> <span class="pl-k">&amp;&amp;</span> indicators.<span class="pl-c1">success_url</span>);
+          },
+          <span class="pl-en">hook</span><span class="pl-k">:</span> <span class="pl-k">function</span>(<span class="pl-smi">response</span>) {
+            <span class="pl-en">console</span><span class="pl-c1">.log</span>(<span class="pl-s"><span class="pl-pds">'</span>Successfully retrieved the user<span class="pl-pds">'</span></span>s profile<span class="pl-k">!</span><span class="pl-s"><span class="pl-pds">'</span>);</span>
+<span class="pl-s">          }</span>
+<span class="pl-s">        }</span>
+<span class="pl-s">      }</span>
+<span class="pl-s">  }</span>
+<span class="pl-s">};</span></pre></div>
+
+<h4>
+<a id="processresponsekeyhook" class="anchor" href="#processresponsekeyhook" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>process.response[&lt;key&gt;].hook</code>
+</h4>
+
+<p>(<em>function</em>, <em>optional</em>) - Hook function to trigger after the response is validated. Only a single hook will be triggered in a still. If no hook is defined, </p>
+
+<ul>
+<li>arguments
+
+<ul>
+<li>
+<code>response</code> (<em>object</em>) - <a href="https://nodejs.org/api/http.html#http_http_incomingmessage">HTTP response object</a> plus some additional distillery data. This is almost the same as the response object returned from the <a href="https://github.com/request/request">Request</a> library. There are a few additional keys: 
+
+<ul>
+<li>
+<code>response.indicators</code> (<em>object</em>) - response indicators as detailed in the <a href="#processresponsekeyindicators">response indicators</a> section</li>
+<li>
+<code>response.hook</code> (<em>function</em>) - response hook as detailed in the <a href="#processresponsekeyhook">response hook</a> section</li>
+<li>
+<code>response.jar</code> (<em>object</em>) - <a href="https://github.com/request/request#requestjar">request cookie jar</a> with cookie that is returned with the response. This can be used to pass cookies between distills or to store a cookie for later use.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<h4>
+<a id="models" class="anchor" href="#models" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models</code>
+</h4>
+
+<p>(<code>array</code>, <code>optional</code>) - Array of models that define how to extract an entity from HTML</p>
+
+<h4>
+<a id="modelsindex" class="anchor" href="#modelsindex" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;]</code>
+</h4>
+
+<p>(<code>object</code>, <code>optional</code>) - Model definition for how to extract an entity from HTML</p>
+
+<h4>
+<a id="modelsindexname" class="anchor" href="#modelsindexname" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].name</code>
+</h4>
+
+<p>(<code>string</code>, <code>required</code>) - Name for the model</p>
+
+<h4>
+<a id="modelsindextype" class="anchor" href="#modelsindextype" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].type</code>
+</h4>
+
+<p>(<code>string</code>, <code>required</code>) -Model type which can be:</p>
+
+<ul>
+<li>
+<em>collection</em> - When an entity is expected to appear multiple times on a page, the type should be collection. A second property, <em>iterate</em> should be supplied if the type is collection.</li>
+<li>
+<em>item</em> - When an entity is expect to appear only once on a page, the type should be item.</li>
+</ul>
+
+<h4>
+<a id="modelsindexelements" class="anchor" href="#modelsindexelements" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].elements</code>
+</h4>
+
+<p>(<code>object</code>, <code>required</code>) - Object containing all of the properties of the entites with the keys being the name of the property and value being either a string CSS path to to the HTML element or an object containing information about how to retireve the property.</p>
+
+<h4>
+<a id="modelsindexelementskey" class="anchor" href="#modelsindexelementskey" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].elements[&lt;key&gt;]</code>
+</h4>
+
+<p>(<em>string</em>, <em>object</em>, or <em>function</em>, <em>required</em>) - There are several possibilities for what is returned from a model depending on the value of this key detailed below:</p>
+
+<ul>
+<li>
+<code>&lt;string&gt;</code> - the inner text of the HTML element at that path will be returned</li>
+<li>
+<code>&lt;object&gt;</code> with <code>attr</code>, <code>regex</code>, and <code>path</code> properties defined - the value of the attribute of the HTML element at the <code>path</code> which has inner text matching the regular expression <code>regex</code> will be returned</li>
+<li>
+<code>&lt;object&gt;</code> with <code>attr</code> and <code>path</code> properties defined - the value of the attribute of the HTML element at the <code>path</code> will be returned</li>
+<li>
+<code>&lt;object&gt;</code> with <code>regex</code> and <code>path</code> properties defined - the inner text of the HTML element at that path which has inner text matching the regular expression <code>regex</code> will be returned</li>
+<li>
+<code>&lt;function&gt;</code> - the return of the function will be returned. The first argument is a <a href="https://github.com/cheeriojs/cheerio#-selector-context-root-">cheerio selector</a> with the html body loaded</li>
+</ul>
+
+<h5>
+<a id="example-7" class="anchor" href="#example-7" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<p>Here, distillery will run the function in <code>elements.title</code> and return the result rather than selecting a specific a CSS path as it does with <code>elements.id</code>.</p>
+
+<div class="highlight highlight-javascript"><pre>models<span class="pl-k">:</span> [
+    {
+        type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>item<span class="pl-pds">'</span></span>,
+        elements<span class="pl-k">:</span> {
+            id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>div.id<span class="pl-pds">'</span></span>,
+            <span class="pl-en">title</span><span class="pl-k">:</span> <span class="pl-k">function</span>(<span class="pl-smi">$</span>) {
+                <span class="pl-k">return</span> $(<span class="pl-s"><span class="pl-pds">'</span>div#post-list &gt; div<span class="pl-pds">'</span></span>).<span class="pl-c1">eq</span>(<span class="pl-c1">0</span>).<span class="pl-c1">html</span>()
+            }
+        }
+    }
+]</pre></div>
+
+<h5>
+<a id="modelsindexelementskeypath" class="anchor" href="#modelsindexelementskeypath" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].elements[&lt;key&gt;].path</code>
+</h5>
+
+<p>(<em>string</em>, <em>required</em>) - CSS path to a HTML element. Must also have a <code>attr</code> or <code>regex</code> property.</p>
+
+<h5>
+<a id="modelsindexelementskeyattr" class="anchor" href="#modelsindexelementskeyattr" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].elements[&lt;key&gt;].attr</code>
+</h5>
+
+<p>(<em>string</em>, <em>optional</em>) - Name of an HTML attribute to retrieve the value from</p>
+
+<h5>
+<a id="modelsindexelementskeyregex" class="anchor" href="#modelsindexelementskeyregex" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].elements[&lt;key&gt;].regex</code>
+</h5>
+
+<p>(<em>string</em>, <em>optional</em>) - Regular expression to test the inner text of the element at <code>path</code></p>
+
+<h4>
+<a id="modelsindexiterate" class="anchor" href="#modelsindexiterate" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].iterate</code>
+</h4>
+
+<p>(<em>string</em>, <em>required</em>) - Required if <code>type</code> is <em>collection</em>, otherwise not needed. The CSS path that contains the items in a collection. </p>
+
+<h5>
+<a id="example-8" class="anchor" href="#example-8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<p>With this snippet of a model, distillery with iterate over every <code>table &gt; tr</code> in the HTML document and return the value from the <code>td.title</code> as an array.</p>
+
+<div class="highlight highlight-javascript"><pre>models<span class="pl-k">:</span> [
+    {
+        type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>collection<span class="pl-pds">'</span></span>,
+        elements<span class="pl-k">:</span> {
+          title<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>td.title<span class="pl-pds">'</span></span>
+        },
+        iterate<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>table &gt; tr<span class="pl-pds">'</span></span>
+    }
+]</pre></div>
+
+<h4>
+<a id="modelsindexvalidate" class="anchor" href="#modelsindexvalidate" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].validate</code>
+</h4>
+
+<p>(<em>function</em>, <em>optional</em>) - Validation function that should return a true value for entites that should be returned and false for entites that should be removed from the result array for collections.</p>
+
+<h4>
+<a id="modelsindexformat" class="anchor" href="#modelsindexformat" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>models[&lt;index&gt;].format</code>
+</h4>
+
+<p>(<em>function</em>, <em>optional</em>) - Formatting function that will be run over each entity in a collection to transform its values or on a single entity for an item.</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-en">validate</span><span class="pl-k">:</span> <span class="pl-k">function</span>(<span class="pl-smi">posting</span>) {
+  <span class="pl-k">return</span> (<span class="pl-k">typeof</span> posting.<span class="pl-c1">title</span> <span class="pl-k">!==</span> <span class="pl-s"><span class="pl-pds">"</span>undefined<span class="pl-pds">"</span></span>)
+},
+<span class="pl-en">format</span><span class="pl-k">:</span> <span class="pl-k">function</span>(<span class="pl-smi">posting</span>) {
+  posting.<span class="pl-c1">title</span> <span class="pl-k">=</span> posting.<span class="pl-c1">title</span>.<span class="pl-c1">trim</span>();
+  <span class="pl-k">return</span> posting;
+}</pre></div>
+
+<h2>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<p>See <a href="https://github.com/achannarasappa/distillery-examples">distillery-examples</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/achannarasappa/distillery">Distillery</a> is maintained by <a href="https://github.com/achannarasappa">achannarasappa</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
