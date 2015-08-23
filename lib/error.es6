@@ -21,4 +21,14 @@ class DistilleryValidationError extends CustomError {
 
 }
 
-export { DistilleryValidationError }
+class DistilleryStillError extends CustomError {
+
+  constructor(message) {
+
+    super(message);
+    
+  }
+
+}
+
+export { DistilleryValidationError, DistilleryStillError }
