@@ -36,6 +36,31 @@ const validateProcessParameter = (parameterValue) => {
 
 };
 
+const validateProcessResponseIndicator = (indicatorValue) => {
+
+  if (!_.isFunction(indicatorValue))
+    throw new DistilleryStillError('');
+
+};
+
+const validateProcessResponse = (responseValue) => {
+
+  if (!_.isPlainObject(responseValue.indicators))
+    throw new DistilleryStillError('');
+
+  if (_.keys(responseValue.indicators).length < 1)
+    throw new DistilleryStillError('');
+
+  _.mapValues(responseValue.indicators, validateProcessResponseIndicator);
+
+  if (!_.isFunction(responseValue.validate))
+    throw new DistilleryStillError('');
+
+  if (!_.isFunction(responseValue.hook) && !_.isUndefined(responseValue.hook))
+    throw new DistilleryStillError('');
+
+};
+
 const Validate = {
   model: (definition) => {
 
@@ -70,7 +95,7 @@ const Validate = {
     if (!_.isPlainObject(definition.request))
       throw new DistilleryStillError('');
 
-    if (!_.includes(['get', 'head', 'post', 'put', 'patch', 'del'], definition.request.method.toLowerCase()))
+    if (!_.includes([ 'get', 'head', 'post', 'put', 'patch', 'del' ], definition.request.method.toLowerCase()))
       throw new DistilleryStillError('');
 
     if (_.has(definition.request, 'query'))
@@ -85,9 +110,14 @@ const Validate = {
     if (!_.isPlainObject(definition.response))
       throw new DistilleryStillError('');
 
+    if (_.keys(definition.response).length < 1)
+      throw new DistilleryStillError('');
+
+    _.mapValues(definition.response, validateProcessResponse);
+
     return definition;
 
-  }
+  },
 };
 
 export default Validate;
