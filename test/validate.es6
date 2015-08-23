@@ -119,7 +119,7 @@ describe('Validate', () => {
         elements: {
           url: {
             path: 'div.url',
-            attr: {}
+            attr: {},
           },
         },
       });
@@ -143,7 +143,7 @@ describe('Validate', () => {
         elements: {
           url: {
             path: 'div.url',
-            regex: {}
+            regex: {},
           },
         },
       });
@@ -428,7 +428,7 @@ describe('Validate', () => {
 
     it('should throw an error if definition.response does not have at least one response', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionProcess = _.assign(definitionProcess, {
         response: {},
       });
 
@@ -491,7 +491,7 @@ describe('Validate', () => {
             indicators: {
               valid_indicator: (response) => true,
             },
-            validate: false
+            validate: false,
           },
         },
       });
@@ -509,7 +509,7 @@ describe('Validate', () => {
               valid_indicator: (response) => true,
             },
             validate: (indicators) => true,
-            hook: false
+            hook: false,
           },
         },
       });
