@@ -2,7 +2,7 @@ const _ = require('lodash');
 const expect = require('expect.js');
 import Distillery from '../lib/distillery';
 import Process from '../lib/process';
-import { DistilleryValidationError, DistilleryResponseError } from '../lib/error';
+import { DistilleryValidationError, DistilleryResponseError, DistilleryError } from '../lib/error';
 import * as fixtures from './fixtures';
 
 describe('Process', () => {
@@ -85,7 +85,7 @@ describe('Process', () => {
 
     it('should throw an error if the parameters argument is not an object and not undefined', () => {
 
-      expect(process._buildConfiguration).withArgs('test').to.throwError();
+      expect(process._buildConfiguration).withArgs('test').to.throwError((error) => expect(error).to.be.a(DistilleryError));
 
     });
 

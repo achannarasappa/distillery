@@ -41,4 +41,4 @@ class DistilleryResponseError extends DistilleryError {
 
 }
 
-export { DistilleryValidationError, DistilleryStillError, DistilleryResponseError }
+export { DistilleryError, DistilleryValidationError, DistilleryStillError, DistilleryResponseError }

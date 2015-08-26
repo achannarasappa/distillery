@@ -3,6 +3,7 @@ import Model from './model';
 import Process from './process';
 import Expect from './expect';
 import { validateStill } from './validate';
+import { DistilleryError } from './error';
 
 const parseModels = (html, models) => _.map(models, (model) => model.parse(html));
 
@@ -11,7 +12,7 @@ class Distillery {
   constructor(still, options = {}) {
 
     if (_.isUndefined(still))
-      throw new Error('Unable run distillery with out a still.');
+      throw new DistilleryError('Unable run distillery with out a still.');
 
     this.options = options;
     this.still = validateStill(still(this));

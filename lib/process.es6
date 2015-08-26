@@ -2,7 +2,7 @@ const _ = require('lodash').mixin(require('./mixin'));
 const request = require('request-promise').defaults({ jar: true });
 import Expect from './expect';
 import { validateProcess } from './validate';
-import { DistilleryValidationError, DistilleryResponseError } from './error';
+import { DistilleryValidationError, DistilleryResponseError, DistilleryError } from './error';
 
 const generateParameters = (parameterDefinitions, parameterValues) => _(parameterDefinitions)
   .pairs()
@@ -60,6 +60,9 @@ class Process {
 
   _buildConfiguration(parameters = {}) {
 
+    if (!_.isObject(parameters))
+      throw new DistilleryError('Process parameters must be an object.');
+
     const configuration = {
       method: this.request.method.toUpperCase(),
       jar: this.options.jar,
@@ -69,9 +72,6 @@ class Process {
       resolveWithFullResponse: true,
       simple: false,
     };
-
-    if (!_.isObject(parameters))
-      throw new Error('Process parameters must be an object.');
 
     if (_.isObject(this.options.requestOptions))
       return _.defaults(this.options.requestOptions, configuration);
