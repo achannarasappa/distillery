@@ -2,7 +2,7 @@ const _ = require('lodash');
 const expect = require('expect.js');
 import Distillery from '../lib/distillery';
 import Process from '../lib/process';
-import { DistilleryValidationError } from '../lib/error';
+import { DistilleryValidationError, DistilleryResponseError } from '../lib/error';
 import * as fixtures from './fixtures';
 
 describe('Process', () => {
@@ -104,11 +104,9 @@ describe('Process', () => {
 
     });
 
-    it('should return an error object when there is not a validResponseKey', () => {
+    it('should throw a DistilleryResponseError when there is not a validResponseKey', () => {
 
-      expect(process._generateResponse(blankCookie)(responseInvalid)).to.have.keys([ 'error', 'http_code', 'url' ]);
-      expect(process._generateResponse(blankCookie)(responseInvalid).http_code).to.be(responseInvalid.statusCode);
-      expect(process._generateResponse(blankCookie)(responseInvalid).url).to.be(responseInvalid.request.uri.href);
+      expect(() => process._generateResponse(blankCookie)(responseInvalid)).to.throwError((error) => expect(error).to.be.a(DistilleryResponseError));
 
     });
 

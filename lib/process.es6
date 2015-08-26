@@ -2,7 +2,7 @@ const _ = require('lodash').mixin(require('./mixin'));
 const request = require('request-promise').defaults({ jar: true });
 import Expect from './expect';
 import { validateProcess } from './validate';
-import { DistilleryValidationError } from './error';
+import { DistilleryValidationError, DistilleryResponseError } from './error';
 
 const generateParameters = (parameterDefinitions, parameterValues) => _(parameterDefinitions)
   .pairs()
@@ -87,11 +87,7 @@ class Process {
       const validResponseKey = this._getValidResponseKey(response);
 
       if (_.isUndefined(validResponseKey))
-        return {
-          error: 'No response conditions met.',
-          http_code: response.statusCode,
-          url: response.request.uri.href,
-        };
+        throw new DistilleryResponseError('No response conditions met.');
 
       return _.assign(response, {
         indicators: this._getValidResponseIndicators(this.response[validResponseKey].indicators, response),
