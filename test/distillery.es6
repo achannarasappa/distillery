@@ -2,6 +2,7 @@ const _ = require('lodash');
 const expect = require('expect.js');
 import Distillery from '../';
 import * as fixtures from './fixtures';
+import { DistilleryError } from '../lib/error';
 
 describe('Distillery', () => {
 
@@ -29,7 +30,7 @@ describe('Distillery', () => {
 
     it('should throw an error if no still is passed in', () => {
 
-      expect(Distillery).to.throwError();
+      expect(() => new Distillery()).to.throwError((error) => expect(error).to.be.a(DistilleryError));
 
     });
 

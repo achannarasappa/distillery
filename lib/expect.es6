@@ -1,5 +1,6 @@
 const cheerio = require('cheerio');
 const _ = require('lodash');
+import { DistilleryStillError } from './error';
 
 const getValidHtmlElement = (path, expected, $) => {
 
@@ -18,7 +19,7 @@ const Expect = {
   http_code: (expected) => {
 
     if (!_.isFinite(expected))
-      throw new Error('Expected http_code must be an number.');
+      throw new DistilleryStillError('Expected http_code must be an number.');
     
     return (response, verbose) => {
 
@@ -40,7 +41,7 @@ const Expect = {
   url: (expected) => {
 
     if (!_.isRegExp(expected) && !_.isString(expected))
-      throw new Error('Expected url must be an string of regular expression.');
+      throw new DistilleryStillError('Expected url must be an string of regular expression.');
 
     return (response, verbose) => {
 
@@ -62,10 +63,10 @@ const Expect = {
   html_element: (path, expected) => {
 
     if (!_.isRegExp(expected) && !_.isString(expected) && !_.isUndefined(expected))
-      throw new Error('Expected html_element must be an string or regular expression if defined.');
+      throw new DistilleryStillError('Expected html_element must be an string or regular expression if defined.');
 
     if (!_.isString(path))
-      throw new Error('Path for html_element must be an string.');
+      throw new DistilleryStillError('Path for html_element must be an string.');
 
     return (response, verbose) => {
 

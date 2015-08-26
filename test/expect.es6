@@ -2,6 +2,7 @@ const _ = require('lodash');
 const expect = require('expect.js');
 import Expect from '../lib/expect';
 import * as fixtures from './fixtures';
+import { DistilleryStillError } from '../lib/error';
 
 describe('Expect', () => {
 
@@ -20,7 +21,7 @@ describe('Expect', () => {
 
     it('should throw an error if the expected value is not a number', () => {
 
-      expect(Expect.http_code).withArgs('test').withArgs(response).to.throwError();
+      expect(Expect.http_code).withArgs('test').withArgs(response).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
       expect(Expect.http_code).withArgs(200).withArgs(response).to.not.throwError();
 
     });
@@ -56,7 +57,7 @@ describe('Expect', () => {
 
     it('should throw an error if the expected value is not a regular expression or string', () => {
 
-      expect(Expect.url).withArgs(1000).withArgs(response).to.throwError();
+      expect(Expect.url).withArgs(1000).withArgs(response).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
       expect(Expect.url).withArgs(/context=user/).withArgs(response).to.not.throwError();
       expect(Expect.url).withArgs('https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user').withArgs(response).to.not.throwError();
 
@@ -101,7 +102,7 @@ describe('Expect', () => {
 
     it('should throw an error if the expected value is not a regular expression, string, or undefined', () => {
 
-      expect(Expect.html_element).withArgs('head > title', 1000).withArgs(response).to.throwError();
+      expect(Expect.html_element).withArgs('head > title', 1000).withArgs(response).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
       expect(Expect.html_element).withArgs('head > title', /Car/).withArgs(response).to.not.throwError();
       expect(Expect.html_element).withArgs('head > title', 'Car Auctions').withArgs(response).to.not.throwError();
       expect(Expect.html_element).withArgs('head > title').withArgs(response).to.not.throwError();
@@ -110,7 +111,7 @@ describe('Expect', () => {
 
     it('should throw an error if the path is not a string', () => {
 
-      expect(Expect.html_element).withArgs(1000).withArgs(response).to.throwError();
+      expect(Expect.html_element).withArgs(1000).withArgs(response).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
