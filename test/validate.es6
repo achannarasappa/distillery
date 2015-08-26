@@ -484,7 +484,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.response[<keyA>].validate is not a function', () => {
+    it('should throw an error if process.response[<keyA>].validate is not a function or undefined', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {
         response: {
@@ -496,8 +496,18 @@ describe('Validate', () => {
           },
         },
       });
+      const validDefinitionProcess = _.merge({}, definitionProcess, {
+        response: {
+          valid_response: {
+            indicators: {
+              valid_indicator: (response) => true,
+            },
+          },
+        },
+      });
 
       expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(validDefinitionProcess).to.not.throwError();
 
     });
 

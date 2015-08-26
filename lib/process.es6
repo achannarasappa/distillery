@@ -119,6 +119,9 @@ class Process {
 
     const evaluatedIndicators = _.mapValues(definition.indicators, (indicator) => indicator(response));
 
+    if (_.isUndefined(definition.validate))
+      return _.every(evaluatedIndicators, _.identity);
+
     return definition.validate(evaluatedIndicators)
 
   }

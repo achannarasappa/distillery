@@ -136,15 +136,53 @@ describe('Process', () => {
 
   describe('.prototype._isResponseValid', () => {
 
-    it('should validate the response the response validation function evaluates to true', () => {
+    const distillery = new Distillery(fixtures.still.posts);
+    const definition = distillery.still.process;
+    const response = fixtures.response.posts;
+
+    it('should validate the response validation function evaluates to true', () => {
 
       expect(process._isResponseValid(definition.response.success, response)).to.be.ok()
 
     });
 
-    it('should not validate the response the response validation function evaluates to false', () => {
+    it('should not validate the response validation function evaluates to false', () => {
 
       expect(process._isResponseValid(definition.response.error, response)).to.not.be.ok()
+
+    });
+
+    it('should validate a response that meets all the indicators when a validate function is absent', () => {
+
+      const validEvaluatedResponse = {
+        indicators: {
+          title: (response) => 'ABC',
+          custom: (response) => true,
+        }
+      };
+      const invalidEvaluatedResponseSomeFalse = {
+        indicators: {
+          title: (response) => true,
+          custom: (response) => false,
+        }
+      };
+      const invalidEvaluatedResponseSomeNull = {
+        indicators: {
+          title: (response) => true,
+          custom: (response) => null,
+        }
+      };
+      const invalidEvaluatedResponseAllFalse = {
+        indicators: {
+          title: (response) => false,
+          custom: (response) => false,
+        }
+      };
+
+      expect(process._isResponseValid(validEvaluatedResponse, response)).to.be.ok();
+      expect(process._isResponseValid(invalidEvaluatedResponseSomeFalse, response)).to.not.be.ok();
+      expect(process._isResponseValid(invalidEvaluatedResponseSomeNull, response)).to.not.be.ok();
+      expect(process._isResponseValid(invalidEvaluatedResponseAllFalse, response)).to.not.be.ok();
 
     });
 

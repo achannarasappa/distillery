@@ -53,7 +53,7 @@ const validateProcessResponse = (responseValue) => {
 
   _.mapValues(responseValue.indicators, validateProcessResponseIndicator);
 
-  if (!_.isFunction(responseValue.validate))
+  if (!_.isFunction(responseValue.validate) && !_.isUndefined(responseValue.validate))
     throw new DistilleryStillError('');
 
   if (!_.isFunction(responseValue.hook) && !_.isUndefined(responseValue.hook))
