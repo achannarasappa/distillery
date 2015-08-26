@@ -45,9 +45,6 @@ class Distillery {
       if (returnResponse)
         return response;
 
-      if (response.error)
-        return response;
-
       if (!_.isUndefined(response.hook))
         return response.hook(response);
 
