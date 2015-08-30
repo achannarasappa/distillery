@@ -2,10 +2,10 @@
 
 * [Read Me](README.md)
 * [Table of Contents](docs/README.md)
-* [CLI](docs/cli/README.md)
 * [Introduction](docs/introduction/README.md)
    * [Overview](docs/introduction/overview.md)
    * [Setup](docs/introduction/setup.md)
+* [CLI](docs/cli/README.md)
 * [API](docs/api/README.md)
    * [Distillery](docs/api/distillery.md)
    * [Expect](docs/api/expect.md)
