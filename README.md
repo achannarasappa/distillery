@@ -6,4 +6,5 @@
    * [Setup](docs/introduction/setup.md)
 * [API](docs/api/README.md)
    * [Distillery](docs/api/distillery.md)
+   * Expect
 
