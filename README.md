@@ -2,5 +2,5 @@
 
 * [Introduction](README.md)
    * [Overview](docs/introduction/overview.md)
-   * Setup
+   * [Setup](docs/introduction/setup.md)
 
