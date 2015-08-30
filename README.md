@@ -2,6 +2,7 @@
 
 * [Read Me](README.md)
 * [Table of Contents](docs/README.md)
+   * CLI
 * [Introduction](docs/introduction/README.md)
    * [Overview](docs/introduction/overview.md)
    * [Setup](docs/introduction/setup.md)
