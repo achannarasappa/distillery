@@ -1,6 +1,8 @@
 # Table of Contents
 
-* [Introduction](introduction/README.md)
-   * [Overview](introduction/overview.md)
-   * [Setup](introduction/setup.md)
-
+* [Introduction](docs/introduction/README.md)
+   * [Overview](docs/introduction/overview.md)
+   * [Setup](docs/introduction/setup.md)
+* [API](docs/api/README.md)
+   * [Distillery](docs/api/distillery.md)
+   * [Expect](docs/api/expect.md)
