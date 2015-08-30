@@ -5,5 +5,5 @@
    * [Overview](docs/introduction/overview.md)
    * [Setup](docs/introduction/setup.md)
 * [API](docs/api/README.md)
-   * Distillery
+   * [Distillery](docs/api/distillery.md)
 
