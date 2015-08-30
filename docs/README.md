@@ -1,6 +1,6 @@
 # Summary
 
-* [Introduction](docs/introduction/README.md)
-   * [Overview](docs/introduction/overview.md)
-   * [Setup](docs/introduction/setup.md)
+* [Introduction](introduction/README.md)
+   * [Overview](introduction/overview.md)
+   * [Setup](introduction/setup.md)
 
