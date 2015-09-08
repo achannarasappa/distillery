@@ -79,7 +79,7 @@ describe('Process', () => {
 
     it('should interpolate the url', () => {
 
-      expect(configuration.url).to.be('http://example.com/auctions?show_tab=home&page=10&items={show_items}&context=user');
+      expect(configuration.url).to.be('http://example.com/auctions?show_tab=home&page=10&items={show_items}&context=user&filter={filter}');
 
     });
 
@@ -186,7 +186,7 @@ describe('Process', () => {
 
   });
 
-  describe('generateParameter', () => {
+  describe('processParameter', () => {
 
     it('should substitute a parameter if one is passed', () => {
 
@@ -240,12 +240,64 @@ describe('Process', () => {
 
   });
 
+  describe('createParameter', () => {
+
+    it('should use the parameterDefinition as the parameter name if the parameterDefinition is a string', () => {
+
+      expect(process._buildConfiguration({ filter: 'boat', page: 1 }).url).to.contain('filter=boat');
+
+    });
+
+    it('should use the parameterDefinition.alias as the parameter name if the parameterDefinition.alias is a string', () => {
+
+      expect(process._buildConfiguration({ items: 'true', page: 1 }).url).to.contain('items=true');
+
+    });
+
+    it('should use the parameterDefinition.name as the parameter name if the parameterDefinition.name if parameterDefinition.alias is not a string', () => {
+
+      expect(process._buildConfiguration({ page: 20 }).url).to.contain('page=200');
+
+    });
+
+  });
+
   describe('generateParameters', () => {
 
     it('should pair the \'name\' property in the definition to the value from generateParameter in an object', () => {
 
       expect(process._buildConfiguration({ tab: 'home', page: 1 }).headers).to.be.a('object');
-      expect(process._buildConfiguration({ tab: 'home', page: 1 }).headers).to.have.property('Content-Type', 'application/x-www-form-urlencoded')
+      expect(process._buildConfiguration({ tab: 'home', page: 1 }).headers).to.have.property('Content-Type', 'application/x-www-form-urlencoded');
+
+    });
+
+    it('should use defaults when the definition.parameters property is undefined', () => {
+
+      const distilleryPosts = new Distillery(fixtures.still.posts);
+      const definitionPosts = distilleryPosts.still.process;
+      const processPosts = new Process(definitionPosts);
+
+      expect(processPosts._buildConfiguration().headers).to.eql({});
+      expect(processPosts._buildConfiguration().form).to.eql({});
+
+    });
+
+    it('should not throw an error when no query parameters are defined', () => {
+
+      const definitionWithoutQuery = _.assign(distillery.still.process, {
+        parameters: [
+          {
+            name: 'Content-Type',
+            alias: 'content_type',
+            type: 'header',
+            required: true,
+            def: 'application/x-www-form-urlencoded',
+          },
+        ],
+      });
+      const processWithoutQuery = new Process(definitionWithoutQuery);
+
+      expect(() => processWithoutQuery._buildConfiguration({ page: 1 })).to.not.throwError();
 
     });
 
