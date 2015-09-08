@@ -38,7 +38,7 @@ const defaultParameter = (parameter) => {
 
 const formatParameter = (parameter) => {
 
-  if (_.isFunction(parameter.format))
+  if (_.isFunction(parameter.format) && !_.isUndefined(parameter.value))
     return _.assign(parameter, {
       value: parameter.format(parameter.value)
     });
@@ -60,7 +60,7 @@ const processParameter = ({ name, alias, value, required, def, validate }) => {
 
   if (!_.isUndefined(def))
     return [ name, def ];
-
+  
   if (required)
     throw new DistilleryValidationError('Required parameter \'' + alias + '\' missing from request.');
 

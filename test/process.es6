@@ -224,7 +224,7 @@ describe('Process', () => {
 
     it('should throw an error if a required parameter is not passed', () => {
 
-      expect(process._buildConfiguration).to.throwError();
+      expect(() => process._buildConfiguration()).to.throwError();
 
     });
 
