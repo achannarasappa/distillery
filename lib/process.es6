@@ -4,37 +4,87 @@ import Expect from './expect';
 import { validateProcess } from './validate';
 import { DistilleryValidationError, DistilleryResponseError, DistilleryError } from './error';
 
-const generateParameters = (parameterDefinitions, parameterValues) => _(parameterDefinitions)
-  .pairs()
-  .map(([parameterName, parameterDefinition]) => {
+const createParameter = _.curry((parameterValues, parameterDefinition) => {
 
-    if (_.has(parameterDefinition, 'format'))
-      return [ parameterName, parameterDefinition, parameterDefinition.format(parameterValues[parameterName]) ];
+  if (_.isString(parameterDefinition))
+    return {
+      name: parameterDefinition,
+      alias: parameterDefinition,
+      value: parameterValues[parameterDefinition],
+    };
 
-    return [ parameterName, parameterDefinition, parameterValues[parameterName] ];
+  if (_.isString(parameterDefinition.alias))
+    return _.assign(parameterDefinition, {
+      value: parameterValues[parameterDefinition.alias],
+    });
 
-  })
-  .map(([parameterName, parameterDefinition, parameterValue]) => [ parameterDefinition.name, generateParameter(parameterDefinition.name, parameterDefinition.required, parameterDefinition.default, parameterValue, parameterDefinition.validate) ])
-  .zipObject()
-  .omit(_.isUndefined)
-  .value();
+  return _.assign(parameterDefinition, {
+    alias: parameterDefinition.name,
+    value: parameterValues[parameterDefinition.name],
+  });
 
-const generateParameter = (parameterName, parameterRequired, parameterDefault, parameterValue, parameterValidation) => {
+});
 
-  if (!_.isUndefined(parameterValue) && _.isFunction(parameterValidation) && parameterValidation(parameterValue))
-    return parameterValue;
+const defaultParameter = (parameter) => {
 
-  if (!_.isUndefined(parameterValue) && _.isFunction(parameterValidation) && !parameterValidation(parameterValue))
-    throw new DistilleryValidationError('Parameter \'' + parameterName + '\' failed validation');
+  if (!_.isString(parameter.type))
+    return _.assign(parameter, {
+      type: 'query'
+    });
 
-  if (!_.isUndefined(parameterValue))
-    return parameterValue;
+  return parameter;
 
-  if (!_.isUndefined(parameterDefault))
-    return parameterDefault;
+};
 
-  if (parameterRequired)
-    throw new DistilleryValidationError('Required parameter \'' + parameterName + '\' missing from request.');
+const formatParameter = (parameter) => {
+
+  if (_.isFunction(parameter.format))
+    return _.assign(parameter, {
+      value: parameter.format(parameter.value)
+    });
+
+  return parameter;
+
+};
+
+const processParameter = ({ name, alias, value, required, def, validate }) => {
+
+  if (!_.isUndefined(value) && _.isFunction(validate) && validate(value))
+    return [ name, value ];
+
+  if (!_.isUndefined(value) && _.isFunction(validate) && !validate(value))
+    throw new DistilleryValidationError('Parameter \'' + alias + '\' failed validation');
+
+  if (!_.isUndefined(value))
+    return [ name, value ];
+
+  if (!_.isUndefined(def))
+    return [ name, def ];
+
+  if (required)
+    throw new DistilleryValidationError('Required parameter \'' + alias + '\' missing from request.');
+
+};
+
+const generateParameters = (parameterDefinitions, parameterValues) => {
+
+  const defaultParameters = { query: {}, form: {}, header: {} };
+
+  if (_.isArray(parameterDefinitions))
+    return _(parameterDefinitions)
+      .map(createParameter(parameterValues))
+      .map(defaultParameter)
+      .map(formatParameter)
+      .groupBy('type')
+      .mapValues((parameters) => _(parameters)
+        .map(processParameter)
+        .reject(_.isUndefined)
+        .zipObject()
+        .value())
+      .defaults(defaultParameters)
+      .value();
+
+  return defaultParameters;
 
 };
 
@@ -63,12 +113,14 @@ class Process {
     if (!_.isObject(parameters))
       throw new DistilleryError('Process parameters must be an object.');
 
+    const { query, header, form } = generateParameters(this.request.parameters, parameters);
+
     const configuration = {
       method: this.request.method.toUpperCase(),
       jar: this.options.jar,
-      url: _.interpolate(this.request.url, generateParameters(this.request.query, parameters)),
-      headers: generateParameters(this.request.headers, parameters),
-      form: generateParameters(this.request.payload, parameters),
+      url: _.interpolate(this.request.url, query),
+      headers: header,
+      form,
       resolveWithFullResponse: true,
       simple: false,
     };

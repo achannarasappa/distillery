@@ -41,4 +41,14 @@ class DistilleryResponseError extends DistilleryError {
 
 }
 
-export { DistilleryError, DistilleryValidationError, DistilleryStillError, DistilleryResponseError }
+class DistilleryRequestError extends DistilleryError {
+
+  constructor(message) {
+
+    super(message);
+
+  }
+
+}
+
+export { DistilleryError, DistilleryValidationError, DistilleryStillError, DistilleryResponseError, DistilleryRequestError }

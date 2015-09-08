@@ -70,75 +70,78 @@ const still = {
     ],
   }),
   auctions: (distillery) => ({
-      process: {
-        request: {
-          url: 'http://example.com/auctions?show_tab={show_tab_name}&page={page}&items={show_items}&context={context}',
-          method: 'Get',
-          query: {
-            tab: {
-              name: 'show_tab_name',
-              required: true,
-              'default': 'postings',
-            },
-            page: {
-              name: 'page',
-              required: true,
-              format: value => value * 10,
-            },
-            items: {
-              name: 'show_items',
-            },
-            context: {
-              name: 'context',
-              'default': 'user',
-              validate: value => _.contains([ 'user', 'admin' ], value),
-            },
+    process: {
+      request: {
+        url: 'http://example.com/auctions?show_tab={show_tab_name}&page={page}&items={show_items}&context={context}&filter={filter}',
+        method: 'Get',
+        parameters: [
+          'filter',
+          {
+            name: 'show_tab_name',
+            alias: 'tab',
+            required: true,
+            def: 'postings',
           },
-          headers: {
-            content_type: {
-              name: 'Content-Type',
-              required: true,
-              'default': 'application/x-www-form-urlencoded',
-            },
+          {
+            name: 'page',
+            required: true,
+            format: value => value * 10,
           },
+          {
+            name: 'show_items',
+            alias: 'items',
+          },
+          {
+            name: 'context',
+            def: 'user',
+            validate: value => _.contains([ 'user', 'admin' ], value),
+          },
+          {
+            name: 'Content-Type',
+            alias: 'content_type',
+            type: 'header',
+            required: true,
+            def: 'application/x-www-form-urlencoded',
+          },
+        ],
+      },
+      response: {
+        success: {
+          indicators: {
+            success_code: distillery.expect.http_code(200),
+            success_title: distillery.expect.html_element('title'),
+          },
+          validate: (indicators) => indicators.success_code && indicators.success_title,
         },
-        response: {
-          success: {
-            indicators: {
-              success_code: distillery.expect.http_code(200),
-              success_title: distillery.expect.html_element('title'),
-            },
-            validate: (indicators) => indicators.success_code && indicators.success_title,
+        success_2: {
+          indicators: {
+            success_code: distillery.expect.http_code(200),
           },
-          success_2: {
-            indicators: {
-              success_code: distillery.expect.http_code(200),
-            },
-            validate: (indicators) => indicators.success_code,
+          validate: (indicators) => indicators.success_code,
+        },
+        error: {
+          indicators: {
+            error_code: distillery.expect.http_code(400),
           },
-          error: {
-            indicators: {
-              error_code: distillery.expect.http_code(400),
-            },
-            validate: (indicators) => indicators.error_code,
-          },
+          validate: (indicators) => indicators.error_code,
         },
       },
-      models: [
-        {
-          name: 'auctions',
-          type: 'collection',
-          elements: {
-            status: 'td.status',
-            title: 'td.title',
-            category: 'td.cat',
-            id: 'td.id',
-          },
-          iterate: '#container > table > tr',
-          validate: (posting) => (!_.isUndefined(posting.status) && !_.isUndefined(posting.title) && !_.isUndefined(posting.category) && !_.isUndefined(posting.id)),
+    },
+    models: [
+      {
+        name: 'auctions',
+        type: 'collection',
+        elements: {
+          status: 'td.status',
+          title: 'td.title',
+          category: 'td.cat',
+          id: 'td.id',
         },
-      ],
-    }),
+        iterate: '#container > table > tr',
+        validate: (posting) => (!_.isUndefined(posting.status) && !_.isUndefined(posting.title) && !_.isUndefined(posting.category) && !_.isUndefined(posting.id)),
+      },
+    ],
+  }),
 };
 
 const html = {
