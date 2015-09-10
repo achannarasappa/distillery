@@ -482,6 +482,25 @@ describe('Validate', () => {
 
     });
 
+    it('should throw an error if process.request.validate is not a function or undefined', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          validate: true
+        },
+      });
+
+      const validDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          validate: () => true
+        },
+      });
+
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateProcess).withArgs(validDefinitionProcess).to.not.throwError();
+
+    });
+
     it('should throw an error if definition.response is not an object', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {

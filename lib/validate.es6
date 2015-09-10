@@ -110,6 +110,9 @@ const validateProcess = (definition) => {
   if (_.has(definition.request, 'parameters'))
     _.map(definition.request.parameters, validateProcessParameter);
 
+  if (!_.isFunction(definition.request.validate) && !_.isUndefined(definition.request.validate))
+    throw new DistilleryStillError('');
+
   if (!_.isPlainObject(definition.response))
     throw new DistilleryStillError('');
 
