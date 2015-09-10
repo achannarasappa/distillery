@@ -22,16 +22,25 @@ const validateModelElement = (elementValue) => {
 
 const validateProcessParameter = (parameterValue) => {
 
-  if (!_.isString(parameterValue.name))
+  if (!_.isPlainObject(parameterValue) && !_.isString(parameterValue))
     throw new DistilleryStillError('');
 
-  if (!_.isUndefined(parameterValue.required) && !_.isBoolean(parameterValue.required))
+  if (_.isPlainObject(parameterValue) && !_.isString(parameterValue.name))
     throw new DistilleryStillError('');
 
-  if (!_.isUndefined(parameterValue.validate) && !_.isFunction(parameterValue.validate))
+  if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.required) && !_.isBoolean(parameterValue.required))
     throw new DistilleryStillError('');
 
-  if (!_.isUndefined(parameterValue.format) && !_.isFunction(parameterValue.format))
+  if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.validate) && !_.isFunction(parameterValue.validate))
+    throw new DistilleryStillError('');
+
+  if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.format) && !_.isFunction(parameterValue.format))
+    throw new DistilleryStillError('');
+
+  if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.alias) && !_.isString(parameterValue.alias))
+    throw new DistilleryStillError('');
+
+  if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.type) && !_.isString(parameterValue.type))
     throw new DistilleryStillError('');
 
 };
@@ -98,14 +107,8 @@ const validateProcess = (definition) => {
   if (!_.includes([ 'get', 'head', 'post', 'put', 'patch', 'del' ], definition.request.method.toLowerCase()))
     throw new DistilleryStillError('');
 
-  if (_.has(definition.request, 'query'))
-    _.mapValues(definition.request.query, validateProcessParameter);
-
-  if (_.has(definition.request, 'headers'))
-    _.mapValues(definition.request.headers, validateProcessParameter);
-
-  if (_.has(definition.request, 'payload'))
-    _.mapValues(definition.request.payload, validateProcessParameter);
+  if (_.has(definition.request, 'parameters'))
+    _.map(definition.request.parameters, validateProcessParameter);
 
   if (!_.isPlainObject(definition.response))
     throw new DistilleryStillError('');
