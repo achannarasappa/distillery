@@ -66,7 +66,18 @@ const processParameter = ({ name, alias, value, required, def, validate }) => {
 
 };
 
-const generateParameters = (parameterDefinitions, parameterValues) => {
+const validateParameters = _.curry((validateFn, parameters) => {
+
+  const combinedParameters = _.reduce(parameters, (result, value) => _.merge(result, value), {});
+
+  if (_.isFunction(validateFn) && !validateFn(combinedParameters))
+    throw new DistilleryValidationError('Combined parameter validation failed.');
+
+  return parameters;
+
+});
+
+const generateParameters = (parameterDefinitions, parameterValues, validateFn) => {
 
   const defaultParameters = { query: {}, form: {}, header: {} };
 
@@ -82,6 +93,7 @@ const generateParameters = (parameterDefinitions, parameterValues) => {
         .zipObject()
         .value())
       .defaults(defaultParameters)
+      .thru(validateParameters(validateFn))
       .value();
 
   return defaultParameters;
@@ -113,7 +125,7 @@ class Process {
     if (!_.isObject(parameters))
       throw new DistilleryError('Process parameters must be an object.');
 
-    const { query, header, form } = generateParameters(this.request.parameters, parameters);
+    const { query, header, form } = generateParameters(this.request.parameters, parameters, this.request.validate);
 
     const configuration = {
       method: this.request.method.toUpperCase(),
