@@ -218,7 +218,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.[] is not a string or object', () => {
+    it('should throw an error if process.request.parameters[<index>] is not a string or object', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {
         request: {
@@ -255,7 +255,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.[].name is not a string', () => {
+    it('should throw an error if process.request.parameters[<index>].name is not a string', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {
         request: {
@@ -282,7 +282,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.[].required is not a boolean or undefined', () => {
+    it('should throw an error if process.request.parameters[<index>].required is not a boolean or undefined', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {
         request: {
@@ -322,7 +322,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.[].validate is not a function or undefined', () => {
+    it('should throw an error if process.request.parameters[<index>].validate is not a function or undefined', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {
         request: {
@@ -362,7 +362,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.[].format is not a function or undefined', () => {
+    it('should throw an error if process.request.parameters[<index>].format is not a function or undefined', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {
         request: {
@@ -402,7 +402,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.[].alias is not a string or undefined', () => {
+    it('should throw an error if process.request.parameters[<index>].alias is not a string or undefined', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {
         request: {
@@ -442,7 +442,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.[].type is not a string or undefined', () => {
+    it('should throw an error if process.request.parameters[<index>].type is not a string or undefined', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {
         request: {
