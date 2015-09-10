@@ -216,15 +216,30 @@ Run with `$ node ./example.js`. The username variable can be modified in example
 
 #### `process.request.method`  
 (*string*, *required*) - The HTTP verb which may be `GET`, `POST`, `PUT`, or `DELETE`  
-#### `process.request.query`  
-(*object*, *optional*) - Parameters to be interpolated with url tokens. Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
-##### `process.request.query[<key>].name`  
+#### `process.request.parameters`  
+(*array*, *optional*) - Parameters that can be set at invokation time.
+#### `process.request.parameters[<index>]`  
+(*object*, *optional*, or *string*, *optional*) - Describes a parameter that can be passed into the still. When a string is used, several default parameter properties are assigned:
+```js
+...
+parameters: [
+  'username', // Short-form
+  { // Long-form
+    name: 'username',
+    type: 'query',
+    required: false
+  }
+]
+...
+```
+
+##### `process.request.parameters[<index>].name`  
 (*string*, *required*) - Name of the token in the url string.
-##### `process.request.query[<key>].required`  
+##### `process.request.parameters[<index>].required`  
 (*boolean*, *optional*) - If set to true, then an error will be thrown if this variable is not set in the `Distillery(still).distill()` method.
-##### `process.request.query[<key>].default`  
+##### `process.request.parameters[<index>].def`  
 (*string*, *optional*) - Default value for the given parameter.
-##### `process.request.query[<key>].validate`  
+##### `process.request.parameters[<index>].validate`  
 (*function*, *optional*) - A `DistilleryValidationError` is thrown when a falsy value is returned from this function.
 ##### Example  
 ```javascript
@@ -236,7 +251,7 @@ context: {
   }
 },
 ```
-##### `process.request.query[<key>].format`  
+##### `process.request.parameters[<index>].format`  
 (*function*, *optional*) - Modifies the parameter before running any validation.
 ##### Example  
 ```javascript
@@ -248,22 +263,14 @@ context: {
   }
 },
 ```
-#### `process.request.headers`  
-(*object*, *optional*) - Parameters to be sent as headers. See [Request documentation](https://github.com/request/request#custom-http-headers) of headers for more information. Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
-##### `process.request.headers[<key>].name`  
-(*string*, *required*) - Name of the [http header](http://en.wikipedia.org/wiki/List_of_HTTP_header_fields).
-##### `process.request.headers[<key>].required`  
-See `process.request.query[<key>].required`.
-##### `process.request.headers[<key>].default`  
-See `process.request.query[<key>].default`.
-#### `process.request.payload`  
-(*object*, *optional*) - Send request data as `application/x-www-form-urlencoded`. See [Request documentation](https://github.com/request/request#forms) on forms for more information.  Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
-##### `process.request.payload[<key>].name`  
-(*string*, *required*) - Name of the form parameter.
-##### `process.request.payload[<key>].required`  
-See `process.request.query[<key>].required`.
-##### `process.request.payload[<key>].default`  
-See `process.request.query[<key>].default`.
+##### `process.request.parameters[<index>].type`  
+(*string*, *optional*) - The parameter type. This indicates in which part of the request the parameter will be used. Possible types include:
+* `query` - Parameters to be interpolated with url tokens. `name` property refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
+* `header` - Parameters to be sent as headers. See [Request documentation](https://github.com/request/request#custom-http-headers) of headers for more information. Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
+* `payload` - Send request data as `application/x-www-form-urlencoded`. See [Request documentation](https://github.com/request/request#forms) on forms for more information.  Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
+
+##### `process.request.parameters[<index>].alias`  
+(*string*, *optional*) - An alias for the parameter. For example, the header `Content-Type` can be aliased to `content_type` to make it easier to refer to when using the `Distillery(still).distill()` method.
 #### `process.response`  
 Hooks, validators, and indicators to handle a HTTP response. Each sub-object is a potential response condition. This allows for handling 404 Not Found response differently from a 200 OK response.
 #### `process.response[<key>].indicators`  
