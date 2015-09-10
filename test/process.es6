@@ -271,7 +271,7 @@ describe('Process', () => {
 
     });
 
-    it('should use defaults when the definition.parameters property is undefined', () => {
+    it('should use default headers and form data when the definition.request.parameters property is undefined', () => {
 
       const distilleryPosts = new Distillery(fixtures.still.posts);
       const definitionPosts = distilleryPosts.still.process;
@@ -284,20 +284,42 @@ describe('Process', () => {
 
     it('should not throw an error when no query parameters are defined', () => {
 
-      const definitionWithoutQuery = _.assign(distillery.still.process, {
-        parameters: [
-          {
-            name: 'Content-Type',
-            alias: 'content_type',
-            type: 'header',
-            required: true,
-            def: 'application/x-www-form-urlencoded',
-          },
-        ],
+      const definitionWithoutQuery = _.merge({}, distillery.still.process, {
+        request: {
+          parameters: [
+            {
+              name: 'Content-Type',
+              alias: 'content_type',
+              type: 'header',
+              required: true,
+              def: 'application/x-www-form-urlencoded',
+            },
+          ],
+        },
       });
       const processWithoutQuery = new Process(definitionWithoutQuery);
 
       expect(() => processWithoutQuery._buildConfiguration({ page: 1 })).to.not.throwError();
+
+    });
+
+    it('should throw an error when definition.request.validate is defined and returns a falsy value', () => {
+
+      const definitionValidationError = _.merge({}, distillery.still.process, {
+        request: {
+          validate: () => false,
+        }
+      });
+      const definitionValidationNoError = _.merge({}, distillery.still.process, {
+        request: {
+          validate: () => true,
+        }
+      });
+      const processValidationError = new Process(definitionValidationError);
+      const processValidationNoError = new Process(definitionValidationNoError);
+
+      expect(() => processValidationError._buildConfiguration({ page: 1 })).to.throwError((error) => expect(error).to.be.a(DistilleryValidationError));
+      expect(() => processValidationNoError._buildConfiguration({ page: 1 })).to.not.throwError();
 
     });
 
