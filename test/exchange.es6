@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const expect = require('expect.js');
 import Distillery from '../lib/distillery';
-import Process from '../lib/process';
+import Process from '../lib/exchange';
 import { DistilleryValidationError, DistilleryResponseError, DistilleryError } from '../lib/error';
 import * as fixtures from './fixtures';
 
