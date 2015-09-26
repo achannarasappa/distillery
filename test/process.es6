@@ -323,6 +323,28 @@ describe('Process', () => {
 
     });
 
+    it('should expose parameters by their aliased name', () => {
+
+      const definitionValidationNoError = _.assign(_.clone(distillery.still.process), {
+        request: {
+          url: 'http://example.com/auctions?page={page}',
+          method: 'get',
+          parameters: [
+            {
+              name: 'p',
+              alias: 'page',
+              required: true,
+            },
+          ],
+          validate: (parameters) => _.has(parameters, 'page'),
+        }
+      });
+      const processValidationNoError = new Process(definitionValidationNoError);
+
+      expect(() => processValidationNoError._buildConfiguration({ page: 1 })).to.not.throwError();
+
+    });
+
   })
 
 });
