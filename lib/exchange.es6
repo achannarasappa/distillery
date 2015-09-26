@@ -1,7 +1,7 @@
 const _ = require('lodash').mixin(require('./mixin'));
 const request = require('request-promise').defaults({ jar: true });
 import Expect from './expect';
-import { validateProcess } from './validate';
+import { validateExchange } from './validate';
 import { DistilleryValidationError, DistilleryResponseError, DistilleryError } from './error';
 
 const createParameter = _.curry((parameterValues, parameterDefinition) => {
@@ -102,13 +102,13 @@ const generateParameters = (parameterDefinitions, parameterValues, validateFn) =
 
 };
 
-class Process {
+class Exchange {
 
   constructor(definition, options = {}) {
 
     this.options = _.defaults(options, { jar: request.jar() });
 
-    if (validateProcess(definition))
+    if (validateExchange(definition))
       _.extend(this, definition);
 
   }
@@ -125,7 +125,7 @@ class Process {
   _buildConfiguration(parameters = {}) {
 
     if (!_.isObject(parameters))
-      throw new DistilleryError('Process parameters must be an object.');
+      throw new DistilleryError('Exchange parameters must be an object.');
 
     const { query, header, form } = generateParameters(this.request.parameters, parameters, this.request.validate);
 
@@ -190,4 +190,4 @@ class Process {
 
 }
 
-export default Process;
+export default Exchange;
