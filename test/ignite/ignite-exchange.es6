@@ -7,7 +7,7 @@ import * as fixtures from '../fixtures';
 describe('IgniteExchange', () => {
 
   const ignite = new Ignite(fixtures.still.posts);
-  const definition = ignite.still.process;
+  const definition = ignite.still.exchange;
   const igniteExchange = new IgniteExchange(definition);
   const response = fixtures.response.posts;
 

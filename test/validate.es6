@@ -9,7 +9,7 @@ describe('Validate', () => {
 
   const distillery = new Distillery(fixtures.still.auctions);
   const definitionStill = _.clone(distillery.still);
-  const definitionExchange = _.clone(distillery.still.process);
+  const definitionExchange = _.clone(distillery.still.exchange);
   const definitionModel = _.clone(distillery.still.models[0]);
 
   describe('.validateModel', () => {
@@ -242,7 +242,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.parameters[<index>] is not a string or object', () => {
+    it('should throw an error if exchange.request.parameters[<index>] is not a string or object', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
@@ -279,7 +279,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.parameters[<index>].name is not a string', () => {
+    it('should throw an error if exchange.request.parameters[<index>].name is not a string', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
@@ -306,7 +306,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.parameters[<index>].required is not a boolean or undefined', () => {
+    it('should throw an error if exchange.request.parameters[<index>].required is not a boolean or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
@@ -346,7 +346,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.parameters[<index>].validate is not a function or undefined', () => {
+    it('should throw an error if exchange.request.parameters[<index>].validate is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
@@ -386,7 +386,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.parameters[<index>].format is not a function or undefined', () => {
+    it('should throw an error if exchange.request.parameters[<index>].format is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
@@ -426,7 +426,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.parameters[<index>].alias is not a string or undefined', () => {
+    it('should throw an error if exchange.request.parameters[<index>].alias is not a string or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
@@ -466,7 +466,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.parameters[<index>].type is not a string or undefined', () => {
+    it('should throw an error if exchange.request.parameters[<index>].type is not a string or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
@@ -506,7 +506,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.request.validate is not a function or undefined', () => {
+    it('should throw an error if exchange.request.validate is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
@@ -545,7 +545,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.response[<key>].indicators is not an object', () => {
+    it('should throw an error if exchange.response[<key>].indicators is not an object', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
@@ -575,7 +575,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.response[<keyA>].indicators[<keyB>] is not a function', () => {
+    it('should throw an error if exchange.response[<keyA>].indicators[<keyB>] is not a function', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
@@ -592,7 +592,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.response[<keyA>].validate is not a function or undefined', () => {
+    it('should throw an error if exchange.response[<keyA>].validate is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
@@ -619,7 +619,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if process.response[<keyA>].hook is not a function or undefined', () => {
+    it('should throw an error if exchange.response[<keyA>].hook is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
@@ -644,7 +644,7 @@ describe('Validate', () => {
     it('should return the still if validation of individual components pass', () => {
 
       const invalidDefinitionStill = _.merge({}, definitionStill, {
-        process: {
+        exchange: {
           response: false
         },
       });
