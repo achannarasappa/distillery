@@ -4,7 +4,7 @@ const path = require('path');
 const request = require('request-promise').defaults({ jar: true });
 const chalk = require('chalk');
 const Table = require('cli-table');
-import Process from '../exchange';
+import Exchange from '../exchange';
 
 const cliStyleTable = { head: [ 'blue' ] };
 
@@ -62,7 +62,7 @@ const getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey,
 
 });
 
-class IgniteProcess extends Process {
+class IgniteExchange extends Exchange {
 
   constructor(definition, options={}) {
 
@@ -164,4 +164,4 @@ class IgniteProcess extends Process {
 
 }
 
-export default IgniteProcess;
+export default IgniteExchange;

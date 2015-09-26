@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const expect = require('expect.js');
-import IgniteProcess from '../../lib/ignite/ignite-process';
+import IgniteProcess from '../../lib/ignite/ignite-exchange';
 import Ignite from '../../lib/ignite/ignite';
 import * as fixtures from '../fixtures';
 
