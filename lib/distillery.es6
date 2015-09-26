@@ -1,6 +1,6 @@
 const _ = require('lodash');
 import Model from './model';
-import Process from './process';
+import Process from './exchange';
 import Expect from './expect';
 import { validateStill } from './validate';
 import { DistilleryError } from './error';
