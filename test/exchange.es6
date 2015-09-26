@@ -1,16 +1,16 @@
 const _ = require('lodash');
 const expect = require('expect.js');
 import Distillery from '../lib/distillery';
-import Process from '../lib/exchange';
+import Exchange from '../lib/exchange';
 import { DistilleryValidationError, DistilleryResponseError, DistilleryError } from '../lib/error';
 import * as fixtures from './fixtures';
 
-describe('Process', () => {
+describe('Exchange', () => {
 
   const distillery = new Distillery(fixtures.still.auctions);
   const definition = distillery.still.process;
-  const process = new Process(definition);
-  const processCustom = new Process(definition, {
+  const exchange = new Exchange(definition);
+  const exchangeCustom = new Exchange(definition, {
     requestOptions: {
       url: 'http://examplecustom.com',
       maxRedirects: 100,
@@ -23,28 +23,28 @@ describe('Process', () => {
 
   describe('Constructor', () => {
 
-    it('should be an instance of Process', () => {
+    it('should be an instance of Exchange', () => {
 
-      expect(process).to.be.an(Process);
+      expect(exchange).to.be.an(Exchange);
 
     });
 
     it('should set an empty cookie jar if no jar is specified', () => {
 
-      expect(process.options.jar).to.eql(blankCookie)
+      expect(exchange.options.jar).to.eql(blankCookie)
 
     });
 
     it('should set use the passed cookie jar is one is specified', () => {
 
-      expect(new Process(definition, { jar: testCookie }).options.jar).to.eql(testCookie)
+      expect(new Exchange(definition, { jar: testCookie }).options.jar).to.eql(testCookie)
 
     });
 
-    it('should extend process with the definition', () => {
+    it('should extend exchange with the definition', () => {
 
-      expect(process.request).to.eql(definition.request);
-      expect(process.response).to.eql(definition.response);
+      expect(exchange.request).to.eql(definition.request);
+      expect(exchange.response).to.eql(definition.response);
 
     });
 
@@ -52,8 +52,8 @@ describe('Process', () => {
 
   describe('.prototype._buildConfiguration', () => {
 
-    const configuration = process._buildConfiguration({ tab: 'home', page: 1 });
-    const configurationCustom = processCustom._buildConfiguration({ tab: 'home', page: 1 });
+    const configuration = exchange._buildConfiguration({ tab: 'home', page: 1 });
+    const configurationCustom = exchangeCustom._buildConfiguration({ tab: 'home', page: 1 });
 
     it('should build a request configuration object', () => {
 
@@ -85,7 +85,7 @@ describe('Process', () => {
 
     it('should throw an error if the parameters argument is not an object and not undefined', () => {
 
-      expect(process._buildConfiguration).withArgs('test').to.throwError((error) => expect(error).to.be.a(DistilleryError));
+      expect(exchange._buildConfiguration).withArgs('test').to.throwError((error) => expect(error).to.be.a(DistilleryError));
 
     });
 
@@ -93,20 +93,20 @@ describe('Process', () => {
 
   describe('.prototype._generateResponse', () => {
 
-    const validResponseKey = process._getValidResponseKey(response);
+    const validResponseKey = exchange._getValidResponseKey(response);
 
     it('should add indicators, hook, and jar keys to the response when there is a validResponseKey', () => {
 
-      expect(process._generateResponse(blankCookie)(response)).to.have.keys([ 'indicators', 'hook', 'jar' ]);
-      expect(process._generateResponse(blankCookie)(response).indicators).to.eql(process._getValidResponseIndicators(definition.response[validResponseKey].indicators, response));
-      expect(process._generateResponse(blankCookie)(response).hook).to.be(definition.response[validResponseKey].hook);
-      expect(process._generateResponse(blankCookie)(response).jar).to.be(blankCookie);
+      expect(exchange._generateResponse(blankCookie)(response)).to.have.keys([ 'indicators', 'hook', 'jar' ]);
+      expect(exchange._generateResponse(blankCookie)(response).indicators).to.eql(exchange._getValidResponseIndicators(definition.response[validResponseKey].indicators, response));
+      expect(exchange._generateResponse(blankCookie)(response).hook).to.be(definition.response[validResponseKey].hook);
+      expect(exchange._generateResponse(blankCookie)(response).jar).to.be(blankCookie);
 
     });
 
     it('should throw a DistilleryResponseError when there is not a validResponseKey', () => {
 
-      expect(() => process._generateResponse(blankCookie)(responseInvalid)).to.throwError((error) => expect(error).to.be.a(DistilleryResponseError));
+      expect(() => exchange._generateResponse(blankCookie)(responseInvalid)).to.throwError((error) => expect(error).to.be.a(DistilleryResponseError));
 
     });
 
@@ -116,7 +116,7 @@ describe('Process', () => {
 
     it('should return object with the keys as indicator names', () => {
 
-      expect(process._getValidResponseIndicators(definition.response.success.indicators, response)).to.only.have.keys(_.keys(definition.response.success.indicators));
+      expect(exchange._getValidResponseIndicators(definition.response.success.indicators, response)).to.only.have.keys(_.keys(definition.response.success.indicators));
 
     });
 
@@ -126,7 +126,7 @@ describe('Process', () => {
 
     it('should find first valid response', () => {
 
-      expect(process._getValidResponseKey(response)).to.be('success')
+      expect(exchange._getValidResponseKey(response)).to.be('success')
 
     });
 
@@ -140,13 +140,13 @@ describe('Process', () => {
 
     it('should validate the response validation function evaluates to true', () => {
 
-      expect(process._isResponseValid(definition.response.success, response)).to.be.ok()
+      expect(exchange._isResponseValid(definition.response.success, response)).to.be.ok()
 
     });
 
     it('should not validate the response validation function evaluates to false', () => {
 
-      expect(process._isResponseValid(definition.response.error, response)).to.not.be.ok()
+      expect(exchange._isResponseValid(definition.response.error, response)).to.not.be.ok()
 
     });
 
@@ -177,10 +177,10 @@ describe('Process', () => {
         }
       };
 
-      expect(process._isResponseValid(validEvaluatedResponse, response)).to.be.ok();
-      expect(process._isResponseValid(invalidEvaluatedResponseSomeFalse, response)).to.not.be.ok();
-      expect(process._isResponseValid(invalidEvaluatedResponseSomeNull, response)).to.not.be.ok();
-      expect(process._isResponseValid(invalidEvaluatedResponseAllFalse, response)).to.not.be.ok();
+      expect(exchange._isResponseValid(validEvaluatedResponse, response)).to.be.ok();
+      expect(exchange._isResponseValid(invalidEvaluatedResponseSomeFalse, response)).to.not.be.ok();
+      expect(exchange._isResponseValid(invalidEvaluatedResponseSomeNull, response)).to.not.be.ok();
+      expect(exchange._isResponseValid(invalidEvaluatedResponseAllFalse, response)).to.not.be.ok();
 
     });
 
@@ -190,7 +190,7 @@ describe('Process', () => {
 
     it('should substitute a parameter if one is passed', () => {
 
-      const configuration = process._buildConfiguration({ tab: 'home', page: 1 });
+      const configuration = exchange._buildConfiguration({ tab: 'home', page: 1 });
 
       expect(configuration.url).to.contain('page=1');
       expect(configuration.url).to.contain('show_tab=home');
@@ -199,7 +199,7 @@ describe('Process', () => {
 
     it('should substitute a parameter if one is passed and validation passes', () => {
 
-      const configuration = process._buildConfiguration({ context: 'user', page: 1 });
+      const configuration = exchange._buildConfiguration({ context: 'user', page: 1 });
 
       expect(configuration.url).to.contain('page=1');
       expect(configuration.url).to.contain('context=user');
@@ -208,7 +208,7 @@ describe('Process', () => {
 
     it('should substitute a default parameter if one is available and no parameter is passed', () => {
 
-      const configuration = process._buildConfiguration({ tab: 'home', page: 1 });
+      const configuration = exchange._buildConfiguration({ tab: 'home', page: 1 });
 
       expect(configuration.url).to.contain('context=user');
 
@@ -216,7 +216,7 @@ describe('Process', () => {
 
     it('should format a parameter if a format function is defined', () => {
 
-      const configuration = process._buildConfiguration({ tab: 'home', page: 1 });
+      const configuration = exchange._buildConfiguration({ tab: 'home', page: 1 });
 
       expect(configuration.url).to.contain('page=10');
 
@@ -224,13 +224,13 @@ describe('Process', () => {
 
     it('should throw an error if a required parameter is not passed', () => {
 
-      expect(() => process._buildConfiguration()).to.throwError();
+      expect(() => exchange._buildConfiguration()).to.throwError();
 
     });
 
     it('should throw a DistilleryValidationError error if validation fails', () => {
 
-      expect(() => process._buildConfiguration({ context: 'mod', page: 1 })).to.throwError((e) => {
+      expect(() => exchange._buildConfiguration({ context: 'mod', page: 1 })).to.throwError((e) => {
 
         expect(e).to.be.a(DistilleryValidationError);
 
@@ -244,19 +244,19 @@ describe('Process', () => {
 
     it('should use the parameterDefinition as the parameter name if the parameterDefinition is a string', () => {
 
-      expect(process._buildConfiguration({ filter: 'boat', page: 1 }).url).to.contain('filter=boat');
+      expect(exchange._buildConfiguration({ filter: 'boat', page: 1 }).url).to.contain('filter=boat');
 
     });
 
     it('should use the parameterDefinition.alias as the parameter name if the parameterDefinition.alias is a string', () => {
 
-      expect(process._buildConfiguration({ items: 'true', page: 1 }).url).to.contain('items=true');
+      expect(exchange._buildConfiguration({ items: 'true', page: 1 }).url).to.contain('items=true');
 
     });
 
     it('should use the parameterDefinition.name as the parameter name if the parameterDefinition.name if parameterDefinition.alias is not a string', () => {
 
-      expect(process._buildConfiguration({ page: 20 }).url).to.contain('page=200');
+      expect(exchange._buildConfiguration({ page: 20 }).url).to.contain('page=200');
 
     });
 
@@ -266,8 +266,8 @@ describe('Process', () => {
 
     it('should pair the \'name\' property in the definition to the value from generateParameter in an object', () => {
 
-      expect(process._buildConfiguration({ tab: 'home', page: 1 }).headers).to.be.a('object');
-      expect(process._buildConfiguration({ tab: 'home', page: 1 }).headers).to.have.property('Content-Type', 'application/x-www-form-urlencoded');
+      expect(exchange._buildConfiguration({ tab: 'home', page: 1 }).headers).to.be.a('object');
+      expect(exchange._buildConfiguration({ tab: 'home', page: 1 }).headers).to.have.property('Content-Type', 'application/x-www-form-urlencoded');
 
     });
 
@@ -275,10 +275,10 @@ describe('Process', () => {
 
       const distilleryPosts = new Distillery(fixtures.still.posts);
       const definitionPosts = distilleryPosts.still.process;
-      const processPosts = new Process(definitionPosts);
+      const exchangePosts = new Exchange(definitionPosts);
 
-      expect(processPosts._buildConfiguration().headers).to.eql({});
-      expect(processPosts._buildConfiguration().form).to.eql({});
+      expect(exchangePosts._buildConfiguration().headers).to.eql({});
+      expect(exchangePosts._buildConfiguration().form).to.eql({});
 
     });
 
@@ -297,9 +297,9 @@ describe('Process', () => {
           ],
         },
       });
-      const processWithoutQuery = new Process(definitionWithoutQuery);
+      const exchangeWithoutQuery = new Exchange(definitionWithoutQuery);
 
-      expect(() => processWithoutQuery._buildConfiguration({ page: 1 })).to.not.throwError();
+      expect(() => exchangeWithoutQuery._buildConfiguration({ page: 1 })).to.not.throwError();
 
     });
 
@@ -315,11 +315,11 @@ describe('Process', () => {
           validate: () => true,
         }
       });
-      const processValidationError = new Process(definitionValidationError);
-      const processValidationNoError = new Process(definitionValidationNoError);
+      const exchangeValidationError = new Exchange(definitionValidationError);
+      const exchangeValidationNoError = new Exchange(definitionValidationNoError);
 
-      expect(() => processValidationError._buildConfiguration({ page: 1 })).to.throwError((error) => expect(error).to.be.a(DistilleryValidationError));
-      expect(() => processValidationNoError._buildConfiguration({ page: 1 })).to.not.throwError();
+      expect(() => exchangeValidationError._buildConfiguration({ page: 1 })).to.throwError((error) => expect(error).to.be.a(DistilleryValidationError));
+      expect(() => exchangeValidationNoError._buildConfiguration({ page: 1 })).to.not.throwError();
 
     });
 
@@ -339,9 +339,9 @@ describe('Process', () => {
           validate: (parameters) => _.has(parameters, 'page'),
         }
       });
-      const processValidationNoError = new Process(definitionValidationNoError);
+      const exchangeValidationNoError = new Exchange(definitionValidationNoError);
 
-      expect(() => processValidationNoError._buildConfiguration({ page: 1 })).to.not.throwError();
+      expect(() => exchangeValidationNoError._buildConfiguration({ page: 1 })).to.not.throwError();
 
     });
 
