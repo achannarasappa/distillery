@@ -3,7 +3,7 @@ const _ = require('lodash');
 const chalk = require('chalk');
 import Distillery from '../distillery';
 import IgniteModel from './ignite-model';
-import IgniteProcess from './ignite-process';
+import IgniteExchange from './ignite-exchange';
 
 class Ignite extends Distillery {
 
@@ -25,7 +25,7 @@ class Ignite extends Distillery {
 
     console.log(chalk.blue('\u2776') + chalk.gray(' initiating request'));
 
-    return new IgniteProcess(this.still.process, this.options)
+    return new IgniteExchange(this.still.process, this.options)
       .execute(parameters)
       .then(this._respond(returnResponse))
 
