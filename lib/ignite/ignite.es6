@@ -25,7 +25,7 @@ class Ignite extends Distillery {
 
     console.log(chalk.blue('\u2776') + chalk.gray(' initiating request'));
 
-    return new IgniteExchange(this.still.process, this.options)
+    return new IgniteExchange(this.still.exchange, this.options)
       .execute(parameters)
       .then(this._respond(returnResponse))
 

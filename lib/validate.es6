@@ -132,7 +132,7 @@ const validateExchange = (definition) => {
 };
 
 const validateStill = (still) => ({
-  process: validateExchange(still.process),
+  exchange: validateExchange(still.exchange),
   models: _.map(still.models, validateModel),
 });
 

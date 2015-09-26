@@ -21,7 +21,7 @@ class Distillery {
 
   distill(parameters, returnResponse) {
 
-    return new Exchange(this.still.process, this.options)
+    return new Exchange(this.still.exchange, this.options)
       .execute(parameters)
       .then(this._respond(returnResponse))
 

@@ -8,7 +8,7 @@ import * as fixtures from './fixtures';
 describe('Exchange', () => {
 
   const distillery = new Distillery(fixtures.still.auctions);
-  const definition = distillery.still.process;
+  const definition = distillery.still.exchange;
   const exchange = new Exchange(definition);
   const exchangeCustom = new Exchange(definition, {
     requestOptions: {
@@ -135,7 +135,7 @@ describe('Exchange', () => {
   describe('.prototype._isResponseValid', () => {
 
     const distillery = new Distillery(fixtures.still.posts);
-    const definition = distillery.still.process;
+    const definition = distillery.still.exchange;
     const response = fixtures.response.posts;
 
     it('should validate the response validation function evaluates to true', () => {
@@ -274,7 +274,7 @@ describe('Exchange', () => {
     it('should use default headers and form data when the definition.request.parameters property is undefined', () => {
 
       const distilleryPosts = new Distillery(fixtures.still.posts);
-      const definitionPosts = distilleryPosts.still.process;
+      const definitionPosts = distilleryPosts.still.exchange;
       const exchangePosts = new Exchange(definitionPosts);
 
       expect(exchangePosts._buildConfiguration().headers).to.eql({});
@@ -284,7 +284,7 @@ describe('Exchange', () => {
 
     it('should not throw an error when no query parameters are defined', () => {
 
-      const definitionWithoutQuery = _.merge({}, distillery.still.process, {
+      const definitionWithoutQuery = _.merge({}, distillery.still.exchange, {
         request: {
           parameters: [
             {
@@ -305,12 +305,12 @@ describe('Exchange', () => {
 
     it('should throw an error when definition.request.validate is defined and returns a falsy value', () => {
 
-      const definitionValidationError = _.merge({}, distillery.still.process, {
+      const definitionValidationError = _.merge({}, distillery.still.exchange, {
         request: {
           validate: () => false,
         }
       });
-      const definitionValidationNoError = _.merge({}, distillery.still.process, {
+      const definitionValidationNoError = _.merge({}, distillery.still.exchange, {
         request: {
           validate: () => true,
         }
@@ -325,7 +325,7 @@ describe('Exchange', () => {
 
     it('should expose parameters by their aliased name', () => {
 
-      const definitionValidationNoError = _.assign(_.clone(distillery.still.process), {
+      const definitionValidationNoError = _.assign(_.clone(distillery.still.exchange), {
         request: {
           url: 'http://example.com/auctions?page={page}',
           method: 'get',

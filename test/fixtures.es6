@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const still = {
   posts: (distillery) => ({
-    process: {
+    exchange: {
       request: {
         url: 'http://example.com/forum/tech',
         method: 'GET',
@@ -70,7 +70,7 @@ const still = {
     ],
   }),
   auctions: (distillery) => ({
-    process: {
+    exchange: {
       request: {
         url: 'http://example.com/auctions?show_tab={show_tab_name}&page={page}&items={show_items}&context={context}&filter={filter}',
         method: 'Get',
