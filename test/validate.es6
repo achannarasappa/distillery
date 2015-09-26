@@ -9,7 +9,7 @@ describe('Validate', () => {
 
   const distillery = new Distillery(fixtures.still.auctions);
   const definitionStill = _.clone(distillery.still);
-  const definitionProcess = _.clone(distillery.still.process);
+  const definitionExchange = _.clone(distillery.still.process);
   const definitionModel = _.clone(distillery.still.models[0]);
 
   describe('.validateModel', () => {
@@ -192,59 +192,59 @@ describe('Validate', () => {
 
     it('should return the input if no errors are thrown', () => {
 
-      expect(validateExchange(definitionProcess)).to.eql(definitionProcess);
+      expect(validateExchange(definitionExchange)).to.eql(definitionExchange);
 
     });
 
     it('should throw an error if definition.request is not an object', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: '',
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
     it('should throw an error if definition.request.url is not a string', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           url: false
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
     it('should throw an error if definition.request.method is not a string', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           method: false
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
     it('should throw an error if definition.request.method is not \'GET\', \'POST\', \'PATCH\', \'PUT\', \'DEL\', or \'HEAD\'', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           method: 'post1'
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
     it('should throw an error if process.request.parameters[<index>] is not a string or object', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             () => true,
@@ -252,7 +252,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessString = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeString = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             'test',
@@ -260,7 +260,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessObject = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeObject = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -273,15 +273,15 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(validateExchange).withArgs(validDefinitionProcessString).to.not.throwError();
-      expect(validateExchange).withArgs(validDefinitionProcessObject).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchangeString).to.not.throwError();
+      expect(validateExchange).withArgs(validDefinitionExchangeObject).to.not.throwError();
 
     });
 
     it('should throw an error if process.request.parameters[<index>].name is not a string', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -291,7 +291,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessString = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeString = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -301,14 +301,14 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(validateExchange).withArgs(validDefinitionProcessString).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchangeString).to.not.throwError();
 
     });
 
     it('should throw an error if process.request.parameters[<index>].required is not a boolean or undefined', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -319,7 +319,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessBoolean = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeBoolean = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -330,7 +330,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessUndefined = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeUndefined = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -340,15 +340,15 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(validateExchange).withArgs(validDefinitionProcessBoolean).to.not.throwError();
-      expect(validateExchange).withArgs(validDefinitionProcessUndefined).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchangeBoolean).to.not.throwError();
+      expect(validateExchange).withArgs(validDefinitionExchangeUndefined).to.not.throwError();
 
     });
 
     it('should throw an error if process.request.parameters[<index>].validate is not a function or undefined', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -359,7 +359,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessFunction = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeFunction = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -370,7 +370,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessUndefined = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeUndefined = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -380,15 +380,15 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(validateExchange).withArgs(validDefinitionProcessFunction).to.not.throwError();
-      expect(validateExchange).withArgs(validDefinitionProcessUndefined).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchangeFunction).to.not.throwError();
+      expect(validateExchange).withArgs(validDefinitionExchangeUndefined).to.not.throwError();
 
     });
 
     it('should throw an error if process.request.parameters[<index>].format is not a function or undefined', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -399,7 +399,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessFunction = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeFunction = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -410,7 +410,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessUndefined = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeUndefined = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -420,15 +420,15 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(validateExchange).withArgs(validDefinitionProcessFunction).to.not.throwError();
-      expect(validateExchange).withArgs(validDefinitionProcessUndefined).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchangeFunction).to.not.throwError();
+      expect(validateExchange).withArgs(validDefinitionExchangeUndefined).to.not.throwError();
 
     });
 
     it('should throw an error if process.request.parameters[<index>].alias is not a string or undefined', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -439,7 +439,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessString = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeString = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -450,7 +450,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessUndefined = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeUndefined = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -460,15 +460,15 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(validateExchange).withArgs(validDefinitionProcessString).to.not.throwError();
-      expect(validateExchange).withArgs(validDefinitionProcessUndefined).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchangeString).to.not.throwError();
+      expect(validateExchange).withArgs(validDefinitionExchangeUndefined).to.not.throwError();
 
     });
 
     it('should throw an error if process.request.parameters[<index>].type is not a string or undefined', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -479,7 +479,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessString = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeString = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -490,7 +490,7 @@ describe('Validate', () => {
         },
       });
 
-      const validDefinitionProcessUndefined = _.merge({}, definitionProcess, {
+      const validDefinitionExchangeUndefined = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
@@ -500,54 +500,54 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(validateExchange).withArgs(validDefinitionProcessString).to.not.throwError();
-      expect(validateExchange).withArgs(validDefinitionProcessUndefined).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchangeString).to.not.throwError();
+      expect(validateExchange).withArgs(validDefinitionExchangeUndefined).to.not.throwError();
 
     });
 
     it('should throw an error if process.request.validate is not a function or undefined', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           validate: true
         },
       });
 
-      const validDefinitionProcess = _.merge({}, definitionProcess, {
+      const validDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           validate: () => true
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(validateExchange).withArgs(validDefinitionProcess).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchange).to.not.throwError();
 
     });
 
     it('should throw an error if definition.response is not an object', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: '',
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
     it('should throw an error if definition.response does not have at least one response', () => {
 
-      const invalidDefinitionProcess = _.assign(definitionProcess, {
+      const invalidDefinitionExchange = _.assign(definitionExchange, {
         response: {},
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
     it('should throw an error if process.response[<key>].indicators is not an object', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
           invalid_response: {
             indicators: false,
@@ -556,13 +556,13 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
     it('should throw an error if definition.response[<keyA>].indicators does not have at least one indicator', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
           valid_response: {
             indicators: {},
@@ -571,13 +571,13 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
     it('should throw an error if process.response[<keyA>].indicators[<keyB>] is not a function', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
           valid_response: {
             indicators: {
@@ -588,13 +588,13 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
     it('should throw an error if process.response[<keyA>].validate is not a function or undefined', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
           valid_response: {
             indicators: {
@@ -604,7 +604,7 @@ describe('Validate', () => {
           },
         },
       });
-      const validDefinitionProcess = _.merge({}, definitionProcess, {
+      const validDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
           valid_response: {
             indicators: {
@@ -614,14 +614,14 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
-      expect(validateExchange).withArgs(validDefinitionProcess).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchange).to.not.throwError();
 
     });
 
     it('should throw an error if process.response[<keyA>].hook is not a function or undefined', () => {
 
-      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+      const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         response: {
           valid_response: {
             indicators: {
@@ -633,7 +633,7 @@ describe('Validate', () => {
         },
       });
 
-      expect(validateExchange).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
