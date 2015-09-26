@@ -27,9 +27,9 @@ npm install distillery-js --save
 * returns 
     * `Promise<response object>` if returnResponse is set to `true`
     * `Promise<response object>` if any error is returned. The `response.error` will be set along with the rest of the [response object](https://nodejs.org/api/http.html#http_http_incomingmessage).
-    * `Promise<any>` if the still has the `process.response[<key>].hook` set, this function will be run and the and the promise will be resolved with the return of this function.
-    * `Promise<response object>` if the `process.response[<key>].hook` and the `models` keys are not set in the still
-    * `Promise<models object>` if the `process.response[<key>].hook` is not set but the `models` is set, an array of data parsed by the models will be returned. This is the same data would would be returned by running `distillery.parse(html)` directly.
+    * `Promise<any>` if the still has the `exchange.response[<key>].hook` set, this function will be run and the and the promise will be resolved with the return of this function.
+    * `Promise<response object>` if the `exchange.response[<key>].hook` and the `models` keys are not set in the still
+    * `Promise<models object>` if the `exchange.response[<key>].hook` is not set but the `models` is set, an array of data parsed by the models will be returned. This is the same data would would be returned by running `distillery.parse(html)` directly.
 
 #### `distillery.parse(html)`  
 * arguments
@@ -42,7 +42,7 @@ npm install distillery-js --save
 // still.js
 module.exports = function(distillery) {
   return {
-    process: {
+    exchange: {
       ...
     },
     models: [
@@ -119,7 +119,7 @@ The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expec
     * `path` (*string*) - CSS path to an HTML element.
     * `expected` (*string* or *regex*, *optional*) - If expected is not set, the function will return the contents of the element at the CSS path if found or false is not found. If expected is a string, the fuction will return true if the inner text of the element at the path matches
 * returns
-    * `<html element inner text>` if expected is not set and the element at the CSS path exists in the html document. This response allows for any customer validation logic to be performed in `process.response[<key>].validate`.
+    * `<html element inner text>` if expected is not set and the element at the CSS path exists in the html document. This response allows for any customer validation logic to be performed in `exchange.response[<key>].validate`.
     * `true` if `expected` is a regex, the element at the CSS path exists in the html document, and the `expected` regex pattern matches the inner text of that element
     * `true` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string matches the inner text of that element exactly
     * `false` if the contents of the element at the CSS path does not exists in the html document
@@ -140,8 +140,8 @@ $ distillery ignite <stillPath> [-o <option>...] [-p <parameter>...]
 #### stillPath  
 The relative path to the still file
 #### option  
-Set distillery CLI options which are detailed below. All model options have default values shown while process options have no defaults.
-* Process
+Set distillery CLI options which are detailed below. All model options have default values shown while exchange options have no defaults.
+* Exchange
     * `-o save_html=response.html` - Save HTML document to response.html
     * `-o save_cookie=response.cookie` - Save cookie set in the response to response.cookie
     * `-o restore_cookie=request.cookie` - Use cookie saved in request.cookie when making the request
@@ -152,7 +152,7 @@ Set distillery CLI options which are detailed below. All model options have defa
     * `-o item_format=false` - Apply the model's `format` function to the entities, by default, the raw data returned without any custom formatting will be returned
 
 #### parameter  
-Set any parameters defined in the still's `process.request.query`, `process.request.headers`, or `process.request.form` section that would be normally set in the `.distill` method of the programmatic API. Parameters should follow the format of `-p <name>=<value>`
+Set any parameters defined in the still's `exchange.request.query`, `exchange.request.headers`, or `exchange.request.form` section that would be normally set in the `.distill` method of the programmatic API. Parameters should follow the format of `-p <name>=<value>`
 ##### Example  
 ```
 $ distillery ignite ./still.js -p id=4809527167
@@ -163,7 +163,7 @@ Stills are the configuration object that defines how to retrieve and extract dat
 ```javascript
 module.exports = function(distillery) {
   return {
-    process: {
+    exchange: {
       request: {
         ...
       },
@@ -178,21 +178,21 @@ module.exports = function(distillery) {
 };
 ```
 
-#### `process`  
+#### `exchange`
 (`object`, `required`) - The prcocess object contains the definition for how to make the HTTP request and how to handle the response.
-#### `process.request`  
+#### `exchange.request`
 (`object`, `required`) - Data detailing how to complete a HTTP request.
-#### `process.request.url`  
+#### `exchange.request.url`
 (`string`, `required`) - URL string which may contain tokenized variables. See token section below for more information.  
 #### Tokens  
-Tokens are placeholders for variables in the `process.request.url` that can be passed into a still to modify the request. Tokens are encapsulated by `{` and `}` in the url string. These can be used to make use of the same still for multiple similar requests.
+Tokens are placeholders for variables in the `exchange.request.url` that can be passed into a still to modify the request. Tokens are encapsulated by `{` and `}` in the url string. These can be used to make use of the same still for multiple similar requests.
 ##### Example  
 In this example a GitHub username is passed into the distillery instance to save the profile page of a user. The username can be modified in the example.js script to scrape any user's profile.
 ```javascript
 // still.js
 module.exports = function(distillery) {
   return {
-    process: {
+    exchange: {
       request: {
         method: 'GET',
         url: 'https://github.com/{un}',
@@ -214,11 +214,11 @@ Distillery(still)
 ```
 Run with `$ node ./example.js`. The username variable can be modified in example.js to scrape the profile page of any github user.
 
-#### `process.request.method`  
+#### `exchange.request.method`
 (*string*, *required*) - The HTTP verb which may be `GET`, `POST`, `PUT`, or `DELETE`  
-#### `process.request.parameters`  
+#### `exchange.request.parameters`
 (*array*, *optional*) - Parameters that can be set at invokation time.
-#### `process.request.parameters[<index>]`  
+#### `exchange.request.parameters[<index>]`
 (*object*, *optional*, or *string*, *optional*) - Describes a parameter that can be passed into the still. When a string is used, several default parameter properties are assigned:
 ```js
 ...
@@ -233,13 +233,13 @@ parameters: [
 ...
 ```
 
-##### `process.request.parameters[<index>].name`  
+##### `exchange.request.parameters[<index>].name`
 (*string*, *required*) - Name of the token in the url string.
-##### `process.request.parameters[<index>].required`  
+##### `exchange.request.parameters[<index>].required`
 (*boolean*, *optional*) - If set to true, then an error will be thrown if this variable is not set in the `Distillery(still).distill()` method.
-##### `process.request.parameters[<index>].def`  
+##### `exchange.request.parameters[<index>].def`
 (*string*, *optional*) - Default value for the given parameter.
-##### `process.request.parameters[<index>].validate`  
+##### `exchange.request.parameters[<index>].validate`
 (*function*, *optional*) - A `DistilleryValidationError` is thrown when a falsy value is returned from this function.
 ##### Example  
 ```javascript
@@ -251,7 +251,7 @@ context: {
   }
 },
 ```
-##### `process.request.parameters[<index>].format`  
+##### `exchange.request.parameters[<index>].format`
 (*function*, *optional*) - Modifies the parameter before running any validation.
 ##### Example  
 ```javascript
@@ -263,18 +263,18 @@ context: {
   }
 },
 ```
-##### `process.request.parameters[<index>].type`  
+##### `exchange.request.parameters[<index>].type`
 (*string*, *optional*) - The parameter type. This indicates in which part of the request the parameter will be used. Possible types include:
 * `query` - Parameters to be interpolated with url tokens. `name` property refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
 * `header` - Parameters to be sent as headers. See [Request documentation](https://github.com/request/request#custom-http-headers) of headers for more information. Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
 * `payload` - Send request data as `application/x-www-form-urlencoded`. See [Request documentation](https://github.com/request/request#forms) on forms for more information.  Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
 
-##### `process.request.parameters[<index>].alias`  
+##### `exchange.request.parameters[<index>].alias`
 (*string*, *optional*) - An alias for the parameter. For example, the header `Content-Type` can be aliased to `content_type` to make it easier to refer to when using the `Distillery(still).distill()` method.
-#### `process.response`  
+#### `exchange.response`
 Hooks, validators, and indicators to handle a HTTP response. Each sub-object is a potential response condition. This allows for handling 404 Not Found response differently from a 200 OK response.
-#### `process.response[<key>].indicators`  
-(*object*, *required*) - List conditions to look for that would indicate this specific response was returned from the server. Each sub-key is a user-assigned name for the indicator. There are a set of indicator that can be used detailed below. Which combination or combinations of indicators constitues a specific response is in the [`process.response[<key>].validate`](#processresponsekeyvalidate) function.
+#### `exchange.response[<key>].indicators`
+(*object*, *required*) - List conditions to look for that would indicate this specific response was returned from the server. Each sub-key is a user-assigned name for the indicator. There are a set of indicator that can be used detailed below. Which combination or combinations of indicators constitues a specific response is in the [`exchange.response[<key>].validate`](#exchangeresponsekeyvalidate) function.
 ##### Indicators  
 Indicators are used to recognize if a particular response was returned. They are key value pairs where the keys are the name of the indicator and the value is an expected value in the HTTP response. There are three signatures that can be detected with distillery:
 * [A specifc HTTP response code](#distilleryexpecthttp_codecode)
@@ -296,10 +296,10 @@ The first two indicators are included with distillery. The last indicator is a u
 ...
 ```
 
-#### `process.response[<key>].validate`  
+#### `exchange.response[<key>].validate`
 (*function*, *required*) - Used to determine which response was returned from the the request. The result of each indicator can be used in this function to evaluate if the response is valid. If there are multiple responses that have validation functions that evaluate to true, the first response will be chosen.
 * arguments
-    * `indicators` (*object*) - Object with the same keys as defined in [response indicators](#processresponsekeyindicators). The values of these keys will be either a boolean or string depending on the indictor.
+    * `indicators` (*object*) - Object with the same keys as defined in [response indicators](#exchangeresponsekeyindicators). The values of these keys will be either a boolean or string depending on the indictor.
 
 ##### Example  
 In the `profile_success` response, there are two indicators that will be evaluated, `success_url` and `success_code`. If the validate function returns true, the hook for this response will be triggered.
@@ -307,7 +307,7 @@ In the `profile_success` response, there are two indicators that will be evaluat
 // still.js
 module.exports = function(distillery) {
   return {
-    process: {
+    exchange: {
       request: {
         method: 'GET',
         url: 'https://github.com/{un}',
@@ -331,12 +331,12 @@ module.exports = function(distillery) {
   }
 };
 ```
-#### `process.response[<key>].hook`  
+#### `exchange.response[<key>].hook`
 (*function*, *optional*) - Hook function to trigger after the response is validated. Only a single hook will be triggered in a still. If no hook is defined, 
 * arguments
     * `response` (*object*) - [HTTP response object](https://nodejs.org/api/http.html#http_http_incomingmessage) plus some additional distillery data. This is almost the same as the response object returned from the [Request](https://github.com/request/request) library. There are a few additional keys: 
-        * `response.indicators` (*object*) - response indicators as detailed in the [response indicators](#processresponsekeyindicators) section
-        * `response.hook` (*function*) - response hook as detailed in the [response hook](#processresponsekeyhook) section
+        * `response.indicators` (*object*) - response indicators as detailed in the [response indicators](#exchangeresponsekeyindicators) section
+        * `response.hook` (*function*) - response hook as detailed in the [response hook](#exchangeresponsekeyhook) section
         * `response.jar` (*object*) - [request cookie jar](https://github.com/request/request#requestjar) with cookie that is returned with the response. This can be used to pass cookies between distills or to store a cookie for later use.
 
 #### `models`  
