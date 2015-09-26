@@ -107,6 +107,9 @@ const validateProcess = (definition) => {
   if (!_.isString(definition.request.method))
     throw new DistilleryStillError('');
 
+  if (!_.isString(definition.request.url))
+    throw new DistilleryStillError('');
+
   if (!_.includes([ 'get', 'head', 'post', 'put', 'patch', 'del' ], definition.request.method.toLowerCase()))
     throw new DistilleryStillError('');
 
