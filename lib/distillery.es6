@@ -1,6 +1,6 @@
 const _ = require('lodash');
 import Model from './model';
-import Process from './exchange';
+import Exchange from './exchange';
 import Expect from './expect';
 import { validateStill } from './validate';
 import { DistilleryError } from './error';
@@ -21,7 +21,7 @@ class Distillery {
 
   distill(parameters, returnResponse) {
 
-    return new Process(this.still.process, this.options)
+    return new Exchange(this.still.process, this.options)
       .execute(parameters)
       .then(this._respond(returnResponse))
 

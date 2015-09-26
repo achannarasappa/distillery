@@ -20,7 +20,7 @@ const validateModelElement = (elementValue) => {
 
 };
 
-const validateProcessParameter = (parameterValue) => {
+const validateExchangeParameter = (parameterValue) => {
 
   if (!_.isPlainObject(parameterValue) && !_.isString(parameterValue))
     throw new DistilleryStillError('');
@@ -45,14 +45,14 @@ const validateProcessParameter = (parameterValue) => {
 
 };
 
-const validateProcessResponseIndicator = (indicatorValue) => {
+const validateExchangeResponseIndicator = (indicatorValue) => {
 
   if (!_.isFunction(indicatorValue))
     throw new DistilleryStillError('');
 
 };
 
-const validateProcessResponse = (responseValue) => {
+const validateExchangeResponse = (responseValue) => {
 
   if (!_.isPlainObject(responseValue.indicators))
     throw new DistilleryStillError('');
@@ -60,7 +60,7 @@ const validateProcessResponse = (responseValue) => {
   if (_.keys(responseValue.indicators).length < 1)
     throw new DistilleryStillError('');
 
-  _.mapValues(responseValue.indicators, validateProcessResponseIndicator);
+  _.mapValues(responseValue.indicators, validateExchangeResponseIndicator);
 
   if (!_.isFunction(responseValue.validate) && !_.isUndefined(responseValue.validate))
     throw new DistilleryStillError('');
@@ -99,7 +99,7 @@ const validateModel = (definition) => {
 
 };
 
-const validateProcess = (definition) => {
+const validateExchange = (definition) => {
 
   if (!_.isPlainObject(definition.request))
     throw new DistilleryStillError('');
@@ -114,7 +114,7 @@ const validateProcess = (definition) => {
     throw new DistilleryStillError('');
 
   if (_.has(definition.request, 'parameters'))
-    _.map(definition.request.parameters, validateProcessParameter);
+    _.map(definition.request.parameters, validateExchangeParameter);
 
   if (!_.isFunction(definition.request.validate) && !_.isUndefined(definition.request.validate))
     throw new DistilleryStillError('');
@@ -125,15 +125,15 @@ const validateProcess = (definition) => {
   if (_.keys(definition.response).length < 1)
     throw new DistilleryStillError('');
 
-  _.mapValues(definition.response, validateProcessResponse);
+  _.mapValues(definition.response, validateExchangeResponse);
 
   return definition;
 
 };
 
 const validateStill = (still) => ({
-  process: validateProcess(still.process),
+  process: validateExchange(still.process),
   models: _.map(still.models, validateModel),
 });
 
-export { validateModel, validateProcess, validateStill };
+export { validateModel, validateExchange, validateStill };
