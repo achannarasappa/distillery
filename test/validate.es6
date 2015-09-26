@@ -206,6 +206,18 @@ describe('Validate', () => {
 
     });
 
+    it('should throw an error if definition.request.method is not a string', () => {
+
+      const invalidDefinitionProcess = _.merge({}, definitionProcess, {
+        request: {
+          method: false
+        },
+      });
+
+      expect(validateProcess).withArgs(invalidDefinitionProcess).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
     it('should throw an error if definition.request.method is not \'GET\', \'POST\', \'PATCH\', \'PUT\', \'DEL\', or \'HEAD\'', () => {
 
       const invalidDefinitionProcess = _.merge({}, definitionProcess, {
