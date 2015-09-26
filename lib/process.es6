@@ -68,7 +68,9 @@ const processParameter = ({ name, alias, value, required, def, validate }) => {
 
 const validateParameters = _.curry((validateFn, parameters) => {
 
-  const combinedParameters = _.reduce(parameters, (result, value) => _.merge(result, value), {});
+  const combinedParameters = _.reduce(parameters, (formattedParameters, parameter) => _.assign(formattedParameters, {
+    [parameter.alias ? parameter.alias : parameter.name]: parameter.value,
+  }), {});
 
   if (_.isFunction(validateFn) && !validateFn(combinedParameters))
     throw new DistilleryValidationError('Combined parameter validation failed.');
@@ -86,6 +88,7 @@ const generateParameters = (parameterDefinitions, parameterValues, validateFn) =
       .map(createParameter(parameterValues))
       .map(defaultParameter)
       .map(formatParameter)
+      .thru(validateParameters(validateFn))
       .groupBy('type')
       .mapValues((parameters) => _(parameters)
         .map(processParameter)
@@ -93,7 +96,6 @@ const generateParameters = (parameterDefinitions, parameterValues, validateFn) =
         .zipObject()
         .value())
       .defaults(defaultParameters)
-      .thru(validateParameters(validateFn))
       .value();
 
   return defaultParameters;
