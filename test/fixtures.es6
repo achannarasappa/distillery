@@ -7,8 +7,9 @@ const still = {
         url: 'http://example.com/forum/tech',
         method: 'GET',
       },
-      response: {
-        success: {
+      response: [
+        {
+          name: 'success',
           indicators: {
             title: distillery.expect.html_element('title', 'Technology'),
             url: distillery.expect.url('http://example.com/forum/tech'),
@@ -17,7 +18,8 @@ const still = {
           },
           validate: (indicators) => indicators.title,
         },
-        error: {
+        {
+          name: 'error',
           indicators: {
             title: distillery.expect.html_element('title', 'Something went wrong'),
             url: distillery.expect.url('http://example.com/error'),
@@ -25,7 +27,7 @@ const still = {
           },
           validate: (indicators) => indicators.title && indicators.url,
         },
-      },
+      ],
     },
     models: [
       {
@@ -105,27 +107,30 @@ const still = {
           },
         ],
       },
-      response: {
-        success: {
+      response: [
+        {
+          name: 'success',
           indicators: {
             success_code: distillery.expect.http_code(200),
             success_title: distillery.expect.html_element('title'),
           },
           validate: (indicators) => indicators.success_code && indicators.success_title,
         },
-        success_2: {
+        {
+          name: 'success_2',
           indicators: {
             success_code: distillery.expect.http_code(200),
           },
           validate: (indicators) => indicators.success_code,
         },
-        error: {
+        {
+          name: 'error',
           indicators: {
             error_code: distillery.expect.http_code(400),
           },
           validate: (indicators) => indicators.error_code,
         },
-      },
+      ],
     },
     models: [
       {

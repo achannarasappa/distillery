@@ -150,14 +150,14 @@ class Exchange {
 
     return (response) => {
 
-      const validResponseKey = this._getValidResponseKey(response);
+      const validResponse = this._getValidResponse(response);
 
-      if (_.isUndefined(validResponseKey))
+      if (_.isUndefined(validResponse))
         throw new DistilleryResponseError('No response conditions met.');
 
       return _.assign(response, {
-        indicators: this._getValidResponseIndicators(this.response[validResponseKey].indicators, response),
-        hook: this.response[validResponseKey].hook,
+        indicators: this._getValidResponseIndicators(validResponse.indicators, response),
+        hook: validResponse.hook,
         jar: jar,
       });
 
@@ -171,9 +171,9 @@ class Exchange {
 
   }
 
-  _getValidResponseKey(response) {
+  _getValidResponse(response) {
 
-    return _.findKey(this.response, (responseDefinition) => this._isResponseValid(responseDefinition, response))
+    return _.find(this.response, (responseDefinition) => this._isResponseValid(responseDefinition, response))
 
   }
 

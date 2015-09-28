@@ -93,18 +93,18 @@ describe('Exchange', () => {
 
   describe('.prototype._generateResponse', () => {
 
-    const validResponseKey = exchange._getValidResponseKey(response);
+    const validResponse = exchange._getValidResponse(response);
 
-    it('should add indicators, hook, and jar keys to the response when there is a validResponseKey', () => {
+    it('should add indicators, hook, and jar keys to the response when there is a validResponse', () => {
 
       expect(exchange._generateResponse(blankCookie)(response)).to.have.keys([ 'indicators', 'hook', 'jar' ]);
-      expect(exchange._generateResponse(blankCookie)(response).indicators).to.eql(exchange._getValidResponseIndicators(definition.response[validResponseKey].indicators, response));
-      expect(exchange._generateResponse(blankCookie)(response).hook).to.be(definition.response[validResponseKey].hook);
+      expect(exchange._generateResponse(blankCookie)(response).indicators).to.eql(exchange._getValidResponseIndicators(validResponse.indicators, response));
+      expect(exchange._generateResponse(blankCookie)(response).hook).to.be(validResponse.hook);
       expect(exchange._generateResponse(blankCookie)(response).jar).to.be(blankCookie);
 
     });
 
-    it('should throw a DistilleryResponseError when there is not a validResponseKey', () => {
+    it('should throw a DistilleryResponseError when there is not a validResponse', () => {
 
       expect(() => exchange._generateResponse(blankCookie)(responseInvalid)).to.throwError((error) => expect(error).to.be.a(DistilleryResponseError));
 
@@ -116,17 +116,17 @@ describe('Exchange', () => {
 
     it('should return object with the keys as indicator names', () => {
 
-      expect(exchange._getValidResponseIndicators(definition.response.success.indicators, response)).to.only.have.keys(_.keys(definition.response.success.indicators));
+      expect(exchange._getValidResponseIndicators(definition.response[0].indicators, response)).to.only.have.keys(_.keys(definition.response[0].indicators));
 
     });
 
   });
 
-  describe('.prototype._getValidResponseKey', () => {
+  describe('.prototype._getValidResponse', () => {
 
     it('should find first valid response', () => {
 
-      expect(exchange._getValidResponseKey(response)).to.be('success')
+      expect(exchange._getValidResponse(response).name).to.be('success')
 
     });
 
@@ -140,13 +140,13 @@ describe('Exchange', () => {
 
     it('should validate the response validation function evaluates to true', () => {
 
-      expect(exchange._isResponseValid(definition.response.success, response)).to.be.ok()
+      expect(exchange._isResponseValid(definition.response[0], response)).to.be.ok()
 
     });
 
     it('should not validate the response validation function evaluates to false', () => {
 
-      expect(exchange._isResponseValid(definition.response.error, response)).to.not.be.ok()
+      expect(exchange._isResponseValid(definition.response[1], response)).to.not.be.ok()
 
     });
 

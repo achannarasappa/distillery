@@ -119,13 +119,13 @@ const validateExchange = (definition) => {
   if (!_.isFunction(definition.request.validate) && !_.isUndefined(definition.request.validate))
     throw new DistilleryStillError('');
 
-  if (!_.isPlainObject(definition.response))
+  if (!_.isArray(definition.response))
     throw new DistilleryStillError('');
 
-  if (_.keys(definition.response).length < 1)
+  if (definition.response.length < 1)
     throw new DistilleryStillError('');
 
-  _.mapValues(definition.response, validateExchangeResponse);
+  _.map(definition.response, validateExchangeResponse);
 
   return definition;
 

@@ -22,14 +22,14 @@ const saveFile = (relativePath, html) => {
 
 const getCookieString = (jar, url) => jar.getCookies(url).toString();
 
-const getResponseAnalysis = _.curry((response, validResponseKey, stillResponsePair) => {
+const getResponseAnalysis = _.curry((response, validResponse, stillResponse) => {
 
-  const [stillResponseKey, stillResponse] = stillResponsePair;
-  const validResponse = (validResponseKey === stillResponseKey);
+  // TODO: Add logic to check for validResponse.index
+  const validResponseKey = (validResponse.name === stillResponse.name);
 
   return _(stillResponse.indicators)
     .pairs()
-    .map(getIndicatorAnalysis(response, validResponse, stillResponseKey))
+    .map(getIndicatorAnalysis(response, validResponseKey, stillResponse.name))
     .map(replaceUndefinedMap)
     .value()
 
@@ -91,7 +91,7 @@ class IgniteExchange extends Exchange {
 
     return (response) => {
 
-      const validResponseKey = this._getValidResponseKey(response);
+      const validResponseKey = this._getValidResponse(response).name;
       const summaryAnalysisTable = this._buildSummaryAnalysisTable(response, validResponseKey);
       const summaryTable = this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey);
 
@@ -135,7 +135,6 @@ class IgniteExchange extends Exchange {
   _getSummaryAnalysis(response, validResponseKey) {
 
     return _(this.response)
-      .pairs()
       .map(getResponseAnalysis(response, validResponseKey))
       .reduce((responses, response) => responses.concat(response), []);
 
