@@ -54,6 +54,9 @@ const validateExchangeResponseIndicator = (indicatorValue) => {
 
 const validateExchangeResponse = (responseValue) => {
 
+  if (!_.isUndefined(responseValue.name) && !_.isString(responseValue.name))
+    throw new DistilleryStillError('');
+
   if (!_.isPlainObject(responseValue.indicators))
     throw new DistilleryStillError('');
 

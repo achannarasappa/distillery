@@ -545,7 +545,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if exchange.response[<key>].indicators is not an object', () => {
+    it('should throw an error if definition.response[<index>].indicators is not an object', () => {
 
       const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
         response: [
@@ -561,7 +561,45 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if definition.response[<keyA>].indicators does not have at least one indicator', () => {
+    it('should throw an error if definition.response[<index>].name is not a string or undefined', () => {
+
+      const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: false,
+            indicators: {
+              valid_indicator: (response) => true,
+            },
+          },
+        ]
+      });
+      const validDefinitionExchangeString = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: 'valid_response',
+            indicators: {
+              valid_indicator: (response) => true,
+            },
+          },
+        ]
+      });
+      const validDefinitionExchangeUndefined = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            indicators: {
+              valid_indicator: (response) => true,
+            },
+          },
+        ]
+      });
+
+      expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(validDefinitionExchangeString).to.not.throwError();
+      expect(validateExchange).withArgs(validDefinitionExchangeUndefined).to.not.throwError();
+
+    });
+
+    it('should throw an error if definition.response[<indexA>].indicators does not have at least one indicator', () => {
 
       const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
         response: [
@@ -577,7 +615,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if exchange.response[<keyA>].indicators[<keyB>] is not a function', () => {
+    it('should throw an error if exchange.response[<indexA>].indicators[<keyB>] is not a function', () => {
 
       const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
         response: [
@@ -595,7 +633,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if exchange.response[<keyA>].validate is not a function or undefined', () => {
+    it('should throw an error if exchange.response[<indexA>].validate is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
         response: [
@@ -624,7 +662,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if exchange.response[<keyA>].hook is not a function or undefined', () => {
+    it('should throw an error if exchange.response[<indexA>].hook is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
         response: [
