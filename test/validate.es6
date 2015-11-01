@@ -545,7 +545,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if definition.response[<index>].indicators is not an object', () => {
+    it('should throw an error if definition.response[<index>].indicators is not an array', () => {
 
       const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
         response: [
@@ -556,8 +556,18 @@ describe('Validate', () => {
           },
         ]
       });
+      const invalidDefinitionExchangeObject = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: 'invalid_response_object',
+            indicators: {},
+            validate: (indicators) => true,
+          },
+        ]
+      });
 
       expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchangeObject).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -567,9 +577,9 @@ describe('Validate', () => {
         response: [
           {
             name: false,
-            indicators: {
-              valid_indicator: (response) => true,
-            },
+            indicators: [
+              (response) => true,
+            ],
           },
         ]
       });
@@ -577,18 +587,18 @@ describe('Validate', () => {
         response: [
           {
             name: 'valid_response',
-            indicators: {
-              valid_indicator: (response) => true,
-            },
+            indicators: [
+              (response) => true,
+            ],
           },
         ]
       });
       const validDefinitionExchangeUndefined = _.assign(_.clone(definitionExchange), {
         response: [
           {
-            indicators: {
-              valid_indicator: (response) => true,
-            },
+            indicators: [
+              (response) => true,
+            ],
           },
         ]
       });
@@ -605,7 +615,7 @@ describe('Validate', () => {
         response: [
           {
             name: 'invalid_response',
-            indicators: {},
+            indicators: [],
             validate: (indicators) => true,
           },
         ]
@@ -615,21 +625,134 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if exchange.response[<indexA>].indicators[<keyB>] is not a function', () => {
+    it('should throw an error if exchange.response[<indexA>].indicators[<indexB>] is not a function or object', () => {
 
-      const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
+      const validDefinitionExchangeFunction = _.assign(_.clone(definitionExchange), {
         response: [
           {
-            name: 'invalid_response',
-            indicators: {
-              invalid_indicator: false,
-            },
+            name: 'valid_response_function',
+            indicators: [
+              (response) => true,
+            ],
             validate: (indicators) => true,
           },
         ]
       });
 
+      const validDefinitionExchangeObject = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: 'valid_response_object',
+            indicators: [
+              {
+                name: 'object',
+                test: (response) => true,
+              },
+            ],
+            validate: (indicators) => true,
+          },
+        ]
+      });
+      const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: 'invalid_response',
+            indicators: [
+              false,
+            ],
+            validate: (indicators) => true,
+          },
+        ]
+      });
+
+      expect(validateExchange).withArgs(validDefinitionExchangeFunction).to.not.throwError();
+      expect(validateExchange).withArgs(validDefinitionExchangeObject).to.not.throwError();
       expect(validateExchange).withArgs(invalidDefinitionExchange).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if exchange.response[<indexA>].indicators[<indexB>] is an object and does not have the keys \'test\' and \'name\'', () => {
+
+      const validDefinitionExchange = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: 'valid_response',
+            indicators: [
+              {
+                name: 'object',
+                test: (response) => true,
+              },
+            ],
+            validate: (indicators) => true,
+          },
+        ]
+      });
+      const invalidDefinitionExchangeName = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: 'invalid_response',
+            indicators: [
+              {
+                test: (response) => true,
+              }
+            ],
+            validate: (indicators) => true,
+          },
+        ]
+      });
+      const invalidDefinitionExchangeTest = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: 'invalid_response',
+            indicators: [
+              {
+                name: 'object',
+              }
+            ],
+            validate: (indicators) => true,
+          },
+        ]
+      });
+
+      expect(validateExchange).withArgs(validDefinitionExchange).to.not.throwError();
+      expect(validateExchange).withArgs(invalidDefinitionExchangeName).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchangeTest).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+
+    });
+
+    it('should throw an error if exchange.response[<indexA>].indicators[<indexB>] is an object and \'test\' is not a function or \'name\' is not a string', () => {
+
+      const invalidDefinitionExchangeName = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: 'invalid_response',
+            indicators: [
+              {
+                name: true,
+                test: (response) => true,
+              },
+            ],
+            validate: (indicators) => true,
+          },
+        ]
+      });
+      const invalidDefinitionExchangeTest = _.assign(_.clone(definitionExchange), {
+        response: [
+          {
+            name: 'invalid_response',
+            indicators: [
+              {
+                name: 'object',
+                test: true,
+              },
+            ],
+            validate: (indicators) => true,
+          },
+        ]
+      });
+
+      expect(validateExchange).withArgs(invalidDefinitionExchangeName).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
+      expect(validateExchange).withArgs(invalidDefinitionExchangeTest).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
@@ -639,9 +762,9 @@ describe('Validate', () => {
         response: [
           {
             name: 'invalid_response',
-            indicators: {
-              valid_indicator: (response) => true,
-            },
+            indicators: [
+              (response) => true,
+            ],
             validate: false,
           },
         ]
@@ -650,9 +773,9 @@ describe('Validate', () => {
         response: [
           {
             name: 'valid_response',
-            indicators: {
-              valid_indicator: (response) => true,
-            },
+            indicators: [
+              (response) => true,
+            ],
           },
         ]
       });
@@ -668,9 +791,9 @@ describe('Validate', () => {
         response: [
           {
             name: 'invalid_response',
-            indicators: {
-              valid_indicator: (response) => true,
-            },
+            indicators: [
+              (response) => true,
+            ],
             validate: (indicators) => true,
             hook: false,
           },

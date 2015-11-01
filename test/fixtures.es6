@@ -10,21 +10,42 @@ const still = {
       response: [
         {
           name: 'success',
-          indicators: {
-            title: distillery.expect.html_element('title', 'Technology'),
-            url: distillery.expect.url('http://example.com/forum/tech'),
-            code: distillery.expect.http_code(200),
-            custom: (response) => true,
-          },
+          indicators: [
+            {
+              name: 'title',
+              test: distillery.expect.html_element('title', 'Technology'),
+            },
+            {
+              name: 'url',
+              test: distillery.expect.url('http://example.com/forum/tech'),
+            },
+            {
+              name: 'code',
+              test: distillery.expect.http_code(200),
+            },
+            {
+              name: 'custom',
+              test: (response) => true,
+            },
+          ],
           validate: (indicators) => indicators.title,
         },
         {
           name: 'error',
-          indicators: {
-            title: distillery.expect.html_element('title', 'Something went wrong'),
-            url: distillery.expect.url('http://example.com/error'),
-            code: distillery.expect.http_code(400),
-          },
+          indicators: [
+            {
+              name: 'title',
+              test: distillery.expect.html_element('title', 'Something went wrong'),
+            },
+            {
+              name: 'url',
+              test: distillery.expect.url('http://example.com/error'),
+            },
+            {
+              name: 'code',
+              test: distillery.expect.http_code(400),
+            },
+          ],
           validate: (indicators) => indicators.title && indicators.url,
         },
       ],
@@ -110,24 +131,24 @@ const still = {
       response: [
         {
           name: 'success',
-          indicators: {
-            success_code: distillery.expect.http_code(200),
-            success_title: distillery.expect.html_element('title'),
-          },
+          indicators: [
+            distillery.expect.http_code(200),
+            distillery.expect.html_element('title'),
+          ],
           validate: (indicators) => indicators.success_code && indicators.success_title,
         },
         {
           name: 'success_2',
-          indicators: {
-            success_code: distillery.expect.http_code(200),
-          },
+          indicators: [
+            distillery.expect.http_code(200),
+          ],
           validate: (indicators) => indicators.success_code,
         },
         {
           name: 'error',
-          indicators: {
-            error_code: distillery.expect.http_code(400),
-          },
+          indicators: [
+            distillery.expect.http_code(400),
+          ],
           validate: (indicators) => indicators.error_code,
         },
       ],
