@@ -10,12 +10,48 @@ describe('IgniteExchange', () => {
   const definition = ignite.still.exchange;
   const igniteExchange = new IgniteExchange(definition);
   const response = fixtures.response.posts;
+  const postsIndex = (distillery) => ({
+    exchange: {
+      request: {
+        url: 'http://example.com/forum/tech',
+        method: 'GET',
+      },
+      response: [
+        {
+          indicators: {
+            title: distillery.expect.html_element('title', 'Technology'),
+            url: distillery.expect.url('http://example.com/forum/tech'),
+            code: distillery.expect.http_code(200),
+            custom: (response) => true,
+          },
+          validate: (indicators) => indicators.title,
+        },
+        {
+          indicators: {
+            title: distillery.expect.html_element('title', 'Something went wrong'),
+            url: distillery.expect.url('http://example.com/error'),
+            code: distillery.expect.http_code(400),
+          },
+          validate: (indicators) => indicators.title && indicators.url,
+        },
+      ],
+    }
+  });
+  const igniteIndex = new Ignite(postsIndex);
+  const definitionIndex = igniteIndex.still.exchange;
+  const igniteExchangeIndex = new IgniteExchange(definitionIndex);
 
   describe('constructor()', () => {
 
     it('should set default options', () => {
 
       expect(igniteExchange.options).to.only.have.keys('jar', 'indicators', 'save_html', 'save_cookie', 'restore_cookie')
+
+    });
+
+    it('should add the index property to each response', () => {
+
+      expect(_.pluck(igniteExchangeIndex.response, 'index')).to.eql([ 0, 1 ])
 
     });
 
@@ -48,6 +84,16 @@ describe('IgniteExchange', () => {
       const undefinedIndicators = _.filter(igniteExchange._getSummaryAnalysis(response, 'success'), (indicatorAnalysis) => _.contains(indicatorAnalysis, undefined));
 
       expect(undefinedIndicators).to.have.length(0);
+
+    });
+
+    it('should return the index of the response if the name property is undefined', () => {
+
+      const successIndicators = _.filter(igniteExchangeIndex._getSummaryAnalysis(response, 0), (indicatorAnalysis) => _.contains(indicatorAnalysis, 0));
+      const errorIndicators = _.filter(igniteExchangeIndex._getSummaryAnalysis(response, 0), (indicatorAnalysis) => _.contains(indicatorAnalysis, 1));
+
+      expect(successIndicators).to.have.length(4);
+      expect(errorIndicators).to.have.length(3);
 
     });
 

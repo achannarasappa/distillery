@@ -24,12 +24,12 @@ const getCookieString = (jar, url) => jar.getCookies(url).toString();
 
 const getResponseAnalysis = _.curry((response, validResponse, stillResponse) => {
 
-  // TODO: Add logic to check for validResponse.index
-  const validResponseKey = (validResponse.name === stillResponse.name);
+  const isValidResponse = _.has(stillResponse, 'name') ? (validResponse === stillResponse.name) : (validResponse === stillResponse.index);
+  const validResponseKey = _.has(stillResponse, 'name') ? stillResponse.name : stillResponse.index;
 
   return _(stillResponse.indicators)
     .pairs()
-    .map(getIndicatorAnalysis(response, validResponseKey, stillResponse.name))
+    .map(getIndicatorAnalysis(response, isValidResponse, validResponseKey))
     .map(replaceUndefinedMap)
     .value()
 
@@ -62,9 +62,13 @@ const getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey,
 
 });
 
+const addResponseIndexes = (definition) => _.assign(definition, {
+  response: _.reduce(definition.response, (responsesIndexed, response, index) => responsesIndexed.concat(_.assign(response, { index })), []),
+});
+
 class IgniteExchange extends Exchange {
 
-  constructor(definition, options={}) {
+  constructor(definition, options = {}) {
 
     super(definition, options);
 
@@ -76,7 +80,7 @@ class IgniteExchange extends Exchange {
       restore_cookie: false,
     });
 
-    _.extend(this, definition);
+    _.extend(this, addResponseIndexes(definition));
 
     if (options.restore_cookie) {
 
@@ -91,9 +95,10 @@ class IgniteExchange extends Exchange {
 
     return (response) => {
 
-      const validResponseKey = this._getValidResponse(response).name;
-      const summaryAnalysisTable = this._buildSummaryAnalysisTable(response, validResponseKey);
-      const summaryTable = this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey);
+      const validResponse = this._getValidResponse(response);
+      console.log(validResponse);
+      const summaryAnalysisTable = this._buildSummaryAnalysisTable(response, validResponse);
+      const summaryTable = this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponse);
 
       if (this.options.save_html)
         saveFile(this.options.save_html, response.body);
@@ -110,7 +115,7 @@ class IgniteExchange extends Exchange {
 
   }
 
-  _buildSummaryAnalysisTable(response, validResponseKey) {
+  _buildSummaryAnalysisTable(response, validResponse) {
 
     const table = new Table({
       head: [
@@ -124,7 +129,7 @@ class IgniteExchange extends Exchange {
       ],
       style: cliStyleTable,
     });
-    const rows = this._getSummaryAnalysis(response, validResponseKey);
+    const rows = this._getSummaryAnalysis(response, validResponse);
 
     table.push(...rows);
 
@@ -132,10 +137,10 @@ class IgniteExchange extends Exchange {
 
   }
 
-  _getSummaryAnalysis(response, validResponseKey) {
+  _getSummaryAnalysis(response, validResponse) {
 
     return _(this.response)
-      .map(getResponseAnalysis(response, validResponseKey))
+      .map(getResponseAnalysis(response, validResponse))
       .reduce((responses, response) => responses.concat(response), []);
 
   }
