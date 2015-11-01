@@ -179,7 +179,18 @@ class Exchange {
 
   _isResponseValid(definition, response) {
 
-    const evaluatedIndicators = _.mapValues(definition.indicators, (indicator) => indicator(response));
+    const evaluatedIndicators = _.reduce(definition.indicators, (acc, indicator, index) => {
+
+      if (_.isFunction(indicator))
+        return _.assign({}, acc, {
+          [index]: indicator(response)
+        });
+
+      return _.assign({}, acc, {
+        [indicator.name]: indicator.test(response)
+      })
+
+    }, {});
 
     if (_.isUndefined(definition.validate))
       return _.every(evaluatedIndicators, _.identity);
