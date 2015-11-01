@@ -98,10 +98,10 @@ describe('Exchange', () => {
 
     it('should add indicators, hook, and jar keys to the response when there is a validResponse', () => {
 
-      expect(exchange._generateResponse(blankCookie)(response)).to.have.keys([ 'indicators', 'hook', 'jar' ]);
+      expect(exchange._generateResponse(blankCookie)(response)).to.contain.keys([ 'indicators', 'hook', 'jar' ]);
       expect(exchange._generateResponse(blankCookie)(response).indicators).to.eql(exchange._getValidResponseIndicators(validResponse.indicators, response));
-      expect(exchange._generateResponse(blankCookie)(response).hook).to.be(validResponse.hook);
-      expect(exchange._generateResponse(blankCookie)(response).jar).to.be(blankCookie);
+      expect(exchange._generateResponse(blankCookie)(response).hook).to.eql(validResponse.hook);
+      expect(exchange._generateResponse(blankCookie)(response).jar).to.eql(blankCookie);
 
     });
 
@@ -131,7 +131,7 @@ describe('Exchange', () => {
 
       console.log(exchange._getValidResponse(response));
       
-      expect(exchange._getValidResponse(response).name).to.be('success')
+      expect(exchange._getValidResponse(response).name).to.eql('success')
 
     });
 
@@ -374,7 +374,7 @@ describe('Exchange', () => {
       });
       const exchangeValidationNoError = new Exchange(definitionValidationNoError);
 
-      expect(() => exchangeValidationNoError._buildConfiguration({ page: 1 })).to.not.throwError();
+      expect(() => exchangeValidationNoError._buildConfiguration({ page: 1 })).to.not.throw();
 
     });
 
