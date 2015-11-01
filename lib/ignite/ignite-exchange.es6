@@ -37,7 +37,7 @@ const getResponseAnalysis = _.curry((response, validResponse, stillResponse) => 
 
 const getIndicatorAnalysis = _.curry((response, validResponse, stillResponseKey, [stillIndicatorKey, stillIndicator]) => {
 
-  const indicator = stillIndicator(response, true);
+  const indicator = _.isFunction(stillIndicator) ? stillIndicator(response, true) : stillIndicator.test(response, true);
 
   if (!_.isPlainObject(indicator) || !_.has(indicator, 'name') || !_.has(indicator, 'valid') || !_.has(indicator, 'actual'))
     return [
@@ -96,7 +96,6 @@ class IgniteExchange extends Exchange {
     return (response) => {
 
       const validResponse = this._getValidResponse(response);
-      console.log(validResponse);
       const summaryAnalysisTable = this._buildSummaryAnalysisTable(response, validResponse);
       const summaryTable = this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponse);
 
