@@ -47,7 +47,19 @@ const validateExchangeParameter = (parameterValue) => {
 
 const validateExchangeResponseIndicator = (indicatorValue) => {
 
-  if (!_.isFunction(indicatorValue))
+  if (!_.isFunction(indicatorValue) && !_.isPlainObject(indicatorValue))
+    throw new DistilleryStillError('');
+
+  if (_.isPlainObject(indicatorValue) && !_.has(indicatorValue, 'test'))
+    throw new DistilleryStillError('');
+
+  if (_.isPlainObject(indicatorValue) && !_.has(indicatorValue, 'name'))
+    throw new DistilleryStillError('');
+
+  if (_.isPlainObject(indicatorValue) && !_.isFunction(indicatorValue.test))
+    throw new DistilleryStillError('');
+
+  if (_.isPlainObject(indicatorValue) && !_.isString(indicatorValue.name))
     throw new DistilleryStillError('');
 
 };
@@ -57,13 +69,13 @@ const validateExchangeResponse = (responseValue) => {
   if (!_.isUndefined(responseValue.name) && !_.isString(responseValue.name))
     throw new DistilleryStillError('');
 
-  if (!_.isPlainObject(responseValue.indicators))
+  if (!_.isArray(responseValue.indicators))
     throw new DistilleryStillError('');
 
-  if (_.keys(responseValue.indicators).length < 1)
+  if (responseValue.indicators < 1)
     throw new DistilleryStillError('');
 
-  _.mapValues(responseValue.indicators, validateExchangeResponseIndicator);
+  _.map(responseValue.indicators, validateExchangeResponseIndicator);
 
   if (!_.isFunction(responseValue.validate) && !_.isUndefined(responseValue.validate))
     throw new DistilleryStillError('');
