@@ -114,9 +114,11 @@ describe('Exchange', () => {
 
   describe('.prototype._getValidResponseIndicators', () => {
 
-    it('should return object with the keys as indicator names', () => {
+    it('should return an array with boolean values', () => {
 
-      expect(exchange._getValidResponseIndicators(definition.response[0].indicators, response)).to.only.have.keys(_.keys(definition.response[0].indicators));
+      const expectedLength = definition.response[0].indicators.length;
+
+      expect(exchange._getValidResponseIndicators(definition.response[0].indicators, response)).to.only.have.length(expectedLength);
 
     });
 
@@ -132,7 +134,7 @@ describe('Exchange', () => {
 
   });
 
-  describe('.prototype._isResponseValid', () => {
+  describe.only('.prototype._isResponseValid', () => {
 
     const distillery = new Distillery(fixtures.still.posts);
     const definition = distillery.still.exchange;
@@ -150,31 +152,31 @@ describe('Exchange', () => {
 
     });
 
-    it('should validate a response that meets all the indicators when a validate function is absent', () => {
+    it('should validate the first response that meets all the indicators when a validate function is absent', () => {
 
       const validEvaluatedResponse = {
-        indicators: {
-          title: (response) => 'ABC',
-          custom: (response) => true,
-        }
+        indicators: [
+          (response) => 'ABC',
+          (response) => true,
+        ],
       };
       const invalidEvaluatedResponseSomeFalse = {
-        indicators: {
-          title: (response) => true,
-          custom: (response) => false,
-        }
+        indicators: [
+          (response) => true,
+          (response) => false,
+        ],
       };
       const invalidEvaluatedResponseSomeNull = {
-        indicators: {
-          title: (response) => true,
-          custom: (response) => null,
-        }
+        indicators: [
+          (response) => true,
+          (response) => null,
+        ],
       };
       const invalidEvaluatedResponseAllFalse = {
-        indicators: {
-          title: (response) => false,
-          custom: (response) => false,
-        }
+        indicators: [
+          (response) => false,
+          (response) => false,
+        ],
       };
 
       expect(exchange._isResponseValid(validEvaluatedResponse, response)).to.be.ok();
@@ -183,6 +185,10 @@ describe('Exchange', () => {
       expect(exchange._isResponseValid(invalidEvaluatedResponseAllFalse, response)).to.not.be.ok();
 
     });
+
+    it('should use the indicators[<index>].test function to evaluate if an indicator is met when indicators[<index>] is an object');
+
+    it('should use the indicators[<index>] function to evaluate if an indicator is met when indicators[<index>] is a function');
 
   });
 

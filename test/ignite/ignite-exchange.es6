@@ -18,21 +18,21 @@ describe('IgniteExchange', () => {
       },
       response: [
         {
-          indicators: {
-            title: distillery.expect.html_element('title', 'Technology'),
-            url: distillery.expect.url('http://example.com/forum/tech'),
-            code: distillery.expect.http_code(200),
-            custom: (response) => true,
-          },
-          validate: (indicators) => indicators.title,
+          indicators: [
+            distillery.expect.html_element('title', 'Technology'),
+            distillery.expect.url('http://example.com/forum/tech'),
+            distillery.expect.http_code(200),
+            (response) => true,
+          ],
+          validate: (indicators) => indicators[0],
         },
         {
-          indicators: {
-            title: distillery.expect.html_element('title', 'Something went wrong'),
-            url: distillery.expect.url('http://example.com/error'),
-            code: distillery.expect.http_code(400),
-          },
-          validate: (indicators) => indicators.title && indicators.url,
+          indicators: [
+            distillery.expect.html_element('title', 'Something went wrong'),
+            distillery.expect.url('http://example.com/error'),
+            distillery.expect.http_code(400),
+          ],
+          validate: (indicators) => indicators[0] && indicators[1],
         },
       ],
     }

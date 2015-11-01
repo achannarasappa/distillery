@@ -5,3 +5,4 @@ logs
 .grunt
 node_modules
 *.js
+.map
