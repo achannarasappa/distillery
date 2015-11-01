@@ -30,13 +30,13 @@ describe('Exchange', () => {
 
     it('should be an instance of Exchange', () => {
 
-      expect(exchange).to.be.an(Exchange);
+      expect(exchange).to.be.an.instanceof(Exchange);
 
     });
 
     it('should set an empty cookie jar if no jar is specified', () => {
 
-      expect(exchange.options.jar).to.eql(blankCookie)
+      expect(_.cloneDeep(exchange.options.jar)).to.eql(blankCookie)
 
     });
 
@@ -62,35 +62,31 @@ describe('Exchange', () => {
 
     it('should build a request configuration object', () => {
 
-      expect(configuration).to.have.key('method');
-      expect(configuration).to.have.key('jar');
-      expect(configuration).to.have.key('url');
-      expect(configuration).to.have.key('headers');
-      expect(configuration).to.have.key('form');
+      expect(configuration).to.contain.all.keys([ 'method', 'jar', 'url', 'headers', 'form' ]);
 
     });
 
     it('should override distillery parameters and use custom requestOptions when passed', () => {
 
-      expect(configurationCustom.url).to.be('http://examplecustom.com');
+      expect(configurationCustom.url).to.eql('http://examplecustom.com');
 
     });
 
     it('should append additional request options', () => {
 
-      expect(configurationCustom.maxRedirects).to.be(100);
+      expect(configurationCustom.maxRedirects).to.eql(100);
 
     });
 
     it('should interpolate the url', () => {
 
-      expect(configuration.url).to.be('http://example.com/auctions?show_tab=home&page=10&items={show_items}&context=user&filter={filter}');
+      expect(configuration.url).to.eql('http://example.com/auctions?show_tab=home&page=10&items={show_items}&context=user&filter={filter}');
 
     });
 
     it('should throw an error if the parameters argument is not an object and not undefined', () => {
 
-      expect(exchange._buildConfiguration).withArgs('test').to.throwError((error) => expect(error).to.be.a(DistilleryError));
+      expect(() => exchange._buildConfiguration('test')).to.throw(DistilleryError);
 
     });
 
@@ -111,7 +107,7 @@ describe('Exchange', () => {
 
     it('should throw a DistilleryResponseError when there is not a validResponse', () => {
 
-      expect(() => exchange._generateResponse(blankCookie)(responseInvalid)).to.throwError((error) => expect(error).to.be.a(DistilleryResponseError));
+      expect(() => exchange._generateResponse(blankCookie)(responseInvalid)).to.throw(DistilleryResponseError);
 
     });
 
@@ -121,9 +117,9 @@ describe('Exchange', () => {
 
     it('should return an array with boolean values', () => {
 
-      const expectedLength = definition.response[0].indicators.length;
+      const expectedLength = _.keys(definition.response[0].indicators).length;
 
-      expect(exchange._getValidResponseIndicators(definition.response[0].indicators, response)).to.only.have.length(expectedLength);
+      expect(_.keys(exchange._getValidResponseIndicators(definition.response[0].indicators, response))).to.have.length(expectedLength);
 
     });
 
@@ -133,6 +129,8 @@ describe('Exchange', () => {
 
     it('should find first valid response', () => {
 
+      console.log(exchange._getValidResponse(response));
+      
       expect(exchange._getValidResponse(response).name).to.be('success')
 
     });
@@ -263,17 +261,13 @@ describe('Exchange', () => {
 
     it('should throw an error if a required parameter is not passed', () => {
 
-      expect(() => exchange._buildConfiguration()).to.throwError();
+      expect(() => exchange._buildConfiguration()).to.throw();
 
     });
 
     it('should throw a DistilleryValidationError error if validation fails', () => {
 
-      expect(() => exchange._buildConfiguration({ context: 'mod', page: 1 })).to.throwError((e) => {
-
-        expect(e).to.be.a(DistilleryValidationError);
-
-      });
+      expect(() => exchange._buildConfiguration({ context: 'mod', page: 1 })).to.throw(DistilleryValidationError);
 
     });
 
@@ -338,7 +332,7 @@ describe('Exchange', () => {
       });
       const exchangeWithoutQuery = new Exchange(definitionWithoutQuery);
 
-      expect(() => exchangeWithoutQuery._buildConfiguration({ page: 1 })).to.not.throwError();
+      expect(() => exchangeWithoutQuery._buildConfiguration({ page: 1 })).to.not.throw();
 
     });
 
@@ -357,8 +351,8 @@ describe('Exchange', () => {
       const exchangeValidationError = new Exchange(definitionValidationError);
       const exchangeValidationNoError = new Exchange(definitionValidationNoError);
 
-      expect(() => exchangeValidationError._buildConfiguration({ page: 1 })).to.throwError((error) => expect(error).to.be.a(DistilleryValidationError));
-      expect(() => exchangeValidationNoError._buildConfiguration({ page: 1 })).to.not.throwError();
+      expect(() => exchangeValidationError._buildConfiguration({ page: 1 })).to.throw(DistilleryValidationError);
+      expect(() => exchangeValidationNoError._buildConfiguration({ page: 1 })).to.not.throw();
 
     });
 

@@ -135,21 +135,21 @@ const still = {
             distillery.expect.http_code(200),
             distillery.expect.html_element('title'),
           ],
-          validate: (indicators) => indicators.success_code && indicators.success_title,
+          validate: (indicators) => indicators[0] && indicators[1],
         },
         {
           name: 'success_2',
           indicators: [
             distillery.expect.http_code(200),
           ],
-          validate: (indicators) => indicators.success_code,
+          validate: (indicators) => indicators[0],
         },
         {
           name: 'error',
           indicators: [
             distillery.expect.http_code(400),
           ],
-          validate: (indicators) => indicators.error_code,
+          validate: (indicators) => indicators[0],
         },
       ],
     },
