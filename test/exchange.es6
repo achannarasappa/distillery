@@ -1,9 +1,14 @@
 const _ = require('lodash');
-const expect = require('expect.js');
+const chai = require('chai');
+const expect = chai.expect;
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
 import Distillery from '../lib/distillery';
 import Exchange from '../lib/exchange';
 import { DistilleryValidationError, DistilleryResponseError, DistilleryError } from '../lib/error';
 import * as fixtures from './fixtures';
+
+chai.use(sinonChai);
 
 describe('Exchange', () => {
 
@@ -134,7 +139,7 @@ describe('Exchange', () => {
 
   });
 
-  describe.only('.prototype._isResponseValid', () => {
+  describe('.prototype._isResponseValid', () => {
 
     const distillery = new Distillery(fixtures.still.posts);
     const definition = distillery.still.exchange;
@@ -142,13 +147,14 @@ describe('Exchange', () => {
 
     it('should validate the response validation function evaluates to true', () => {
 
-      expect(exchange._isResponseValid(definition.response[0], response)).to.be.ok()
+      console.log(exchange._isResponseValid(definition.response[0], response));
+      expect(exchange._isResponseValid(definition.response[0], response)).to.be.ok
 
     });
 
     it('should not validate the response validation function evaluates to false', () => {
 
-      expect(exchange._isResponseValid(definition.response[1], response)).to.not.be.ok()
+      expect(exchange._isResponseValid(definition.response[1], response)).to.not.be.ok
 
     });
 
@@ -179,16 +185,43 @@ describe('Exchange', () => {
         ],
       };
 
-      expect(exchange._isResponseValid(validEvaluatedResponse, response)).to.be.ok();
-      expect(exchange._isResponseValid(invalidEvaluatedResponseSomeFalse, response)).to.not.be.ok();
-      expect(exchange._isResponseValid(invalidEvaluatedResponseSomeNull, response)).to.not.be.ok();
-      expect(exchange._isResponseValid(invalidEvaluatedResponseAllFalse, response)).to.not.be.ok();
+      expect(exchange._isResponseValid(validEvaluatedResponse, response)).to.be.ok;
+      expect(exchange._isResponseValid(invalidEvaluatedResponseSomeFalse, response)).to.not.be.ok;
+      expect(exchange._isResponseValid(invalidEvaluatedResponseSomeNull, response)).to.not.be.ok;
+      expect(exchange._isResponseValid(invalidEvaluatedResponseAllFalse, response)).to.not.be.ok;
 
     });
 
-    it('should use the indicators[<index>].test function to evaluate if an indicator is met when indicators[<index>] is an object');
+    it('should use the indicators[<index>].test function to evaluate if an indicator is met when indicators[<index>] is an object', () => {
 
-    it('should use the indicators[<index>] function to evaluate if an indicator is met when indicators[<index>] is a function');
+      const indicatorStub = sinon.stub().returns(true);
+      const validEvaluatedResponse = {
+        indicators: [
+          indicatorStub,
+        ],
+      };
+
+      exchange._isResponseValid(validEvaluatedResponse, response);
+      expect(indicatorStub).to.be.calledOnce;
+
+    });
+
+    it('should use the indicators[<index>] function to evaluate if an indicator is met when indicators[<index>] is a function', () => {
+
+      const indicatorStub = sinon.stub().returns(true);
+      const validEvaluatedResponse = {
+        indicators: [
+          {
+            name: 'stub',
+            test: indicatorStub
+          },
+        ],
+      };
+
+      exchange._isResponseValid(validEvaluatedResponse, response);
+      expect(indicatorStub).to.be.calledOnce;
+
+    });
 
   });
 
