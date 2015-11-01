@@ -96,8 +96,9 @@ class IgniteExchange extends Exchange {
     return (response) => {
 
       const validResponse = this._getValidResponse(response);
-      const summaryAnalysisTable = this._buildSummaryAnalysisTable(response, validResponse);
-      const summaryTable = this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponse);
+      const validResponseKey = _.has(validResponse, 'name') ? validResponse.name : validResponse.index;
+      const summaryAnalysisTable = this._buildSummaryAnalysisTable(response, validResponseKey);
+      const summaryTable = this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey);
 
       if (this.options.save_html)
         saveFile(this.options.save_html, response.body);
