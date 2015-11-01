@@ -128,8 +128,6 @@ describe('Exchange', () => {
   describe('.prototype._getValidResponse', () => {
 
     it('should find first valid response', () => {
-
-      console.log(exchange._getValidResponse(response));
       
       expect(exchange._getValidResponse(response).name).to.eql('success')
 
@@ -145,7 +143,6 @@ describe('Exchange', () => {
 
     it('should validate the response validation function evaluates to true', () => {
 
-      console.log(exchange._isResponseValid(definition.response[0], response));
       expect(exchange._isResponseValid(definition.response[0], response)).to.be.ok
 
     });
@@ -211,7 +208,7 @@ describe('Exchange', () => {
         indicators: [
           {
             name: 'stub',
-            test: indicatorStub
+            test: indicatorStub,
           },
         ],
       };
