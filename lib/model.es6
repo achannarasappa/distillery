@@ -74,7 +74,7 @@ class Model {
 
   _parseIteration($) {
 
-    return $(this.iterate).map((key, val) => cheerio.load('<html>' + $(val).html() + '</html>'))
+    return $(this.collectionPath).map((key, val) => cheerio.load('<html>' + $(val).html() + '</html>'))
 
   }
 
@@ -89,7 +89,7 @@ class Model {
 
   _parseItem($) {
 
-    return _.mapValues(this.elements, (element) => parseElement(element, $))
+    return _.mapValues(this.properties, (element) => parseElement(element, $))
 
   }
 

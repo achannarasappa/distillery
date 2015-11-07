@@ -29,7 +29,7 @@ describe('Model', () => {
 
       expect(itemDefinition.name).to.eql(itemDefinition.name);
       expect(itemDefinition.type).to.eql(itemDefinition.type);
-      expect(itemDefinition.elements).to.eql(itemDefinition.elements);
+      expect(itemDefinition.properties).to.eql(itemDefinition.properties);
 
     });
 
@@ -158,7 +158,7 @@ describe('Model', () => {
     const itemDefinitionRegexAttr = {
       name: 'post1000',
       type: 'item',
-      elements: {
+      properties: {
         id: 'div.id',
         title: {
           path: 'a.title',
@@ -175,7 +175,7 @@ describe('Model', () => {
     const itemDefinitionRegex = {
       name: 'post1000',
       type: 'item',
-      elements: {
+      properties: {
         id: 'div.id',
         title: {
           path: 'a.title',
@@ -191,7 +191,7 @@ describe('Model', () => {
     const itemDefinitionAttr = {
       name: 'post1000',
       type: 'item',
-      elements: {
+      properties: {
         id: 'div.id',
         title: 'a.title',
         category: {
@@ -204,7 +204,7 @@ describe('Model', () => {
     const itemDefinitionFunction = {
       name: 'post1000',
       type: 'item',
-      elements: {
+      properties: {
         id: 'div.id',
         title: ($) => $('div#post-list > div').eq(0).html(),
         category: {

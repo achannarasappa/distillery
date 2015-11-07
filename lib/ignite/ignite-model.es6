@@ -106,7 +106,7 @@ class IgniteModel extends Model {
 
   _buildCollectionTable(collection) {
 
-    const head = _.keys(this.elements);
+    const head = _.keys(this.properties);
     const table = new Table({ head, style: cliStyleDataTable });
     const rows = arrayToCliArray(collection, this.options.table_item_count, this.truncateFn);
 
@@ -118,7 +118,7 @@ class IgniteModel extends Model {
 
   _buildIterationTable(iteration) {
 
-    const head = _.keys(this.elements);
+    const head = _.keys(this.properties);
     const table = new Table({ head, style: cliStyleDataTable });
     const rows = _(iteration)
       .take(this.options.table_item_count)
