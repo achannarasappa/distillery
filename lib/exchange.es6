@@ -47,12 +47,12 @@ const transformParameter = (parameter) => {
 
 };
 
-const processParameter = ({ name, alias, value, required, def, validate }) => {
+const processParameter = ({ name, alias, value, required, def, predicate }) => {
 
-  if (!_.isUndefined(value) && _.isFunction(validate) && validate(value))
+  if (!_.isUndefined(value) && _.isFunction(predicate) && predicate(value))
     return [ name, value ];
 
-  if (!_.isUndefined(value) && _.isFunction(validate) && !validate(value))
+  if (!_.isUndefined(value) && _.isFunction(predicate) && !predicate(value))
     throw new DistilleryValidationError('Parameter \'' + alias + '\' failed validation');
 
   if (!_.isUndefined(value))
@@ -66,20 +66,20 @@ const processParameter = ({ name, alias, value, required, def, validate }) => {
 
 };
 
-const validateParameters = _.curry((validateFn, parameters) => {
+const validateParameters = _.curry((predicateFn, parameters) => {
 
   const combinedParameters = _.reduce(parameters, (transformedParameters, parameter) => _.assign(transformedParameters, {
     [parameter.alias ? parameter.alias : parameter.name]: parameter.value,
   }), {});
 
-  if (_.isFunction(validateFn) && !validateFn(combinedParameters))
+  if (_.isFunction(predicateFn) && !predicateFn(combinedParameters))
     throw new DistilleryValidationError('Combined parameter validation failed.');
 
   return parameters;
 
 });
 
-const generateParameters = (parameterDefinitions, parameterValues, validateFn) => {
+const generateParameters = (parameterDefinitions, parameterValues, predicateFn) => {
 
   const defaultParameters = { query: {}, form: {}, header: {} };
 
@@ -88,7 +88,7 @@ const generateParameters = (parameterDefinitions, parameterValues, validateFn) =
       .map(createParameter(parameterValues))
       .map(defaultParameter)
       .map(transformParameter)
-      .thru(validateParameters(validateFn))
+      .thru(validateParameters(predicateFn))
       .groupBy('type')
       .mapValues((parameters) => _(parameters)
         .map(processParameter)
@@ -127,7 +127,7 @@ class Exchange {
     if (!_.isObject(parameters))
       throw new DistilleryError('Exchange parameters must be an object.');
 
-    const { query, header, form } = generateParameters(this.request.parameters, parameters, this.request.validate);
+    const { query, header, form } = generateParameters(this.request.parameters, parameters, this.request.predicate);
 
     const configuration = {
       method: this.request.method.toUpperCase(),
@@ -192,10 +192,10 @@ class Exchange {
 
     }, {});
 
-    if (_.isUndefined(definition.validate))
+    if (_.isUndefined(definition.predicate))
       return _.every(evaluatedIndicators, _.identity);
 
-    return definition.validate(evaluatedIndicators)
+    return definition.predicate(evaluatedIndicators)
 
   }
 

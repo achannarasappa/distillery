@@ -153,7 +153,7 @@ describe('Exchange', () => {
 
     });
 
-    it('should validate the first response that meets all the indicators when a validate function is absent', () => {
+    it('should validate the first response that meets all the indicators when a predicate function is absent', () => {
 
       const validEvaluatedResponse = {
         indicators: [
@@ -333,16 +333,16 @@ describe('Exchange', () => {
 
     });
 
-    it('should throw an error when definition.request.validate is defined and returns a falsy value', () => {
+    it('should throw an error when definition.request.predicate is defined and returns a falsy value', () => {
 
       const definitionValidationError = _.merge({}, distillery.still.exchange, {
         request: {
-          validate: () => false,
+          predicate: () => false,
         }
       });
       const definitionValidationNoError = _.merge({}, distillery.still.exchange, {
         request: {
-          validate: () => true,
+          predicate: () => true,
         }
       });
       const exchangeValidationError = new Exchange(definitionValidationError);
@@ -366,7 +366,7 @@ describe('Exchange', () => {
               required: true,
             },
           ],
-          validate: (parameters) => _.has(parameters, 'page'),
+          predicate: (parameters) => _.has(parameters, 'page'),
         }
       });
       const exchangeValidationNoError = new Exchange(definitionValidationNoError);

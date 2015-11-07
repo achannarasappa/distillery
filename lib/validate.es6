@@ -31,7 +31,7 @@ const validateExchangeParameter = (parameterValue) => {
   if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.required) && !_.isBoolean(parameterValue.required))
     throw new DistilleryStillError('');
 
-  if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.validate) && !_.isFunction(parameterValue.validate))
+  if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.predicate) && !_.isFunction(parameterValue.predicate))
     throw new DistilleryStillError('');
 
   if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.transform) && !_.isFunction(parameterValue.transform))
@@ -77,7 +77,7 @@ const validateExchangeResponse = (responseValue) => {
 
   _.map(responseValue.indicators, validateExchangeResponseIndicator);
 
-  if (!_.isFunction(responseValue.validate) && !_.isUndefined(responseValue.validate))
+  if (!_.isFunction(responseValue.predicate) && !_.isUndefined(responseValue.predicate))
     throw new DistilleryStillError('');
 
   if (!_.isFunction(responseValue.hook) && !_.isUndefined(responseValue.hook))
@@ -104,7 +104,7 @@ const validateModel = (definition) => {
 
   _.mapValues(definition.properties, validateModelElement);
 
-  if (!_.isFunction(definition.validate) && !_.isUndefined(definition.validate))
+  if (!_.isFunction(definition.predicate) && !_.isUndefined(definition.predicate))
     throw new DistilleryStillError('');
 
   if (!_.isFunction(definition.transform) && !_.isUndefined(definition.transform))
@@ -131,7 +131,7 @@ const validateExchange = (definition) => {
   if (_.has(definition.request, 'parameters'))
     _.map(definition.request.parameters, validateExchangeParameter);
 
-  if (!_.isFunction(definition.request.validate) && !_.isUndefined(definition.request.validate))
+  if (!_.isFunction(definition.request.predicate) && !_.isUndefined(definition.request.predicate))
     throw new DistilleryStillError('');
 
   if (!_.isArray(definition.response))
