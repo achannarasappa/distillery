@@ -59,14 +59,14 @@ class Model {
 
   _applyFilters(item) {
 
-    if (_.isFunction(this.validate) && _.isFunction(this.format))
-      return (this.validate(item) ? this.format(item) : null);
+    if (_.isFunction(this.validate) && _.isFunction(this.transform))
+      return (this.validate(item) ? this.transform(item) : null);
 
     if (_.isFunction(this.validate))
       return (this.validate(item) ? item : null);
 
-    if (_.isFunction(this.format))
-      return this.format(item);
+    if (_.isFunction(this.transform))
+      return this.transform(item);
 
     return item
 

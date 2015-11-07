@@ -36,11 +36,11 @@ const defaultParameter = (parameter) => {
 
 };
 
-const formatParameter = (parameter) => {
+const transformParameter = (parameter) => {
 
-  if (_.isFunction(parameter.format) && !_.isUndefined(parameter.value))
+  if (_.isFunction(parameter.transform) && !_.isUndefined(parameter.value))
     return _.assign(parameter, {
-      value: parameter.format(parameter.value)
+      value: parameter.transform(parameter.value)
     });
 
   return parameter;
@@ -68,7 +68,7 @@ const processParameter = ({ name, alias, value, required, def, validate }) => {
 
 const validateParameters = _.curry((validateFn, parameters) => {
 
-  const combinedParameters = _.reduce(parameters, (formattedParameters, parameter) => _.assign(formattedParameters, {
+  const combinedParameters = _.reduce(parameters, (transformedParameters, parameter) => _.assign(transformedParameters, {
     [parameter.alias ? parameter.alias : parameter.name]: parameter.value,
   }), {});
 
@@ -87,7 +87,7 @@ const generateParameters = (parameterDefinitions, parameterValues, validateFn) =
     return _(parameterDefinitions)
       .map(createParameter(parameterValues))
       .map(defaultParameter)
-      .map(formatParameter)
+      .map(transformParameter)
       .thru(validateParameters(validateFn))
       .groupBy('type')
       .mapValues((parameters) => _(parameters)

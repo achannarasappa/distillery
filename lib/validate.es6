@@ -34,7 +34,7 @@ const validateExchangeParameter = (parameterValue) => {
   if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.validate) && !_.isFunction(parameterValue.validate))
     throw new DistilleryStillError('');
 
-  if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.format) && !_.isFunction(parameterValue.format))
+  if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.transform) && !_.isFunction(parameterValue.transform))
     throw new DistilleryStillError('');
 
   if (_.isPlainObject(parameterValue) && !_.isUndefined(parameterValue.alias) && !_.isString(parameterValue.alias))
@@ -107,7 +107,7 @@ const validateModel = (definition) => {
   if (!_.isFunction(definition.validate) && !_.isUndefined(definition.validate))
     throw new DistilleryStillError('');
 
-  if (!_.isFunction(definition.format) && !_.isUndefined(definition.format))
+  if (!_.isFunction(definition.transform) && !_.isUndefined(definition.transform))
     throw new DistilleryStillError('');
 
   return definition;
