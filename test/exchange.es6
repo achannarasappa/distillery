@@ -248,7 +248,7 @@ describe('Exchange', () => {
 
     });
 
-    it('should format a parameter if a format function is defined', () => {
+    it('should transform a parameter if a transform function is defined', () => {
 
       const configuration = exchange._buildConfiguration({ tab: 'home', page: 1 });
 

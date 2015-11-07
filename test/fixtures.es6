@@ -64,7 +64,7 @@ const still = {
         },
         collectionPath: 'html > body > div#post-list > div',
         validate: (post) => (post.id),
-        format: (post) => {
+        transform: (post) => {
 
           post.category = post.category.split('/')[1];
 
@@ -79,7 +79,7 @@ const still = {
           current: 'a.current',
           last: 'a.last',
         },
-        format: (page) => {
+        transform: (page) => {
 
           const pageInt = _.mapValues(page, _.parseInt);
 
@@ -108,7 +108,7 @@ const still = {
           {
             name: 'page',
             required: true,
-            format: value => value * 10,
+            transform: value => value * 10,
           },
           {
             name: 'show_items',

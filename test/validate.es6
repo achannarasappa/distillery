@@ -174,12 +174,12 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if definition.format is not a function or undefined', () => {
+    it('should throw an error if definition.transform is not a function or undefined', () => {
 
       const invalidDefinitionModel = _.merge({}, definitionModel, {
-        format: '',
+        transform: '',
       });
-      const validDefinitionModel = _.omit(definitionModel, 'format');
+      const validDefinitionModel = _.omit(definitionModel, 'transform');
 
       expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
       expect(validateModel).withArgs(validDefinitionModel).to.not.throwError();
@@ -386,14 +386,14 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if exchange.request.parameters[<index>].format is not a function or undefined', () => {
+    it('should throw an error if exchange.request.parameters[<index>].transform is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
               name: 'test1',
-              format: true,
+              transform: true,
             }
           ]
         },
@@ -404,7 +404,7 @@ describe('Validate', () => {
           parameters: [
             {
               name: 'test1',
-              format: () => true,
+              transform: () => true,
             }
           ]
         },

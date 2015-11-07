@@ -48,7 +48,7 @@ describe('IgniteModel', () => {
     '│ last    │ 10 │\n',
     '└─────────┴────┘',
   ].join('');
-  const itemTableFormattedString = [
+  const itemTableTransformedString = [
     '┌──────────┬────┐\n',
     '│ current  │ 1  │\n',
     '├──────────┼────┤\n',
@@ -73,7 +73,7 @@ describe('IgniteModel', () => {
 
     it('should set default options', () => {
 
-      expect(itemIgniteModel.options).to.only.have.keys('table', 'table_item_count', 'item_max_length', 'item_format')
+      expect(itemIgniteModel.options).to.only.have.keys('table', 'table_item_count', 'item_max_length', 'item_transform')
 
     });
 
@@ -81,17 +81,17 @@ describe('IgniteModel', () => {
 
   describe('.prototype._getItemTable()', () => {
 
-    it('should format the item properties if the \'item_format\' option is set', () => {
+    it('should transform the item properties if the \'item_transform\' option is set', () => {
 
-      const itemIgniteModelFormat = new IgniteModel(itemDefinition, { item_format: true });
-      const [dataTable, summaryTable] = itemIgniteModelFormat._getItemTables($);
+      const itemIgniteModelTransform = new IgniteModel(itemDefinition, { item_transform: true });
+      const [dataTable, summaryTable] = itemIgniteModelTransform._getItemTables($);
 
-      expect(stripAnsi(dataTable)).to.be(itemTableFormattedString);
+      expect(stripAnsi(dataTable)).to.be(itemTableTransformedString);
       expect(stripAnsi(summaryTable)).to.be('');
 
     });
 
-    it('should not format the item properties if the \'item_format\' option is not set', () => {
+    it('should not transform the item properties if the \'item_transform\' option is not set', () => {
 
       const [dataTable, summaryTable] = itemIgniteModel._getItemTables($);
 
@@ -104,27 +104,27 @@ describe('IgniteModel', () => {
 
   describe('.prototype._getCollectionTable()', () => {
 
-    it('should generate the string for a collection table if the \'item_format\' option is set', () => {
+    it('should generate the string for a collection table if the \'item_transform\' option is set', () => {
 
-      const collectionIgniteModelFormatted = new IgniteModel(collectionDefinition, { item_format: true });
-      const [dataTable, summaryTable] = collectionIgniteModelFormatted._getCollectionTables($);
+      const collectionIgniteModelTransformed = new IgniteModel(collectionDefinition, { item_transform: true });
+      const [dataTable, summaryTable] = collectionIgniteModelTransformed._getCollectionTables($);
 
       expect(stripAnsi(dataTable)).to.be(collectionTableString);
       expect(stripAnsi(summaryTable)).to.be(summaryTableString);
 
     });
 
-    it('should generate the string for a iteration table if the \'item_format\' option is false', () => {
+    it('should generate the string for a iteration table if the \'item_transform\' option is false', () => {
 
-      const collectionIgniteModelUnformatted = new IgniteModel(collectionDefinition, { item_format: false });
-      const [dataTable, summaryTable] = collectionIgniteModelUnformatted._getCollectionTables($);
+      const collectionIgniteModelUntransformed = new IgniteModel(collectionDefinition, { item_transform: false });
+      const [dataTable, summaryTable] = collectionIgniteModelUntransformed._getCollectionTables($);
 
       expect(stripAnsi(dataTable)).to.be(iterationTableString);
       expect(stripAnsi(summaryTable)).to.be(summaryTableString);
 
     });
 
-    it('should generate the string for a iteration table if the \'item_format\' option is not set', () => {
+    it('should generate the string for a iteration table if the \'item_transform\' option is not set', () => {
 
       const [dataTable, summaryTable] = collectionIgniteModel._getCollectionTables($);
 

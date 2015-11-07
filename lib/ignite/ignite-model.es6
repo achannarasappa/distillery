@@ -14,7 +14,7 @@ const defaultOptions = {
   table: true,
   table_item_count: 10,
   item_max_length: 50,
-  item_format: false,
+  item_transform: false,
 };
 
 const replaceUndefinedIterations = _.replaceUndefined(chalk.yellow('not found'));
@@ -72,7 +72,7 @@ class IgniteModel extends Model {
 
   _getItemTables($) {
 
-    const item = this.options.item_format ? this._applyFilters(this._parseItem($)) : this._parseItem($);
+    const item = this.options.item_transform ? this._applyFilters(this._parseItem($)) : this._parseItem($);
     const dataTable = this._buildItemTable(item);
 
     return [ dataTable, '' ];
@@ -87,7 +87,7 @@ class IgniteModel extends Model {
     const summaryTable = this._buildSummaryTable(collection.length, iteration.length);
 
     if (this.options.table)
-      dataTable = (this.options.item_format) ? this._buildCollectionTable(collection) : this._buildIterationTable(iteration);
+      dataTable = (this.options.item_transform) ? this._buildCollectionTable(collection) : this._buildIterationTable(iteration);
 
     return [ dataTable, summaryTable ];
 
