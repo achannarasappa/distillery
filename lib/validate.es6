@@ -96,13 +96,13 @@ const validateModel = (definition) => {
   if (!_.includes([ 'collection', 'item' ], definition.type))
     throw new DistilleryStillError('');
 
-  if (definition.type === 'collection' && !_.isString(definition.iterate))
+  if (definition.type === 'collection' && !_.isString(definition.collectionPath))
     throw new DistilleryStillError('');
 
-  if (!_.isPlainObject(definition.elements))
+  if (!_.isPlainObject(definition.properties))
     throw new DistilleryStillError('');
 
-  _.mapValues(definition.elements, validateModelElement);
+  _.mapValues(definition.properties, validateModelElement);
 
   if (!_.isFunction(definition.validate) && !_.isUndefined(definition.validate))
     throw new DistilleryStillError('');

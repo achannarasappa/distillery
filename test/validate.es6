@@ -50,33 +50,33 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if definition.type is \'collection\' and definition.iterate is not a string', () => {
+    it('should throw an error if definition.type is \'collection\' and definition.collectionPath is not a string', () => {
 
-      const invalidDefinitionModel = _.omit(definitionModel, 'iterate');
+      const invalidDefinitionModel = _.omit(definitionModel, 'collectionPath');
 
       expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
-    it('should throw an error if definition.elements is not an object', () => {
+    it('should throw an error if definition.properties is not an object', () => {
 
       const invalidDefinitionModel = _.merge({}, definitionModel, {
-        elements: '',
+        properties: '',
       });
 
       expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
 
     });
 
-    it('should throw an error if definition.elements[<key>] is not a string, object, or function', () => {
+    it('should throw an error if definition.properties[<key>] is not a string, object, or function', () => {
 
       const invalidDefinitionModel = _.merge({}, definitionModel, {
-        elements: {
+        properties: {
           url: true,
         },
       });
       const validDefinitionModel = _.merge({}, definitionModel, {
-        elements: {
+        properties: {
           url: ($) => $('div#post-list > div').eq(0).html(),
         },
       });
@@ -86,10 +86,10 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if definition.elements[<key>] is an object but definition.elements[<key>].path is not a string', () => {
+    it('should throw an error if definition.properties[<key>] is an object but definition.properties[<key>].path is not a string', () => {
 
       const invalidDefinitionModel = _.merge({}, definitionModel, {
-        elements: {
+        properties: {
           url: {
             path: {},
           },
@@ -100,10 +100,10 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if definition.elements[<key>] is an object but neither definition.elements[<key>].attr nor definition.elements[<key>].regex are defined', () => {
+    it('should throw an error if definition.properties[<key>] is an object but neither definition.properties[<key>].attr nor definition.properties[<key>].regex are defined', () => {
 
       const invalidDefinitionModel = _.merge({}, definitionModel, {
-        elements: {
+        properties: {
           url: {
             path: 'div.url',
           },
@@ -114,10 +114,10 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if definition.elements[<key>] is an object but definition.elements[<key>].attr is not a string or undefined', () => {
+    it('should throw an error if definition.properties[<key>] is an object but definition.properties[<key>].attr is not a string or undefined', () => {
 
       const invalidDefinitionModel = _.merge({}, definitionModel, {
-        elements: {
+        properties: {
           url: {
             path: 'div.url',
             attr: {},
@@ -125,7 +125,7 @@ describe('Validate', () => {
         },
       });
       const validDefinitionModel = _.merge({}, definitionModel, {
-        elements: {
+        properties: {
           url: {
             path: 'div.url',
             regex: /www/,
@@ -138,10 +138,10 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if definition.elements[<key>] is an object but definition.elements[<key>].regex is not a regular expression or undefined', () => {
+    it('should throw an error if definition.properties[<key>] is an object but definition.properties[<key>].regex is not a regular expression or undefined', () => {
 
       const invalidDefinitionModel = _.merge({}, definitionModel, {
-        elements: {
+        properties: {
           url: {
             path: 'div.url',
             regex: {},
@@ -149,7 +149,7 @@ describe('Validate', () => {
         },
       });
       const validDefinitionModel = _.merge({}, definitionModel, {
-        elements: {
+        properties: {
           url: {
             path: 'div.url',
             regex: /www/,

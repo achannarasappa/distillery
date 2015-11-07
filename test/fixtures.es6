@@ -54,7 +54,7 @@ const still = {
       {
         name: 'posts',
         type: 'collection',
-        elements: {
+        properties: {
           id: 'div.id',
           title: 'a.title',
           category: {
@@ -62,7 +62,7 @@ const still = {
             attr: 'href',
           },
         },
-        iterate: 'html > body > div#post-list > div',
+        collectionPath: 'html > body > div#post-list > div',
         validate: (post) => (post.id),
         format: (post) => {
 
@@ -75,7 +75,7 @@ const still = {
       {
         name: 'page',
         type: 'item',
-        elements: {
+        properties: {
           current: 'a.current',
           last: 'a.last',
         },
@@ -157,13 +157,13 @@ const still = {
       {
         name: 'auctions',
         type: 'collection',
-        elements: {
+        properties: {
           status: 'td.status',
           title: 'td.title',
           category: 'td.cat',
           id: 'td.id',
         },
-        iterate: '#container > table > tr',
+        collectionPath: '#container > table > tr',
         validate: (posting) => (!_.isUndefined(posting.status) && !_.isUndefined(posting.title) && !_.isUndefined(posting.category) && !_.isUndefined(posting.id)),
       },
     ],
