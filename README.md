@@ -27,9 +27,9 @@ npm install distillery-js --save
 * returns 
     * `Promise<response object>` if returnResponse is set to `true`
     * `Promise<response object>` if any error is returned. The `response.error` will be set along with the rest of the [response object](https://nodejs.org/api/http.html#http_http_incomingmessage).
-    * `Promise<any>` if the still has the `exchange.response[<key>].hook` set, this function will be run and the and the promise will be resolved with the return of this function.
-    * `Promise<response object>` if the `exchange.response[<key>].hook` and the `models` keys are not set in the still
-    * `Promise<models object>` if the `exchange.response[<key>].hook` is not set but the `models` is set, an array of data parsed by the models will be returned. This is the same data would would be returned by running `distillery.parse(html)` directly.
+    * `Promise<any>` if the still has the `exchange.response[<index>].hook` set, this function will be run and the and the promise will be resolved with the return of this function.
+    * `Promise<response object>` if the `exchange.response[<index>].hook` and the `models` keys are not set in the still
+    * `Promise<models object>` if the `exchange.response[<index>].hook` is not set but the `models` is set, an array of data parsed by the models will be returned. This is the same data would would be returned by running `distillery.parse(html)` directly.
 
 #### `distillery.parse(html)`  
 * arguments
@@ -49,16 +49,16 @@ module.exports = function(distillery) {
       {
         name: 'postings',
         type: 'collection',
-        elements: {
+        properties: {
           title: 'td.title',
           id: 'td.postingID > small'
         },
-        iterate: 'html > div',
+        collectionPath: 'html > div',
       },
       {
         name: 'page',
         type: 'item',
-        elements: {
+        properties: {
           current: '.current_page',
           last: '.last_page'
         }
@@ -119,7 +119,7 @@ The [HTTP code](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) to expec
     * `path` (*string*) - CSS path to an HTML element.
     * `expected` (*string* or *regex*, *optional*) - If expected is not set, the function will return the contents of the element at the CSS path if found or false is not found. If expected is a string, the fuction will return true if the inner text of the element at the path matches
 * returns
-    * `<html element inner text>` if expected is not set and the element at the CSS path exists in the html document. This response allows for any customer validation logic to be performed in `exchange.response[<key>].validate`.
+    * `<html element inner text>` if expected is not set and the element at the CSS path exists in the html document. This response allows for any customer validation logic to be performed in `exchange.response[<index>].predicate`.
     * `true` if `expected` is a regex, the element at the CSS path exists in the html document, and the `expected` regex pattern matches the inner text of that element
     * `true` if `expected` is a string, the element at the CSS path exists in the html document, and the `expected` string matches the inner text of that element exactly
     * `false` if the contents of the element at the CSS path does not exists in the html document
@@ -149,7 +149,7 @@ Set distillery CLI options which are detailed below. All model options have defa
     * `-o table=true` - Display detailed entities and properties
     * `-o table_item_count=10` - Number of items to display in the table of entities.
     * `-o item_max_length=50` - Number of characters after which to truncate an entity's property
-    * `-o item_format=false` - Apply the model's `format` function to the entities, by default, the raw data returned without any custom formatting will be returned
+    * `-o item_transform=false` - Apply the model's `transform` function to the entities, by default, the raw data returned without any custom transformation will be returned
 
 #### parameter  
 Set any parameters defined in the still's `exchange.request.query`, `exchange.request.headers`, or `exchange.request.form` section that would be normally set in the `.distill` method of the programmatic API. Parameters should follow the format of `-p <name>=<value>`
@@ -167,9 +167,9 @@ module.exports = function(distillery) {
       request: {
         ...
       },
-      response: {
+      response: [
         ...
-      }
+      ]
     },
     models: [
       ...
@@ -179,7 +179,7 @@ module.exports = function(distillery) {
 ```
 
 #### `exchange`
-(`object`, `required`) - The prcocess object contains the definition for how to make the HTTP request and how to handle the response.
+(`object`, `required`) - The process object contains the definition for how to make the HTTP request and how to handle the response.
 #### `exchange.request`
 (`object`, `required`) - Data detailing how to complete a HTTP request.
 #### `exchange.request.url`
@@ -239,26 +239,26 @@ parameters: [
 (*boolean*, *optional*) - If set to true, then an error will be thrown if this variable is not set in the `Distillery(still).distill()` method.
 ##### `exchange.request.parameters[<index>].def`
 (*string*, *optional*) - Default value for the given parameter.
-##### `exchange.request.parameters[<index>].validate`
+##### `exchange.request.parameters[<index>].predicate`
 (*function*, *optional*) - A `DistilleryValidationError` is thrown when a falsy value is returned from this function.
 ##### Example  
 ```javascript
 context: {
   name: 'context',
-  'default': 'user',
-  validate: function(value) {
+  def: 'user',
+  predicate: function(value) {
     return value === 'user' || value === 'admin';
   }
 },
 ```
-##### `exchange.request.parameters[<index>].format`
+##### `exchange.request.parameters[<index>].transform`
 (*function*, *optional*) - Modifies the parameter before running any validation.
 ##### Example  
 ```javascript
 context: {
   name: 'context',
-  'default': 'user',
-  format: function(value) {
+  def: 'user',
+  transform: function(value) {
     return value * 10;
   }
 },
@@ -273,8 +273,8 @@ context: {
 (*string*, *optional*) - An alias for the parameter. For example, the header `Content-Type` can be aliased to `content_type` to make it easier to refer to when using the `Distillery(still).distill()` method.
 #### `exchange.response`
 Hooks, validators, and indicators to handle a HTTP response. Each sub-object is a potential response condition. This allows for handling 404 Not Found response differently from a 200 OK response.
-#### `exchange.response[<key>].indicators`
-(*object*, *required*) - List conditions to look for that would indicate this specific response was returned from the server. Each sub-key is a user-assigned name for the indicator. There are a set of indicator that can be used detailed below. Which combination or combinations of indicators constitues a specific response is in the [`exchange.response[<key>].validate`](#exchangeresponsekeyvalidate) function.
+#### `exchange.response[<index>].indicators`
+(*array*, *required*) -  Conditions to look for that would indicate this specific response was returned from the server. Each sub-key is a user-assigned name for the indicator. There are a set of indicator that can be used detailed below. Which combination or combinations of indicators constitutes a specific response is in the [`exchange.response[<index>].predicate`](#exchangeresponsekeypredicate) function.
 ##### Indicators  
 Indicators are used to recognize if a particular response was returned. They are key value pairs where the keys are the name of the indicator and the value is an expected value in the HTTP response. There are three signatures that can be detected with distillery:
 * [A specifc HTTP response code](#distilleryexpecthttp_codecode)
@@ -286,23 +286,23 @@ Indicators are used to recognize if a particular response was returned. They are
 The first two indicators are included with distillery. The last indicator is a user defined indicator that should return true or false.
 ```javascript
 ...
-  indicators: {
-    success_url: distillery.expect.url('https://github.com/'),
-    success_code: distillery.expect.http_code(200),
-    success_custom: function(response) {
+  indicators: [
+    distillery.expect.url('https://github.com/'),
+    distillery.expect.http_code(200),
+    function(response) {
         return (response.statusMessage === 'Not found')
     }
-  },
+  ],
 ...
 ```
 
-#### `exchange.response[<key>].validate`
-(*function*, *required*) - Used to determine which response was returned from the the request. The result of each indicator can be used in this function to evaluate if the response is valid. If there are multiple responses that have validation functions that evaluate to true, the first response will be chosen.
+#### `exchange.response[<index>].predicate`
+(*function*, *optional*) - Used to determine which response was returned from the the request. The result of each indicator can be used in this function to evaluate if the response is valid. If there are multiple responses that have validation functions that evaluate to true, the first response will be chosen.
 * arguments
-    * `indicators` (*object*) - Object with the same keys as defined in [response indicators](#exchangeresponsekeyindicators). The values of these keys will be either a boolean or string depending on the indictor.
+    * `indicators` (*object*) - Object with the same keys as defined in [response indicators](#exchangeresponsekeyindicators). The values of these keys will be either a boolean or string depending on the indicator.
 
 ##### Example  
-In the `profile_success` response, there are two indicators that will be evaluated, `success_url` and `success_code`. If the validate function returns true, the hook for this response will be triggered.
+In the `profile_success` response, there are two indicators that will be evaluated, `success_url` and `success_code`. If the predicate function returns true, the hook for this response will be triggered.
 ```javascript
 // still.js
 module.exports = function(distillery) {
@@ -311,27 +311,35 @@ module.exports = function(distillery) {
       request: {
         method: 'GET',
         url: 'https://github.com/{un}',
-        query: 
-            username: { name: 'un', required: true }
+        parameters: [
+          { name: 'un', alias: 'username' required: true }
+        ]
       },
-      response: {
-        profile_success: {
-          indicators: {
-            success_url: distillery.expect.url('https://github.com/'),
-            success_code: distillery.expect.http_code(200)
-          },
-          validate: function(indicators) {
+      response: [
+        {
+          name: 'profile_success',
+          indicators: [
+            {
+              name: 'success_url',
+              test: distillery.expect.url('https://github.com/')
+            }
+            {
+              name: 'success_code',
+              test: distillery.expect.http_code(200)
+            }
+          ],
+          predicate: function(indicators) {
             return (indicators.success_code && indicators.success_url);
           },
           hook: function(response) {
             console.log('Successfully retrieved the user's profile!');
           }
         }
-      }
+      ]
   }
 };
 ```
-#### `exchange.response[<key>].hook`
+#### `exchange.response[<index>].hook`
 (*function*, *optional*) - Hook function to trigger after the response is validated. Only a single hook will be triggered in a still. If no hook is defined, 
 * arguments
     * `response` (*object*) - [HTTP response object](https://nodejs.org/api/http.html#http_http_incomingmessage) plus some additional distillery data. This is almost the same as the response object returned from the [Request](https://github.com/request/request) library. There are a few additional keys: 
@@ -347,12 +355,12 @@ module.exports = function(distillery) {
 (`string`, `required`) - Name for the model
 #### `models[<index>].type`  
 (`string`, `required`) -Model type which can be:
-* *collection* - When an entity is expected to appear multiple times on a page, the type should be collection. A second property, *iterate* should be supplied if the type is collection.
+* *collection* - When an entity is expected to appear multiple times on a page, the type should be collection. A second property, *collectionPath* should be supplied if the type is collection.
 * *item* - When an entity is expect to appear only once on a page, the type should be item.
 
-#### `models[<index>].elements`  
+#### `models[<index>].properties`  
 (`object`, `required`) - Object containing all of the properties of the entites with the keys being the name of the property and value being either a string CSS path to to the HTML element or an object containing information about how to retireve the property.
-#### `models[<index>].elements[<key>]`  
+#### `models[<index>].properties[<key>]`  
 (*string*, *object*, or *function*, *required*) - There are several possibilities for what is returned from a model depending on the value of this key detailed below:
 * `<string>` - the inner text of the HTML element at that path will be returned
 * `<object>` with `attr`, `regex`, and `path` properties defined - the value of the attribute of the HTML element at the `path` which has inner text matching the regular expression `regex` will be returned
@@ -361,12 +369,12 @@ module.exports = function(distillery) {
 * `<function>` - the return of the function will be returned. The first argument is a [cheerio selector](https://github.com/cheeriojs/cheerio#-selector-context-root-) with the html body loaded
 
 ##### Example
-Here, distillery will run the function in `elements.title` and return the result rather than selecting a specific a CSS path as it does with `elements.id`.
+Here, distillery will run the function in `properties.title` and return the result rather than selecting a specific a CSS path as it does with `properties.id`.
 ```javascript
 models: [
     {
         type: 'item',
-        elements: {
+        properties: {
             id: 'div.id',
             title: function($) {
                 return $('div#post-list > div').eq(0).html()
@@ -376,13 +384,13 @@ models: [
 ]
 ```
 
-##### `models[<index>].elements[<key>].path`  
+##### `models[<index>].properties[<key>].path`  
 (*string*, *required*) - CSS path to a HTML element. Must also have a `attr` or `regex` property.
-##### `models[<index>].elements[<key>].attr`  
+##### `models[<index>].properties[<key>].attr`  
 (*string*, *optional*) - Name of an HTML attribute to retrieve the value from
-##### `models[<index>].elements[<key>].regex`  
+##### `models[<index>].properties[<key>].regex`  
 (*string*, *optional*) - Regular expression to test the inner text of the element at `path`
-#### `models[<index>].iterate`  
+#### `models[<index>].collectionPath`  
 (*string*, *required*) - Required if `type` is *collection*, otherwise not needed. The CSS path that contains the items in a collection. 
 ##### Example
 With this snippet of a model, distillery with iterate over every `table > tr` in the HTML document and return the value from the `td.title` as an array.
@@ -390,26 +398,23 @@ With this snippet of a model, distillery with iterate over every `table > tr` in
 models: [
     {
         type: 'collection',
-        elements: {
+        properties: {
           title: 'td.title'
         },
-        iterate: 'table > tr'
+        collectionPath: 'table > tr'
     }
 ]
 ```
-#### `models[<index>].validate`  
+#### `models[<index>].predicate`
 (*function*, *optional*) - Validation function that should return a true value for entites that should be returned and false for entites that should be removed from the result array for collections.
-#### `models[<index>].format`  
+#### `models[<index>].transform`
 (*function*, *optional*) - Formatting function that will be run over each entity in a collection to transform its values or on a single entity for an item.
 ```javascript
-validate: function(posting) {
+predicate: function(posting) {
   return (typeof posting.title !== "undefined")
 },
-format: function(posting) {
+transform: function(posting) {
   posting.title = posting.title.trim();
   return posting;
 }
 ```
-
-## Examples  
-See [distillery-examples](https://github.com/achannarasappa/distillery-examples)
