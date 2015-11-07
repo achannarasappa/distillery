@@ -28,7 +28,7 @@ const still = {
               test: (response) => true,
             },
           ],
-          validate: (indicators) => indicators.title,
+          predicate: (indicators) => indicators.title,
         },
         {
           name: 'error',
@@ -46,7 +46,7 @@ const still = {
               test: distillery.expect.http_code(400),
             },
           ],
-          validate: (indicators) => indicators.title && indicators.url,
+          predicate: (indicators) => indicators.title && indicators.url,
         },
       ],
     },
@@ -63,7 +63,7 @@ const still = {
           },
         },
         collectionPath: 'html > body > div#post-list > div',
-        validate: (post) => (post.id),
+        predicate: (post) => (post.id),
         transform: (post) => {
 
           post.category = post.category.split('/')[1];
@@ -117,7 +117,7 @@ const still = {
           {
             name: 'context',
             def: 'user',
-            validate: value => _.contains([ 'user', 'admin' ], value),
+            predicate: value => _.contains([ 'user', 'admin' ], value),
           },
           {
             name: 'Content-Type',
@@ -135,21 +135,21 @@ const still = {
             distillery.expect.http_code(200),
             distillery.expect.html_element('title'),
           ],
-          validate: (indicators) => indicators[0] && indicators[1],
+          predicate: (indicators) => indicators[0] && indicators[1],
         },
         {
           name: 'success_2',
           indicators: [
             distillery.expect.http_code(200),
           ],
-          validate: (indicators) => indicators[0],
+          predicate: (indicators) => indicators[0],
         },
         {
           name: 'error',
           indicators: [
             distillery.expect.http_code(400),
           ],
-          validate: (indicators) => indicators[0],
+          predicate: (indicators) => indicators[0],
         },
       ],
     },
@@ -164,7 +164,7 @@ const still = {
           id: 'td.id',
         },
         collectionPath: '#container > table > tr',
-        validate: (posting) => (!_.isUndefined(posting.status) && !_.isUndefined(posting.title) && !_.isUndefined(posting.category) && !_.isUndefined(posting.id)),
+        predicate: (posting) => (!_.isUndefined(posting.status) && !_.isUndefined(posting.title) && !_.isUndefined(posting.category) && !_.isUndefined(posting.id)),
       },
     ],
   }),

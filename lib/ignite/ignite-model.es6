@@ -19,7 +19,7 @@ const defaultOptions = {
 
 const replaceUndefinedIterations = _.replaceUndefined(chalk.yellow('not found'));
 
-const markFailedValidations = _.curry((item, validateFn, property) => ((!_.isUndefined(validateFn) && validateFn(item)) || _.isUndefined(validateFn)) ? chalk.white(property) : chalk.gray(property));
+const markFailedValidations = _.curry((item, predicateFn, property) => ((!_.isUndefined(predicateFn) && predicateFn(item)) || _.isUndefined(predicateFn)) ? chalk.white(property) : chalk.gray(property));
 
 const objectToCliArray = (object) => _(object)
   .pairs()
@@ -125,7 +125,7 @@ class IgniteModel extends Model {
       .map(($) => this._parseItem($))
       .map((item) => _.map(item, replaceUndefinedIterations))
       .map((item) => _.map(item, this.truncateFn))
-      .map((item) => _.map(item, markFailedValidations(item, this.validate)))
+      .map((item) => _.map(item, markFailedValidations(item, this.predicate)))
       .value();
 
     table.push(...rows);

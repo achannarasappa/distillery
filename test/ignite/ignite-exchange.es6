@@ -24,7 +24,7 @@ describe('IgniteExchange', () => {
             distillery.expect.http_code(200),
             (response) => true,
           ],
-          validate: (indicators) => indicators[0],
+          predicate: (indicators) => indicators[0],
         },
         {
           indicators: [
@@ -32,7 +32,7 @@ describe('IgniteExchange', () => {
             distillery.expect.url('http://example.com/error'),
             distillery.expect.http_code(400),
           ],
-          validate: (indicators) => indicators[0] && indicators[1],
+          predicate: (indicators) => indicators[0] && indicators[1],
         },
       ],
     }

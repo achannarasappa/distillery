@@ -63,41 +63,41 @@ describe('Model', () => {
 
   describe('.prototype._applyFilters', () => {
 
-    it('should return null if both model.validate and model.transform are defined and model.validate returns false', () => {
+    it('should return null if both model.predicate and model.transform are defined and model.predicate returns false', () => {
 
       expect(collectionModel._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.be(null);
 
     });
 
-    it('should return the transformed item if both model.validate and model.transform are defined and model.validate returns true', () => {
+    it('should return the transformed item if both model.predicate and model.transform are defined and model.predicate returns true', () => {
 
       expect(collectionModel._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
 
     });
 
-    it('should return null if model.validate is defined and model.transform is not defined and model.validate returns false', () => {
+    it('should return null if model.predicate is defined and model.transform is not defined and model.predicate returns false', () => {
 
       expect(new Model(_.omit(collectionDefinition, 'transform'))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.be(null);
 
     });
 
-    it('should return the item if model.validate is defined and model.transform is not defined and model.validate returns true', () => {
+    it('should return the item if model.predicate is defined and model.transform is not defined and model.predicate returns true', () => {
 
       expect(new Model(_.omit(collectionDefinition, 'transform'))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
 
     });
 
-    it('should return the transformed item if model.validate is not defined and model.transform is defined', () => {
+    it('should return the transformed item if model.predicate is not defined and model.transform is defined', () => {
 
-      expect(new Model(_.omit(collectionDefinition, 'validate'))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
-      expect(new Model(_.omit(collectionDefinition, 'validate'))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
+      expect(new Model(_.omit(collectionDefinition, 'predicate'))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
+      expect(new Model(_.omit(collectionDefinition, 'predicate'))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'cars' });
 
     });
 
-    it('should return the item if model.validate is not defined and model.transform is not defined', () => {
+    it('should return the item if model.predicate is not defined and model.transform is not defined', () => {
 
-      expect(new Model(_.omit(collectionDefinition, [ 'validate', 'transform' ]))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
-      expect(new Model(_.omit(collectionDefinition, [ 'validate', 'transform' ]))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
+      expect(new Model(_.omit(collectionDefinition, [ 'predicate', 'transform' ]))._applyFilters({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ id: 2046, title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
+      expect(new Model(_.omit(collectionDefinition, [ 'predicate', 'transform' ]))._applyFilters({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' })).to.eql({ title: 'How do I change the oil on a 2007 Honda CRV?', category: 'forum/cars/posts/2046' });
 
     });
 

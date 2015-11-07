@@ -162,12 +162,12 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if definition.validate is not a function or undefined', () => {
+    it('should throw an error if definition.predicate is not a function or undefined', () => {
 
       const invalidDefinitionModel = _.merge({}, definitionModel, {
-        validate: '',
+        predicate: '',
       });
-      const validDefinitionModel = _.omit(definitionModel, 'validate');
+      const validDefinitionModel = _.omit(definitionModel, 'predicate');
 
       expect(validateModel).withArgs(invalidDefinitionModel).to.throwError((error) => expect(error).to.be.a(DistilleryStillError));
       expect(validateModel).withArgs(validDefinitionModel).to.not.throwError();
@@ -346,14 +346,14 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if exchange.request.parameters[<index>].validate is not a function or undefined', () => {
+    it('should throw an error if exchange.request.parameters[<index>].predicate is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
           parameters: [
             {
               name: 'test1',
-              validate: true,
+              predicate: true,
             }
           ]
         },
@@ -364,7 +364,7 @@ describe('Validate', () => {
           parameters: [
             {
               name: 'test1',
-              validate: () => true,
+              predicate: () => true,
             }
           ]
         },
@@ -506,17 +506,17 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if exchange.request.validate is not a function or undefined', () => {
+    it('should throw an error if exchange.request.predicate is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
-          validate: true
+          predicate: true
         },
       });
 
       const validDefinitionExchange = _.merge({}, definitionExchange, {
         request: {
-          validate: () => true
+          predicate: () => true
         },
       });
 
@@ -552,7 +552,7 @@ describe('Validate', () => {
           {
             name: 'invalid_response',
             indicators: false,
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -561,7 +561,7 @@ describe('Validate', () => {
           {
             name: 'invalid_response_object',
             indicators: {},
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -616,7 +616,7 @@ describe('Validate', () => {
           {
             name: 'invalid_response',
             indicators: [],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -634,7 +634,7 @@ describe('Validate', () => {
             indicators: [
               (response) => true,
             ],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -649,7 +649,7 @@ describe('Validate', () => {
                 test: (response) => true,
               },
             ],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -660,7 +660,7 @@ describe('Validate', () => {
             indicators: [
               false,
             ],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -683,7 +683,7 @@ describe('Validate', () => {
                 test: (response) => true,
               },
             ],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -696,7 +696,7 @@ describe('Validate', () => {
                 test: (response) => true,
               }
             ],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -709,7 +709,7 @@ describe('Validate', () => {
                 name: 'object',
               }
             ],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -732,7 +732,7 @@ describe('Validate', () => {
                 test: (response) => true,
               },
             ],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -746,7 +746,7 @@ describe('Validate', () => {
                 test: true,
               },
             ],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
           },
         ]
       });
@@ -756,7 +756,7 @@ describe('Validate', () => {
 
     });
 
-    it('should throw an error if exchange.response[<indexA>].validate is not a function or undefined', () => {
+    it('should throw an error if exchange.response[<indexA>].predicate is not a function or undefined', () => {
 
       const invalidDefinitionExchange = _.assign(_.clone(definitionExchange), {
         response: [
@@ -765,7 +765,7 @@ describe('Validate', () => {
             indicators: [
               (response) => true,
             ],
-            validate: false,
+            predicate: false,
           },
         ]
       });
@@ -794,7 +794,7 @@ describe('Validate', () => {
             indicators: [
               (response) => true,
             ],
-            validate: (indicators) => true,
+            predicate: (indicators) => true,
             hook: false,
           },
         ]
