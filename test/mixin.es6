@@ -42,6 +42,27 @@ describe('mixin', () => {
 
     });
 
+  });
+
+  describe('.formUrlEncode', () => {
+
+    const formObject = {
+      email: 'test@example.com',
+      password: 'Changeme1234',
+    };
+
+    it('should url encode both key and value strings', () => {
+
+      expect(_.formUrlEncode(formObject)).to.contain('%40')
+
+    });
+
+    it('should return a string with each key value pair joined with a \'=\' and pairs joined to each other with a \'&\'', () => {
+
+      expect(_.formUrlEncode(formObject)).to.eql('email=test%40example.com&password=Changeme1234')
+
+    });
+
   })
 
 });

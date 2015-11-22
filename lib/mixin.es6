@@ -10,6 +10,12 @@ const mixin = {
       .zipObject()
       .value(),
   replaceUndefined: _.curry((undefinedString, value) => (_.isUndefined(value) ? undefinedString : value)),
+  formUrlEncode: (obj) => _(obj)
+    .pairs()
+    .map((pair) => _.map(pair, encodeURIComponent))
+    .map((pair) => pair.join('='))
+    .value()
+    .join('&'),
 };
 
 module.exports = mixin;
