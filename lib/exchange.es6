@@ -1,4 +1,6 @@
 const _ = require('lodash').mixin(require('./mixin'));
+const tough = require('tough-cookie');
+const fetch = require('node-fetch');
 const request = require('request-promise').defaults({ jar: true });
 import Expect from './expect';
 import { validateExchange } from './validate';
@@ -106,7 +108,7 @@ class Exchange {
 
   constructor(definition, options = {}) {
 
-    this.options = _.defaults(options, { jar: request.jar() });
+    this.options = _.defaults(options, { jar: new tough.CookieJar() });
 
     if (validateExchange(definition))
       _.extend(this, definition);
@@ -115,53 +117,45 @@ class Exchange {
 
   execute(parameters) {
 
-    const configuration = this._buildConfiguration(parameters);
+    const requestArguments = this._buildRequestArguments(parameters);
 
-    return request(configuration)
-      .then(this._generateResponse(configuration.jar))
+    return fetch(...requestArguments)
+      .then(this._generateResponse.bind(this))
 
   }
 
-  _buildConfiguration(parameters = {}) {
+  _buildRequestArguments(parameters = {}) {
 
     if (!_.isObject(parameters))
       throw new DistilleryError('Exchange parameters must be an object.');
 
     const { query, header, form } = generateParameters(this.request.parameters, parameters, this.request.predicate);
-
-    const configuration = {
-      method: this.request.method.toUpperCase(),
-      jar: this.options.jar,
-      url: _.interpolate(this.request.url, query),
-      headers: header,
-      form,
-      resolveWithFullResponse: true,
-      simple: false,
+    const url = _.interpolate(this.request.url, query);
+    const init = {
+      method: this.request.method,
+      headers: _.assign(header, _.pick({ cookie: this.options.jar.getCookieStringSync(url) }, _.identity)),
+      body: _.formUrlEncode(form),
     };
 
     if (_.isObject(this.options.requestOptions))
-      return _.defaults(this.options.requestOptions, configuration);
+      return [ url, _.defaults(this.options.requestOptions, init) ];
 
-    return configuration;
+    return [ url, init ];
 
   }
 
-  _generateResponse(jar) {
+  _generateResponse(response) {
+    
+    const validResponse = this._getValidResponse(response);
 
-    return (response) => {
+    if (_.isUndefined(validResponse))
+      throw new DistilleryResponseError('No response conditions met.');
 
-      const validResponse = this._getValidResponse(response);
-
-      if (_.isUndefined(validResponse))
-        throw new DistilleryResponseError('No response conditions met.');
-
-      return _.assign(response, {
-        indicators: this._getValidResponseIndicators(validResponse.indicators, response),
-        hook: validResponse.hook,
-        jar: jar,
-      });
-
-    };
+    return _.assign(response, {
+      indicators: this._getValidResponseIndicators(validResponse.indicators, response),
+      hook: validResponse.hook,
+      jar: this.options.jar,
+    });
 
   }
 
