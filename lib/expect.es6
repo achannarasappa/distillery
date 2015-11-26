@@ -23,13 +23,13 @@ const Expect = {
     
     return (response, verbose) => {
 
-      const valid = (response.statusCode === expected);
+      const valid = (response.status === expected);
       
       if (verbose)
         return {
           name: 'http_code',
           expected: expected,
-          actual: response.statusCode,
+          actual: response.status,
           valid: valid,
         };
 
@@ -45,13 +45,13 @@ const Expect = {
 
     return (response, verbose) => {
 
-      const valid = _.isRegExp(expected) ? expected.test(response.request.uri.href) : (response.request.uri.href === expected);
+      const valid = _.isRegExp(expected) ? expected.test(response.url) : (response.url === expected);
 
       if (verbose)
           return {
             name: 'url',
             expected: expected,
-            actual: response.request.uri.href,
+            actual: response.url,
             valid: valid,
           };
 

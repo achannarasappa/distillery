@@ -118,9 +118,10 @@ class Exchange {
   execute(parameters) {
 
     const requestArguments = this._buildRequestArguments(parameters);
+    const request = fetch.Request(...requestArguments);
 
     return fetch(...requestArguments)
-      .then(this._generateResponse.bind(this))
+      .then(this._generateResponse(request))
 
   }
 
@@ -144,18 +145,26 @@ class Exchange {
 
   }
 
-  _generateResponse(response) {
-    
-    const validResponse = this._getValidResponse(response);
+  _generateResponse(request) {
 
-    if (_.isUndefined(validResponse))
-      throw new DistilleryResponseError('No response conditions met.');
+    return (response) => {
 
-    return _.assign(response, {
-      indicators: this._getValidResponseIndicators(validResponse.indicators, response),
-      hook: validResponse.hook,
-      jar: this.options.jar,
-    });
+      const validResponse = this._getValidResponse(response);
+
+      if (_.isUndefined(validResponse))
+        throw new DistilleryResponseError('No response conditions met.');
+
+      return {
+        response,
+        request,
+        jar: this.options.jar,
+        still: {
+          indicators: this._getValidResponseIndicators(validResponse.indicators, response),
+          hook: validResponse.hook,
+        },
+      };
+
+    }
 
   }
 

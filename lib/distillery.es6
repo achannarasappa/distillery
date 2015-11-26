@@ -41,13 +41,13 @@ class Distillery {
 
   _respond(returnResponse) {
 
-    return (response) => {
+    return ({ response, request, jar, still }) => {
 
       if (returnResponse)
-        return response;
+        return { response, request, jar, still };
 
-      if (!_.isUndefined(response.hook))
-        return response.hook(response);
+      if (!_.isUndefined(still.hook))
+        return still.hook(response, request, jar);
 
       if (_.isUndefined(this.still.models))
         return response;

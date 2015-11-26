@@ -3,6 +3,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
+const tough = require('tough-cookie');
 import Distillery from '../lib/distillery';
 import Exchange from '../lib/exchange';
 import { DistilleryValidationError, DistilleryResponseError, DistilleryError } from '../lib/error';
@@ -21,9 +22,11 @@ describe('Exchange', () => {
     }
   });
   const response = fixtures.response.auctions;
+  const request = fixtures.request.auctions;
   const responseInvalid = fixtures.response.error;
-  const blankCookie = { store: { idx: {} } };
-  const testCookie = { store: { idx: { test: 'test cookie' } } };
+  const requestInvalid = fixtures.request.error;
+  const blankCookie = new tough.CookieJar();
+  const testCookie = (new tough.CookieJar()).setCookieSync('cl_session=aaa111', 'example.com');
 
   describe('Constructor', () => {
 
@@ -35,7 +38,7 @@ describe('Exchange', () => {
 
     it('should set an empty cookie jar if no jar is specified', () => {
 
-      expect(_.cloneDeep(exchange.options.jar)).to.eql(blankCookie)
+      expect(exchange.options.jar).to.eql(blankCookie)
 
     });
 
@@ -91,10 +94,14 @@ describe('Exchange', () => {
 
     it('should add indicators, hook, and jar keys to the response when there is a validResponse', () => {
 
-      expect(exchange._generateResponse(blankCookie)(response)).to.contain.keys([ 'indicators', 'hook', 'jar' ]);
-      expect(exchange._generateResponse(blankCookie)(response).indicators).to.eql(exchange._getValidResponseIndicators(validResponse.indicators, response));
-      expect(exchange._generateResponse(blankCookie)(response).hook).to.eql(validResponse.hook);
-      expect(exchange._generateResponse(blankCookie)(response).jar).to.eql(blankCookie);
+      const expectedIndicators = exchange._getValidResponseIndicators(validResponse.indicators, response);
+
+      expect(exchange._generateResponse(request)(response)).to.contain.keys([ 'request', 'response', 'jar', 'still' ]);
+      expect(exchange._generateResponse(request)(response).response).to.eql(response);
+      expect(exchange._generateResponse(request)(response).response).to.eql(response);
+      expect(exchange._generateResponse(request)(response).still.indicators).to.eql(expectedIndicators);
+      expect(exchange._generateResponse(request)(response).still.hook).to.eql(validResponse.hook);
+      expect(exchange._generateResponse(request)(response).jar).to.eql(blankCookie);
 
     });
 

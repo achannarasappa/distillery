@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const fetch = require('node-fetch');
 
 const still = {
   posts: (distillery) => ({
@@ -269,36 +270,14 @@ const html = {
 };
 
 const response = {
-  posts: {
-    statusCode: 200,
-    request: {
-      method: 'GET',
-      uri: {
-        href: 'http://example.com/forum/tech',
-      },
-    },
-    body: html.posts,
-  },
-  auctions: {
-    statusCode: 200,
-    request: {
-      method: 'GET',
-      uri: {
-        href: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user',
-      },
-    },
-    body: html.auctions,
-  },
-  error: {
-    statusCode: 500,
-    request: {
-      method: 'GET',
-      uri: {
-        href: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user',
-      },
-    },
-    body: html.error,
-  },
+  posts: new fetch.Response(html.posts, { status: 200, url: 'http://example.com/forum/tech' }),
+  auctions: new fetch.Response(html.auctions, { status: 200, url: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user' }),
+  error: new fetch.Response(html.error, { status: 500, url: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user' }),
+};
+
+const request = {
+  auctions: new fetch.Response('https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user', { method: 'GET' }),
+  error: new fetch.Response('https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user', { method: 'GET' }),
 };
 
 const objects = {
@@ -329,4 +308,4 @@ const objects = {
   ],
 };
 
-export { objects, still, response, html }
+export { objects, still, response, request, html }
