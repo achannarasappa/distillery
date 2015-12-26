@@ -52,7 +52,7 @@ class Distillery {
       if (_.isUndefined(this.still.models))
         return response;
 
-      return this.parse(response.body);
+      return this.parse(response.bodyText);
 
     }
 

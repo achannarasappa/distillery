@@ -70,7 +70,7 @@ const Expect = {
 
     return (response, verbose) => {
 
-      const $ = cheerio.load(response.body);
+      const $ = cheerio.load(response.bodyText);
       const valid = getValidHtmlElement(path, expected, $);
 
       if (verbose)

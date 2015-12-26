@@ -79,7 +79,7 @@ class Ignite extends Distillery {
 
       console.log(chalk.blue('\u2777') + chalk.gray(' request complete, auto parsing models'));
 
-      return this.parse(response.body);
+      return this.parse(response.bodyText);
 
     }
 

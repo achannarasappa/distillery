@@ -16,7 +16,7 @@ describe('IgniteModel', () => {
   const collectionDefinition = ignite.still.models[0];
   const collectionIgniteModel = new IgniteModel(collectionDefinition);
   const response = fixtures.response.posts;
-  const $ = cheerio.load(response.body);
+  const $ = cheerio.load(response[0]);
   const iterationTableString = [
     '┌──────┬──────────────────────────────────────────┬───────────────────────┐\n',
     '│ id   │ title                                    │ category              │\n',

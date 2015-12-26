@@ -270,9 +270,9 @@ const html = {
 };
 
 const response = {
-  posts: new fetch.Response(html.posts, { status: 200, url: 'http://example.com/forum/tech' }),
-  auctions: new fetch.Response(html.auctions, { status: 200, url: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user' }),
-  error: new fetch.Response(html.error, { status: 500, url: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user' }),
+  posts: [ html.posts, { status: 200, url: 'http://example.com/forum/tech' } ],
+  auctions: [ html.auctions, { status: 200, url: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user' } ],
+  error: [ html.error, { status: 500, url: 'https://example.com/auctions?show_tab=home&page=1&items={show_items}&context=user' } ],
 };
 
 const request = {

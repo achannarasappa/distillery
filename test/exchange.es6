@@ -3,13 +3,16 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
+const chaiAsPromised = require('chai-as-promised');
 const tough = require('tough-cookie');
+const fetch = require('node-fetch');
 import Distillery from '../lib/distillery';
 import Exchange from '../lib/exchange';
 import { DistilleryValidationError, DistilleryResponseError, DistilleryError } from '../lib/error';
 import * as fixtures from './fixtures';
 
 chai.use(sinonChai);
+chai.use(chaiAsPromised);
 
 describe('Exchange', () => {
 
@@ -90,18 +93,25 @@ describe('Exchange', () => {
 
   describe('.prototype._generateResponse', () => {
 
-    const validResponse = exchange._getValidResponse(response);
+    const testResponse = _.assign(new fetch.Response(...response), { bodyText: response[0] });
+    const validResponse = exchange._getValidResponse(testResponse);
 
     it('should add indicators, hook, and jar keys to the response when there is a validResponse', () => {
 
-      const expectedIndicators = exchange._getValidResponseIndicators(validResponse.indicators, response);
+      const expectedIndicators = exchange._getValidResponseIndicators(validResponse.indicators, testResponse);
 
-      expect(exchange._generateResponse(request)(response)).to.contain.keys([ 'request', 'response', 'jar', 'still' ]);
-      expect(exchange._generateResponse(request)(response).response).to.eql(response);
-      expect(exchange._generateResponse(request)(response).response).to.eql(response);
-      expect(exchange._generateResponse(request)(response).still.indicators).to.eql(expectedIndicators);
-      expect(exchange._generateResponse(request)(response).still.hook).to.eql(validResponse.hook);
-      expect(exchange._generateResponse(request)(response).jar).to.eql(blankCookie);
+      return expect(exchange._generateResponse(request)(testResponse))
+        .to.be.fulfilled.then((data) => {
+
+          expect(data).to.contain.keys([ 'request', 'response', 'jar', 'still' ]);
+          expect(data.response).to.eql(testResponse);
+          expect(data.still.indicators).to.eql(expectedIndicators);
+          expect(data.still.hook).to.eql(validResponse.hook);
+          expect(data.jar).to.eql(blankCookie);
+
+        });
+
+
 
     });
 

@@ -101,7 +101,7 @@ class IgniteExchange extends Exchange {
       const summaryTable = this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey);
 
       if (this.options.save_html)
-        saveFile(this.options.save_html, response.body);
+        saveFile(this.options.save_html, response.bodyText);
 
       if (this.options.save_cookie)
         saveFile(this.options.save_cookie, getCookieString(jar, this.request.url));
