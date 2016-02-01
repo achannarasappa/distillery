@@ -148,7 +148,7 @@ const validateExchange = (definition) => {
 
 const validateStill = (still) => ({
   exchange: validateExchange(still.exchange),
-  models: _.map(still.models, validateModel),
+  models: _.isArray(still.models) ? _.map(still.models, validateModel) : still.models,
 });
 
 export { validateModel, validateExchange, validateStill };
