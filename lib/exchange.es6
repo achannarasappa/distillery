@@ -83,7 +83,7 @@ const validateParameters = _.curry((predicateFn, parameters) => {
 
 const generateParameters = (parameterDefinitions, parameterValues, predicateFn) => {
 
-  const defaultParameters = { query: {}, form: {}, header: {} };
+  const defaultParameters = { query: {}, header: {} };
 
   if (_.isArray(parameterDefinitions))
     return _(parameterDefinitions)

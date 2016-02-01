@@ -66,6 +66,18 @@ const addResponseIndexes = (definition) => _.assign(definition, {
   response: _.reduce(definition.response, (responsesIndexed, response, index) => responsesIndexed.concat(_.assign(response, { index })), []),
 });
 
+const getValidResponseKey = (validResponse) => {
+
+  if (_.has(validResponse, 'name'))
+    return validResponse.name;
+
+  if (_.has(validResponse, 'index'))
+    return validResponse.index;
+
+  return validResponse;
+
+};
+
 class IgniteExchange extends Exchange {
 
   constructor(definition, options = {}) {
@@ -96,7 +108,7 @@ class IgniteExchange extends Exchange {
     return (response) => {
 
       const validResponse = this._getValidResponse(response);
-      const validResponseKey = _.has(validResponse, 'name') ? validResponse.name : validResponse.index;
+      const validResponseKey = getValidResponseKey(validResponse);
       const summaryAnalysisTable = this._buildSummaryAnalysisTable(response, validResponseKey);
       const summaryTable = this._buildSummaryTable(response.statusCode, response.request.uri.href, validResponseKey);
 
