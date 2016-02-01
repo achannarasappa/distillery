@@ -81,7 +81,7 @@ const validateParameters = _.curry((predicateFn, parameters) => {
 
 const generateParameters = (parameterDefinitions, parameterValues, predicateFn) => {
 
-  const defaultParameters = { query: {}, form: {}, header: {} };
+  const defaultParameters = { query: {}, header: {} };
 
   if (_.isArray(parameterDefinitions))
     return _(parameterDefinitions)
@@ -129,15 +129,15 @@ class Exchange {
 
     const { query, header, form } = generateParameters(this.request.parameters, parameters, this.request.predicate);
 
-    const configuration = {
+    const configuration = _.omit({
       method: this.request.method.toUpperCase(),
       jar: this.options.jar,
       url: _.interpolate(this.request.url, query),
-      headers: header,
       form,
+      headers: header,
       resolveWithFullResponse: true,
       simple: false,
-    };
+    }, _.isUndefined);
 
     if (_.isObject(this.options.requestOptions))
       return _.defaults(this.options.requestOptions, configuration);
