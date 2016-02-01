@@ -267,7 +267,7 @@ context: {
 (*string*, *optional*) - The parameter type. This indicates in which part of the request the parameter will be used. Possible types include:
 * `query` - Parameters to be interpolated with url tokens. `name` property refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
 * `header` - Parameters to be sent as headers. See [Request documentation](https://github.com/request/request#custom-http-headers) of headers for more information. Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
-* `payload` - Send request data as `application/x-www-form-urlencoded`. See [Request documentation](https://github.com/request/request#forms) on forms for more information.  Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.  
+* `form` - Send request data as `application/x-www-form-urlencoded`. See [Request documentation](https://github.com/request/request#forms) on forms for more information.  Object key refers to the name that can be used to set the parameter in the `Distillery(still).distill()` method.
 
 ##### `exchange.request.parameters[<index>].alias`
 (*string*, *optional*) - An alias for the parameter. For example, the header `Content-Type` can be aliased to `content_type` to make it easier to refer to when using the `Distillery(still).distill()` method.
