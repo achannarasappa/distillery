@@ -23,7 +23,7 @@ describe('Exchange', () => {
   });
   const response = fixtures.response.auctions;
   const responseInvalid = fixtures.response.error;
-  const blankCookie = { _jar: { store: { idx: {} } } };
+  const blankCookie = { _jar: { store: { idx: {} }, enableLooseMode: true } };
   const testCookie = { _jar: { store: { idx: { test: 'test cookie' } } } };
 
   describe('Constructor', () => {
