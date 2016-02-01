@@ -49,7 +49,7 @@ class Ignite extends Distillery {
 
         console.log(chalk.blue('\u2777') + chalk.gray(' returnResponse set, returned raw response object'));
 
-        return super._respond(returnResponse, response);
+        return super._respond(returnResponse)(response);
 
       }
 
@@ -57,7 +57,7 @@ class Ignite extends Distillery {
 
         console.log(chalk.blue('\u2777') + chalk.gray(' request encountered an error: ' + response.error));
 
-        return super._respond(returnResponse, response);
+        return super._respond(returnResponse)(response);
 
       }
 
@@ -65,7 +65,7 @@ class Ignite extends Distillery {
 
         console.log(chalk.blue('\u2777') + chalk.gray(' request complete, triggering hook'));
 
-        return super._respond(returnResponse, response);
+        return super._respond(returnResponse)(response);
 
       }
 
@@ -73,7 +73,7 @@ class Ignite extends Distillery {
 
         console.log(chalk.blue('\u2777') + chalk.gray(' request complete, returning response'));
 
-        return super._respond(returnResponse, response);
+        return super._respond(returnResponse)(response);
 
       }
 
