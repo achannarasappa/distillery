@@ -62,7 +62,7 @@ describe('Exchange', () => {
 
     it('should build a request configuration object', () => {
 
-      expect(configuration).to.contain.all.keys([ 'method', 'jar', 'url', 'headers', 'form' ]);
+      expect(configuration).to.contain.all.keys([ 'method', 'jar', 'url', 'headers' ]);
 
     });
 
@@ -308,7 +308,6 @@ describe('Exchange', () => {
       const exchangePosts = new Exchange(definitionPosts);
 
       expect(exchangePosts._buildConfiguration().headers).to.eql({});
-      expect(exchangePosts._buildConfiguration().form).to.eql({});
 
     });
 
